@@ -1,0 +1,386 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>IPipe.Model</name>
+    </assembly>
+    <members>
+        <member name="P:IPipe.Model.LayerPageModel`1.code">
+            <summary>
+            返回代码
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.LayerPageModel`1.count">
+            <summary>
+            数据总数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.LayerPageModel`1.data">
+            <summary>
+            数据
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.LayerPageModel`1.msg">
+            <summary>
+            成功
+            </summary>
+        </member>
+        <member name="T:IPipe.Model.Love">
+            <summary>
+            爱
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Love.Id">
+            <summary>
+            id
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Love.Name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Love.Age">
+            <summary>
+            年龄
+            </summary>
+        </member>
+        <member name="T:IPipe.Model.MessageModel`1">
+            <summary>
+            通用返回信息类
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.MessageModel`1.status">
+            <summary>
+            状态码
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.MessageModel`1.success">
+            <summary>
+            操作是否成功
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.MessageModel`1.msg">
+            <summary>
+            返回信息
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.MessageModel`1.response">
+            <summary>
+            返回数据集合
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.RootEntity.Id">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="M:IPipe.Model.Models.DBSeed.SeedAsync(IPipe.Model.Models.MyContext,System.String)">
+            <summary>
+            异步添加种子数据
+            </summary>
+            <param name="myContext"></param>
+            <param name="WebRootPath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Models.FrameSeed.CreateModels(IPipe.Model.Models.MyContext,System.String[])">
+            <summary>
+            生成Model层
+            </summary>
+            <param name="myContext">上下文</param>
+            <param name="tableNames">数据库表名数组，默认空，生成所有表</param>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Models.FrameSeed.CreateIRepositorys(IPipe.Model.Models.MyContext,System.String[])">
+            <summary>
+            生成IRepository层
+            </summary>
+            <param name="myContext">上下文</param>
+            <param name="tableNames">数据库表名数组，默认空，生成所有表</param>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Models.FrameSeed.CreateIServices(IPipe.Model.Models.MyContext,System.String[])">
+            <summary>
+            生成 IService 层
+            </summary>
+            <param name="myContext">上下文</param>
+            <param name="tableNames">数据库表名数组，默认空，生成所有表</param>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Models.FrameSeed.CreateRepository(IPipe.Model.Models.MyContext,System.String[])">
+            <summary>
+            生成 Repository 层
+            </summary>
+            <param name="myContext">上下文</param>
+            <param name="tableNames">数据库表名数组，默认空，生成所有表</param>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Models.FrameSeed.CreateServices(IPipe.Model.Models.MyContext,System.String[])">
+            <summary>
+            生成 Service 层
+            </summary>
+            <param name="myContext">上下文</param>
+            <param name="tableNames">数据库表名数组，默认空，生成所有表</param>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetMainConnectionDb">
+            <summary>
+            连接字符串 
+            IPipe
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.MyContext.ConnectionString">
+            <summary>
+            连接字符串 
+            IPipe
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.MyContext.DbType">
+            <summary>
+            数据库类型 
+            IPipe 
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.MyContext.Db">
+            <summary>
+            数据连接对象 
+            IPipe 
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.MyContext.Context">
+            <summary>
+            数据库上下文实例（自动关闭连接）
+            IPipe 
+            </summary>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.#ctor">
+            <summary>
+            功能描述:构造函数
+            作　　者:IPipe
+            </summary>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.Create_Model_ClassFileByDBTalbe(System.String,System.String,System.String[],System.String,System.Boolean)">
+            <summary>
+            功能描述:根据数据库表生产Model层
+            作　　者:IPipe
+            </summary>
+            <param name="strPath">实体类存放路径</param>
+            <param name="strNameSpace">命名空间</param>
+            <param name="lstTableNames">生产指定的表</param>
+            <param name="strInterface">实现接口</param>
+            <param name="blnSerializable">是否序列化</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.Create_IRepository_ClassFileByDBTalbe(System.String,System.String,System.String[],System.String)">
+            <summary>
+            功能描述:根据数据库表生产IRepository层
+            作　　者:IPipe
+            </summary>
+            <param name="strPath">实体类存放路径</param>
+            <param name="strNameSpace">命名空间</param>
+            <param name="lstTableNames">生产指定的表</param>
+            <param name="strInterface">实现接口</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.Create_IServices_ClassFileByDBTalbe(System.String,System.String,System.String[],System.String)">
+            <summary>
+            功能描述:根据数据库表生产IServices层
+            作　　者:IPipe
+            </summary>
+            <param name="strPath">实体类存放路径</param>
+            <param name="strNameSpace">命名空间</param>
+            <param name="lstTableNames">生产指定的表</param>
+            <param name="strInterface">实现接口</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.Create_Repository_ClassFileByDBTalbe(System.String,System.String,System.String[],System.String)">
+            <summary>
+            功能描述:根据数据库表生产 Repository 层
+            作　　者:IPipe
+            </summary>
+            <param name="strPath">实体类存放路径</param>
+            <param name="strNameSpace">命名空间</param>
+            <param name="lstTableNames">生产指定的表</param>
+            <param name="strInterface">实现接口</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.Create_Services_ClassFileByDBTalbe(System.String,System.String,System.String[],System.String)">
+            <summary>
+            功能描述:根据数据库表生产 Services 层
+            作　　者:IPipe
+            </summary>
+            <param name="strPath">实体类存放路径</param>
+            <param name="strNameSpace">命名空间</param>
+            <param name="lstTableNames">生产指定的表</param>
+            <param name="strInterface">实现接口</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.CreateFilesByClassStringList(System.Collections.Generic.Dictionary{System.String,System.String},System.String,System.String,System.Boolean)">
+            <summary>
+            根据模板内容批量生成文件
+            </summary>
+            <param name="ls">类文件字符串list</param>
+            <param name="strPath">生成路径</param>
+            <param name="fileNameTp">文件名格式模板</param>
+            <param name="isMolde">是否是生成实体</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetEntityDB``1">
+            <summary>
+            功能描述:获取数据库处理对象
+            作　　者:IPipe
+            </summary>
+            <returns>返回值</returns>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetEntityDB``1(SqlSugar.SqlSugarClient)">
+            <summary>
+            功能描述:获取数据库处理对象
+            作　　者:IPipe
+            </summary>
+            <param name="db">db</param>
+            <returns>返回值</returns>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.CreateTableByEntity``1(System.Boolean,``0[])">
+            <summary>
+            功能描述:根据实体类生成数据库表
+            作　　者:IPipe
+            </summary>
+            <param name="blnBackupTable">是否备份表</param>
+            <param name="lstEntitys">指定的实体</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.CreateTableByEntity(System.Boolean,System.Type[])">
+            <summary>
+            功能描述:根据实体类生成数据库表
+            作　　者:IPipe
+            </summary>
+            <param name="blnBackupTable">是否备份表</param>
+            <param name="lstEntitys">指定的实体</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetDbContext">
+            <summary>
+            功能描述:获得一个DbContext
+            作　　者:IPipe
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.Init(System.String,SqlSugar.DbType)">
+            <summary>
+            功能描述:设置初始化参数
+            作　　者:IPipe
+            </summary>
+            <param name="strConnectionString">连接字符串</param>
+            <param name="enmDbType">数据库类型</param>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetConnectionConfig(System.Boolean,System.Boolean)">
+            <summary>
+            功能描述:创建一个链接配置
+            作　　者:IPipe
+            </summary>
+            <param name="blnIsAutoCloseConnection">是否自动关闭连接</param>
+            <param name="blnIsShardSameThread">是否夸类事务</param>
+            <returns>ConnectionConfig</returns>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetCustomDB(SqlSugar.ConnectionConfig)">
+            <summary>
+            功能描述:获取一个自定义的DB
+            作　　者:IPipe
+            </summary>
+            <param name="config">config</param>
+            <returns>返回值</returns>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetCustomEntityDB``1(SqlSugar.SqlSugarClient)">
+            <summary>
+            功能描述:获取一个自定义的数据库处理对象
+            作　　者:IPipe
+            </summary>
+            <param name="sugarClient">sugarClient</param>
+            <returns>返回值</returns>
+        </member>
+        <member name="M:IPipe.Model.Models.MyContext.GetCustomEntityDB``1(SqlSugar.ConnectionConfig)">
+            <summary>
+            功能描述:获取一个自定义的数据库处理对象
+            作　　者:IPipe
+            </summary>
+            <param name="config">config</param>
+            <returns>返回值</returns>
+        </member>
+        <member name="T:IPipe.Model.PageModel`1">
+            <summary>
+            通用分页信息类
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.PageModel`1.page">
+            <summary>
+            当前页标
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.PageModel`1.pageCount">
+            <summary>
+            总页数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.PageModel`1.dataCount">
+            <summary>
+            数据总数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.PageModel`1.PageSize">
+            <summary>
+            每页大小
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.PageModel`1.data">
+            <summary>
+            返回数据
+            </summary>
+        </member>
+        <member name="F:IPipe.Model.ResponseEnum.NoPermissions">
+            <summary>
+            无权限
+            </summary>
+        </member>
+        <member name="F:IPipe.Model.ResponseEnum.NoFound">
+            <summary>
+            找不到指定资源
+            </summary>
+        </member>
+        <member name="F:IPipe.Model.ResponseEnum.ServerError">
+            <summary>
+            找不到指定资源
+            </summary>
+        </member>
+        <member name="M:IPipe.Model.Seed.DbBackup.BackupDb(System.Object)">
+            <summary>
+            备份数据库
+            </summary>
+            <param name="path">备份文件地址如D://abc.sql</param>
+            <returns></returns>
+        </member>
+        <member name="M:IPipe.Model.Seed.DbBackup.RestoreDb(System.String,System.String)">
+            <summary>
+            还原数据库
+            </summary>
+            <param name="path">指定还原文件***.sql的绝对路径</param>
+            <param name="dbName">还原到指定数据库</param>
+            <returns></returns>
+        </member>
+        <member name="T:IPipe.Model.TableModel`1">
+            <summary>
+            表格数据，支持分页
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.TableModel`1.Code">
+            <summary>
+            返回编码
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.TableModel`1.Msg">
+            <summary>
+            返回信息
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.TableModel`1.Count">
+            <summary>
+            记录总数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.TableModel`1.Data">
+            <summary>
+            返回数据集
+            </summary>
+        </member>
+    </members>
+</doc>

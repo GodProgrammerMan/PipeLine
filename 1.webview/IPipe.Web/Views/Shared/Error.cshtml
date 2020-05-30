@@ -1,0 +1,36 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">出错啦.</h1>
+<h2 class="text-danger">系统出现错误500，请联系技术人员.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+<h3>开发模式</h3>
+<p>
+    转换到 <strong>Development</strong> 开发环境将显示有关所发生错误的更详细信息。
+</p>
+<p>
+
+    <strong>
+        不应为部署的应用程序启用开发环境。
+    </strong>
+
+    它可能导致向最终用户显示异常中的敏感信息。
+
+    对于本地调试，通过将<strong>ASPNETCORE_environment</strong>环境变量设置为<strong>
+        Development来启用
+    </strong>
+    开发环境重新启动应用程序。
+</p>
+<p>
+    <strong>
+        深圳信息管线通信管道Gis软件开发部
+    </strong>
+</p>

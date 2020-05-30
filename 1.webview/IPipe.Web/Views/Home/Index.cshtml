@@ -1,0 +1,180 @@
+﻿
+@{
+    ViewData["Title"] = "排水管线管理及隐患调查GIS系统";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/css/site.min.css" rel="stylesheet">
+    <link href="~/css/toastr/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/js/layui/css/layui.css" media="all">
+    <link href="~/css/line-style.css" rel="stylesheet">
+    <link href="~/js/cesium/Widgets/widgets.css" rel="stylesheet">
+}
+
+<div class="mapMain" id="mapMain">
+    <div class="mapMain_content">
+        <div class="map_content" id="map_content">
+            <!-- 顶部 -->
+            <div class="map_top" id="map_top">
+                <div class="map_top_tool">
+                    <div class="map_bgsa">
+                        <span class="map_top_span">工具</span>
+                        <div name="comboLayers" style="position: absolute; height: 100%; width: 100%; left: 56px; opacity: 0.8;"><input id="_uiid24" class="combobox-f combo-f textbox-f" style="position: absolute; left: 0px; top: 0px; width: 120px; height: 23px; display: none;"><span class="textbox combo" style="width: 120px; height: 23px;"><span class="textbox-addon textbox-addon-right" style="right: 0px; top: 0px;"><a href="javascript:;" class="textbox-icon combo-arrow" icon-index="0" tabindex="-1" style="width: 18px; height: 23px;"></a></span><input id="_easyui_textbox_input2" type="text" class="textbox-text validatebox-text" autocomplete="off" tabindex="" placeholder="" style="margin: 0px 18px 0px 0px; padding-top: 0px; padding-bottom: 0px; height: 23px; line-height: 23px; width: 102px;"><input type="hidden" class="textbox-value" name="" value="0"></span></div>
+                        <img src="~/img/tool_manyou.png" title="地图漫游操作方式" class="tooltip-f">
+                        <img src="~/img/selveos.png" title="图上指取属性" class="tooltip-f" style="left:220px;">
+                        <img src="~/img/tool_chonghua.png" title="刷新绘制当前窗口内的设备" class="tooltip-f" style="left:252px;">
+                        <img src="~/img/ms_dis.png" title="在地图上测量折线距离，鼠标双击结束" class="tooltip-f" style="left:284px;">
+                        <img src="~/img/ms_area.png" title="在地图上测量面积，鼠标双击结束" class="tooltip-f" style="left:316px;">
+                        <img src="~/img/tunnel.png" title="在三维地图上画多边形作为坑道范围，鼠标双击结束" class="tooltip-f" style="left:348px;">
+                        <input name="textDepth" style="position: absolute; font-size: 12px; height: 23px; width: 30px; background: rgba(255, 255, 255, 0); color: rgb(238, 245, 250); left: 376px;">
+                        <span name="label1" style="position: absolute; font-size: 12px; height: 20px; color: rgb(238, 245, 250); width: 16px; left: 410px;">米</span>
+                        <img src="~/img/cleartunnel.png" title="清除三维地图上绘制的坑道范围" class="tooltip-f" style="left:435px;">
+                    </div>
+                </div>
+            </div>
+            <!-- 中间 -->
+            <div class="map_main" id="map_main">
+                <!-- 右边图层选择工具栏 -->
+                <div class="map_main_left" id="map_main_left">
+                    <div class="map_bgsa">
+                    </div>
+                    <div class="map_main_line"></div>
+                </div>
+                <div class="map_main_map" id="map_main_map">
+                    <div class="map_bgsa" id="map_main_map_content">
+                        <!-- 左边 -->
+                        <div class="map_bgsa" id="map_main_map_content_left">
+                            <div class="map_main_map_content_left_top" id="map_main_map_content_left_top">
+                                <div class="map_bgsa" id="msp_show">
+                                    <div class="map_bgsa" id="3DPartView">
+
+                                    </div>
+                                </div>
+                                <img src="~/img/ment_right.jpg" class="ment-img menthidden" id="mentleft_right" style="top: 50%;" onclick="mentleft('left',this)">
+                                <img src="~/img/ment_left.jpg" class="ment-img" id="mentleft_left" style="top: 50%;" onclick="mentleft('right', this)">
+                                <img src="~/img/ment_up.jpg" class="ment-img" id="mentmiddle_up" style="left: 50%; bottom:0;" onclick="mentmiddle('down',this)">
+                                <img src="~/img/ment_down.jpg" class="ment-img menthidden" id="mentmiddle_down" style=" left: 50%; bottom:0;" onclick="mentmiddle('up',this)">
+                                <img src="~/img/ment_left.jpg" class="ment-img" id="mentright_left" style="top: 50%; right:0;" onclick="mentright('left',this)">
+                                <img src="~/img/ment_right.jpg" class="ment-img menthidden" id="mentright_right" style="top: 50%; right:0;" onclick="mentright('right',this)">
+                            </div>
+                            <div class="map_main_map_content_left_bottom menthidden" id="map_main_map_content_left_bottom">
+
+                            </div>
+                        </div>
+                        <!-- 右边 -->
+                        <div class="map_main_map_content_right" id="map_main_map_content_right">
+                            <div class="map_bgsa">
+                                <div class="map_bgsa map-body map-body-noheader">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <!-- 全局js -->
+    <script src="~/js/jquery.min.js"></script>
+    <!-- Toastr script -->
+    <script src="~/js/toastr/toastr.min.js"></script>
+    <!-- layer -->
+    <script src="~/js/layui/layui.all.js"></script>
+    <!-- cesuum -->
+    <script src="~/js/cesium/Cesium.js"></script>
+    <!-- 异步加载 -->
+    <script src="~/js/content.js" async defer></script>
+
+    <script>
+        var viewer;
+        $(function () {
+
+            viewer = new Cesium.Viewer("3DPartView", {
+                animation: false, //是否显示动画控件
+                baseLayerPicker: true, //是否显示图层选择控件
+                geocoder: true, //是否显示地名查找控件
+                timeline: true, //是否显示时间线控件
+                sceneModePicker: true, //是否显示投影方式控件
+                navigationHelpButton: true, //是否显示帮助信息控件
+                infoBox: true, //是否显示点击要素之后显示的信息
+                imageryProvider: new Cesium.MapboxImageryProvider(
+                    {
+                        mapId: "mapbox.satellite",
+                    })
+            });
+            viewer._cesiumWidget._creditContainer.style.display = "none";//地图地下的logo
+
+
+
+            getHeightWidth();
+            $(window).resize(function () {
+                getHeightWidth();
+            });
+        });
+
+        function mentleft(direction, obj) {
+            $(obj).addClass('menthidden');
+            if (direction == 'left') {
+                $("#map_main_left").removeClass('menthidden');
+                $("#mentleft_left").removeClass('menthidden');
+                $("#map_main_map").css("left", "200px");
+                var width_map_mian_map = $("#map_main_map").width() - 200;
+                $("#map_main_map").css("width", width_map_mian_map + "px");
+            } else {
+                $("#map_main_left").addClass('menthidden');
+                $("#mentleft_right").removeClass('menthidden');
+                $("#map_main_map").css("left", "0");
+                var width_map_mian_map = $("#map_main_map").width() + 200;
+                $("#map_main_map").css("width", width_map_mian_map + "px");
+            }
+        }
+
+        function mentmiddle(direction, obj) {
+            $(obj).addClass('menthidden');
+            if (direction == 'down') {
+                $("#map_main_map_content_left_bottom").removeClass('menthidden');
+                $("#mentmiddle_down").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left_top").height() - 300;
+                $("#map_main_map_content_left_top").css("height", hight + "px");
+
+            } else {
+                $("#map_main_map_content_left_bottom").addClass('menthidden');
+                $("#mentmiddle_up").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left_top").height() + 300;
+                $("#map_main_map_content_left_top").css("height", hight + "px");
+            }
+        }
+
+        function mentright(direction, obj) {
+            $(obj).addClass('menthidden');
+            if (direction == 'down') {
+                $("#map_main_map_content_left_bottom").removeClass('menthidden');
+                $("#mentmiddle_down").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left").height() - 300;
+                $("#map_main_map_content_left").css("height", hight + "px");
+
+            } else {
+                $("#map_main_map_content_left_bottom").addClass('menthidden');
+                $("#mentmiddle_up").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left").height() + 300;
+                $("#map_main_map_content_left").css("height", hight + "px");
+            }
+        }
+
+        function getHeightWidth() {
+            var cliWidth = document.body.clientWidth; //浏览器宽
+            var cliHeight = window.innerHeight;//浏览器高
+            //根据浏览器宽高动态改变div的宽高
+            $("#map_content").width(cliWidth);
+            $("#map_content").height(cliHeight);
+            $("#map_top").width(cliWidth);
+            $("#map_main").height(cliHeight - 30);
+            $("#map_main_map").width(cliWidth - 201);
+            $("#map_main_map_content_left").height(cliHeight - 30);
+        }
+
+    </script>
+}
+
