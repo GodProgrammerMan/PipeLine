@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using IPipe.Web.Models;
-using IPipe.Common.HttpContextUser;
-using IPipe.IServices;
-using IPipe.Model.ViewModels;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace IPipe.Web.Controllers
 {
