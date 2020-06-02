@@ -69,6 +69,553 @@
             返回数据集合
             </summary>
         </member>
+        <member name="T:IPipe.Model.Models.hidden_danger">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.content">
+            <summary>
+            Desc:隐患内容
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.GR_img">
+            <summary>
+            Desc:地址雷达图
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.handleState">
+            <summary>
+            Desc:处理状态（0-未处理，1已处理，2，处理中）
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.handleTime">
+            <summary>
+            Desc:处理时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.handUnit">
+            <summary>
+            Desc:处理单位
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.hd_name">
+            <summary>
+            Desc:隐患名称
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.hd_time">
+            <summary>
+            Desc:隐患时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.hidden_danger.id">
+            <summary>
+            Desc:表ID
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="T:IPipe.Model.Models.pipe_hole">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Address">
+            <summary>
+            Desc:地址
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Angel">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Belong">
+            <summary>
+            Desc:归属
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Code">
+            <summary>
+            Desc:编号
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.CoorWgsX">
+            <summary>
+            Desc:wgs84的X
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.CoorWgsY">
+            <summary>
+            Desc:wgs84的Y
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.deep">
+            <summary>
+            Desc:井深度
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Exp_No">
+            <summary>
+            Desc:某编号
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Feature">
+            <summary>
+            Desc:井特点（如终止点：则没有井）
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.hight">
+            <summary>
+            Desc:高度
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.HType">
+            <summary>
+            Desc:井类型
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.id">
+            <summary>
+            Desc:表id
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.ljm">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.MapCode">
+            <summary>
+            Desc:地图码
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.MDate">
+            <summary>
+            Desc:m时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Note">
+            <summary>
+            Desc:备注
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Operator">
+            <summary>
+            Desc:操作员
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.pointPosit">
+            <summary>
+            Desc:点
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.prj_Name">
+            <summary>
+            Desc:项目名称
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.prj_No">
+            <summary>
+            Desc:项目NO
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.rotation">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.SDate">
+            <summary>
+            Desc:s时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.status">
+            <summary>
+            Desc:状态
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Subsid">
+            <summary>
+            Desc:井类型
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.SymbolName">
+            <summary>
+            Desc:什么的名称
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.szCoorX">
+            <summary>
+            Desc:深圳独立坐标X
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.szCoorY">
+            <summary>
+            Desc:深圳独立坐标Y
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.updateTime">
+            <summary>
+            Desc:更新时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.Visibility">
+            <summary>
+            Desc:可见度
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.wellMater">
+            <summary>
+            Desc:材质
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.wellShape">
+            <summary>
+            Desc:井的形状
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.WellSize">
+            <summary>
+            Desc:井大小
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_hole.ZType">
+            <summary>
+            Desc:某类型
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="T:IPipe.Model.Models.pipe_line">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Address">
+            <summary>
+            Desc:地址
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Angel">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Belong">
+            <summary>
+            Desc:归属
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.CabNum">
+            <summary>
+            Desc:数量
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.E_Deep">
+            <summary>
+            Desc:e井深度
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.E_holeID">
+            <summary>
+            Desc:e井点ID
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.E_Point">
+            <summary>
+            Desc:e井点编号
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.EmBed">
+            <summary>
+            Desc:填埋方式
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.endbotto">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.endcrow">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.FlowDir">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.id">
+            <summary>
+            Desc:表ID
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.LineType">
+            <summary>
+            Desc:管线类型
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Lno">
+            <summary>
+            Desc:管线编号
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Material">
+            <summary>
+            Desc:检测方法
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.MDate">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Note">
+            <summary>
+            Desc:笔记
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Operator">
+            <summary>
+            Desc:操作人
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.PDS">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.PipeLength">
+            <summary>
+            Desc:管线长度
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.PSize">
+            <summary>
+            Desc:管线大小
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.Roadcode">
+            <summary>
+            Desc:道路编号
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.S_Deep">
+            <summary>
+            Desc:s井深度
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.S_holeID">
+            <summary>
+            Desc:S井点ID
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.S_Point">
+            <summary>
+            Desc:s井点编号
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.SDate">
+            <summary>
+            Desc:s时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.ServiceLif">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.SHAPE_Leng">
+            <summary>
+            Desc:长度
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.startbotto">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.startcrow">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.status">
+            <summary>
+            Desc:状态
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.SUnit">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.TotalHole">
+            <summary>
+            Desc:总数
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.UpdateTime">
+            <summary>
+            Desc:更新时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.pipe_line.UsedHole">
+            <summary>
+            Desc:用户井总数
+            Default:
+            Nullable:False
+            </summary>
+        </member>
         <member name="P:IPipe.Model.Models.RootEntity.Id">
             <summary>
             ID

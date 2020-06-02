@@ -20,7 +20,7 @@
                     <div class="map_bgsa">
                         <span class="map_top_span">工具</span>
                         <div name="comboLayers" style="position: absolute; height: 100%; width: 100%; left: 56px; opacity: 0.8;"><input id="_uiid24" class="combobox-f combo-f textbox-f" style="position: absolute; left: 0px; top: 0px; width: 120px; height: 23px; display: none;"><span class="textbox combo" style="width: 120px; height: 23px;"><span class="textbox-addon textbox-addon-right" style="right: 0px; top: 0px;"><a href="javascript:;" class="textbox-icon combo-arrow" icon-index="0" tabindex="-1" style="width: 18px; height: 23px;"></a></span><input id="_easyui_textbox_input2" type="text" class="textbox-text validatebox-text" autocomplete="off" tabindex="" placeholder="" style="margin: 0px 18px 0px 0px; padding-top: 0px; padding-bottom: 0px; height: 23px; line-height: 23px; width: 102px;"><input type="hidden" class="textbox-value" name="" value="0"></span></div>
-                        <img src="~/img/tool_manyou.png" title="地图漫游操作方式" class="tooltip-f">
+                        <img src="~/img/tool_manyou.png" title="地图漫游操作方式" class="tooltip-f" onclick="importHole()">
                         <img src="~/img/selveos.png" title="图上指取属性" class="tooltip-f" style="left:220px;">
                         <img src="~/img/tool_chonghua.png" title="刷新绘制当前窗口内的设备" class="tooltip-f" style="left:252px;">
                         <img src="~/img/ms_dis.png" title="在地图上测量折线距离，鼠标双击结束" class="tooltip-f" style="left:284px;">
@@ -37,6 +37,11 @@
                 <!-- 右边图层选择工具栏 -->
                 <div class="map_main_left" id="map_main_left">
                     <div class="map_bgsa">
+                        导入井点
+                        <input type='file' name='file' id="fileUploadHole" onchange="importHole()" />
+                        导入管段
+                        <input type='file' name='file' id="fileUploadLine"  onchange="importLine()" />
+                        <button onclick="buing()">加载</button>
                     </div>
                     <div class="map_main_line"></div>
                 </div>
@@ -83,19 +88,24 @@
     <!-- layer -->
     <script src="~/js/layui/layui.all.js"></script>
     <!-- cesuum -->
-    <script src="~/js/cesium/Cesium.js"></script>
+    <script src="~/js/cesium/Cesium.js?v=1"></script>
+    <!-- 公共 -->
+    <script src="~/js/public.js"  async defer></script>
     <!-- 异步加载 -->
     <script src="~/js/content.js" async defer></script>
+    <!-- 上传插件 -->
+    <script src="~/js/ajaxfileupload.js" async defer></script>
+
+
 
     <script>
         var viewer;
         $(function () {
-
             viewer = new Cesium.Viewer("3DPartView", {
                 animation: false, //是否显示动画控件
                 baseLayerPicker: true, //是否显示图层选择控件
                 geocoder: true, //是否显示地名查找控件
-                timeline: true, //是否显示时间线控件
+                timeline: false, //是否显示时间线控件
                 sceneModePicker: true, //是否显示投影方式控件
                 navigationHelpButton: true, //是否显示帮助信息控件
                 infoBox: true, //是否显示点击要素之后显示的信息
@@ -106,13 +116,15 @@
             });
             viewer._cesiumWidget._creditContainer.style.display = "none";//地图地下的logo
 
-
-
             getHeightWidth();
             $(window).resize(function () {
                 getHeightWidth();
             });
+
+
+
         });
+
 
         function mentleft(direction, obj) {
             $(obj).addClass('menthidden');
