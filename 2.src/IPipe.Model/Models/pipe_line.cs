@@ -331,7 +331,7 @@ namespace IPipe.Model.Models
         
         public int UsedHole { get; set; }
         public string code { get; set; }
-
+        public string line_Class { get; set; }
 
     }
 }

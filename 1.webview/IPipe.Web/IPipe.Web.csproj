@@ -6,6 +6,10 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\js\cesiumhelp\model\S.glb" />
+  </ItemGroup>
+
 
 
   <ItemGroup>
@@ -31,6 +35,12 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="wwwroot\js\cesiumhelp\model\S.glb">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

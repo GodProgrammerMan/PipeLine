@@ -10,7 +10,7 @@ var importHole = function () {
             withCredentials: true
         },
         crossDomain: true,
-        timeout: 19000,
+        timeout: 1900000,
         fileElementId: "fileUploadHole",
         success: function (data) {
             layer.close(loadindex);
@@ -38,7 +38,7 @@ var importLine = function () {
             withCredentials: true
         },
         crossDomain: true,
-        timeout: 19000,
+        timeout: 1900000,
         fileElementId: "fileUploadLine",
         success: function (data) {
             layer.close(loadindex);
@@ -55,16 +55,18 @@ var importLine = function () {
     });
 }
 
-//toastr提示
-function os(msgtype, msg, title) {
+//toastr提示 toast-top-full-width\toast-top-center
+function os(msgtype, msg, title, time, positionClass) {
+    time = (time === undefined || time === "" || time === null === undefined ? '7000' : time); // a默认值为1
+    positionClass = (positionClass === undefined || positionClass === "" || positionClass === null  ? 'toast-top-center' : positionClass); // b默认值为2
     toastr.options = {
         "closeButton": true,
         "debug": false,
         "progressBar": true,
-        "positionClass": "toast-top-center",
+        "positionClass": positionClass,
         "showDuration": "400",
         "hideDuration": "1000",
-        "timeOut": "7000",
+        "timeOut": time,
         "extendedTimeOut": "1000",
         "showEasing": "swing",
         "hideEasing": "linear",

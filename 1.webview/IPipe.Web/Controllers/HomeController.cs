@@ -46,6 +46,7 @@ namespace IPipe.Web.Controllers
                     result.msg = "没有上传任何文件！";
                     return new JsonResult(result);
                 }
+
                 List<pipe_hole> holesList = new List<pipe_hole>();
                 foreach (var file in files)
                 {
@@ -155,7 +156,7 @@ namespace IPipe.Web.Controllers
                             E_holeID = e_Point.id,
                             E_Point = e_Point.Exp_No,
                             E_Deep = dt.Rows[i][6].ToString().ObjToMoney(),
-                            //LineType = dt.Rows[i][7].ToString().ObjToInt(),
+                            line_Class = dt.Rows[i][7].ToString(),
                             code = dt.Rows[i][9].ToString(),
                             Material = dt.Rows[i][10].ToString(),
                             ServiceLif = dt.Rows[i][11].ToString().ObjToInt(),
@@ -184,7 +185,7 @@ namespace IPipe.Web.Controllers
                             endbotto = dt.Rows[i][46].ToString().ObjToMoney(),
                             endcrow = dt.Rows[i][47].ToString().ObjToMoney(),
                             Angel = dt.Rows[i][49].ToString().ObjToMoney(),
-                            SHAPE_Leng = dt.Rows[i][50].ToString().ObjToMoney(),
+                            SHAPE_Leng = dt.Rows[i][50].ToString().ObjToMoney()
                         };
 
                         lineList.Add(model);
@@ -245,6 +246,9 @@ namespace IPipe.Web.Controllers
             //现将管
             return new JsonResult(result);
         }
+        #endregion
+
+        #region 模型
         #endregion
     }
 }

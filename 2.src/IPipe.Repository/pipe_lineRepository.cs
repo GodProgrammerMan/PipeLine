@@ -25,7 +25,7 @@ namespace IPipe.Repository
                 .ToList();
             lineHoleDateModel.holeDateMoldes = holeDate;
             var LineDate = Db.Queryable<pipe_line>()
-                           .Select(t => new LineDateMolde() {  LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
+                           .Select(t => new LineDateMolde() {line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
                            .ToList();
             lineHoleDateModel.holeDateMoldes = holeDate;
             foreach (var item in LineDate)

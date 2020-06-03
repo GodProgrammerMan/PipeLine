@@ -22,6 +22,7 @@ namespace IPipe.Model.ViewModels
         public double eCoorWgsX { get; set; }
         public double eCoorWgsY { get; set; }
         public double eDeep { get; set; }
+        public string line_Class { get; set; }
     }
 
     public class HoleDateMolde {

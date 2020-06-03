@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using System.IO;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace IPipe.Web
 {
@@ -208,7 +209,11 @@ namespace IPipe.Web
             // 跳转https
             app.UseHttpsRedirection();
             // 使用静态文件
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ServeUnknownFileTypes = true 
+            });
+
             // 返回错误码
             app.UseStatusCodePages();//把错误码返回前台，比如是404
             // Routing

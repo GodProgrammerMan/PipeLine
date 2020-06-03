@@ -7,78 +7,419 @@
     <link href="~/css/site.min.css" rel="stylesheet">
     <link href="~/css/toastr/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/js/layui/css/layui.css" media="all">
-    <link href="~/css/line-style.css" rel="stylesheet">
+    <link href="~/css/showmap.css" rel="stylesheet">
     <link href="~/js/cesium/Widgets/widgets.css" rel="stylesheet">
 }
+<div id="naviMain">
+    <div id="idt_log">
+        @*<img src="~/img/Logo_MSDI.png" />
+        <div id="site-identity">
+            <a href="https://msdi.ltd/" title="">
+                <h1 class="entry-title">
+                    排水管线管理及隐患调查GIS系统
+                </h1>
+            </a>
+            <strong>
+                GIS system of drainage pipeline management and hidden danger investigation
+            </strong>
+        </div>*@
+    </div>
+    <div id="naviCenter">
+        @*layui-bg-blue*@
+        <ul class="layui-nav layui-bg-blue">
+            <li class="layui-nav-item">
+                <a href="">控制台</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">资源管理</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">隐患上报</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">隐患警告<span class="layui-badge">9</span></a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">公告消息<span class="layui-badge">9</span></a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">个人中心<span class="layui-badge-dot"></span></a>
+            </li>
+            <li class="layui-nav-item">
+                <a href=""><img src="//t.cn/RCzsdCq" class="layui-nav-img">我</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:;">修改信息</a></dd>
+                    <dd><a href="javascript:;">安全管理</a></dd>
+                    <dd><a href="javascript:;">退了</a></dd>
+                </dl>
+            </li>
+        </ul>
 
-<div class="mapMain" id="mapMain">
-    <div class="mapMain_content">
-        <div class="map_content" id="map_content">
-            <!-- 顶部 -->
-            <div class="map_top" id="map_top">
-                <div class="map_top_tool">
-                    <div class="map_bgsa">
-                        <span class="map_top_span">工具</span>
-                        <div name="comboLayers" style="position: absolute; height: 100%; width: 100%; left: 56px; opacity: 0.8;"><input id="_uiid24" class="combobox-f combo-f textbox-f" style="position: absolute; left: 0px; top: 0px; width: 120px; height: 23px; display: none;"><span class="textbox combo" style="width: 120px; height: 23px;"><span class="textbox-addon textbox-addon-right" style="right: 0px; top: 0px;"><a href="javascript:;" class="textbox-icon combo-arrow" icon-index="0" tabindex="-1" style="width: 18px; height: 23px;"></a></span><input id="_easyui_textbox_input2" type="text" class="textbox-text validatebox-text" autocomplete="off" tabindex="" placeholder="" style="margin: 0px 18px 0px 0px; padding-top: 0px; padding-bottom: 0px; height: 23px; line-height: 23px; width: 102px;"><input type="hidden" class="textbox-value" name="" value="0"></span></div>
-                        <img src="~/img/tool_manyou.png" title="地图漫游操作方式" class="tooltip-f" onclick="importHole()">
-                        <img src="~/img/selveos.png" title="图上指取属性" class="tooltip-f" style="left:220px;">
-                        <img src="~/img/tool_chonghua.png" title="刷新绘制当前窗口内的设备" class="tooltip-f" style="left:252px;">
-                        <img src="~/img/ms_dis.png" title="在地图上测量折线距离，鼠标双击结束" class="tooltip-f" style="left:284px;">
-                        <img src="~/img/ms_area.png" title="在地图上测量面积，鼠标双击结束" class="tooltip-f" style="left:316px;">
-                        <img src="~/img/tunnel.png" title="在三维地图上画多边形作为坑道范围，鼠标双击结束" class="tooltip-f" style="left:348px;">
-                        <input name="textDepth" style="position: absolute; font-size: 12px; height: 23px; width: 30px; background: rgba(255, 255, 255, 0); color: rgb(238, 245, 250); left: 376px;">
-                        <span name="label1" style="position: absolute; font-size: 12px; height: 20px; color: rgb(238, 245, 250); width: 16px; left: 410px;">米</span>
-                        <img src="~/img/cleartunnel.png" title="清除三维地图上绘制的坑道范围" class="tooltip-f" style="left:435px;">
-                    </div>
-                </div>
-            </div>
-            <!-- 中间 -->
-            <div class="map_main" id="map_main">
-                <!-- 右边图层选择工具栏 -->
-                <div class="map_main_left" id="map_main_left">
-                    <div class="map_bgsa">
-                        导入井点
-                        <input type='file' name='file' id="fileUploadHole" onchange="importHole()" />
-                        导入管段
-                        <input type='file' name='file' id="fileUploadLine"  onchange="importLine()" />
-                        <button onclick="buing()">加载</button>
-                    </div>
-                    <div class="map_main_line"></div>
-                </div>
-                <div class="map_main_map" id="map_main_map">
-                    <div class="map_bgsa" id="map_main_map_content">
-                        <!-- 左边 -->
-                        <div class="map_bgsa" id="map_main_map_content_left">
-                            <div class="map_main_map_content_left_top" id="map_main_map_content_left_top">
-                                <div class="map_bgsa" id="msp_show">
-                                    <div class="map_bgsa" id="3DPartView">
-
-                                    </div>
-                                </div>
-                                <img src="~/img/ment_right.jpg" class="ment-img menthidden" id="mentleft_right" style="top: 50%;" onclick="mentleft('left',this)">
-                                <img src="~/img/ment_left.jpg" class="ment-img" id="mentleft_left" style="top: 50%;" onclick="mentleft('right', this)">
-                                <img src="~/img/ment_up.jpg" class="ment-img" id="mentmiddle_up" style="left: 50%; bottom:0;" onclick="mentmiddle('down',this)">
-                                <img src="~/img/ment_down.jpg" class="ment-img menthidden" id="mentmiddle_down" style=" left: 50%; bottom:0;" onclick="mentmiddle('up',this)">
-                                <img src="~/img/ment_left.jpg" class="ment-img" id="mentright_left" style="top: 50%; right:0;" onclick="mentright('left',this)">
-                                <img src="~/img/ment_right.jpg" class="ment-img menthidden" id="mentright_right" style="top: 50%; right:0;" onclick="mentright('right',this)">
-                            </div>
-                            <div class="map_main_map_content_left_bottom menthidden" id="map_main_map_content_left_bottom">
-
-                            </div>
+    </div>
+</div>
+<!-- 地图 -->
+<div id="map">
+    <img id="control" src="~/img/-ioc.png" />
+    <!-- 菜单 -->
+    <div id="menu">
+        <div class="hc_lnav jslist">
+            <div class="allbtn">
+                <ul style="width:100px" class="jspop box">
+                    <li class=a1>
+                        <div class=tx>
+                            <a href="#">
+                                <div class="menu_i"><i class="layui-icon layui-icon-templeate-1"></i></div>
+                                <div class="menu_span">GIS管线管理</div>
+                            </a>
                         </div>
-                        <!-- 右边 -->
-                        <div class="map_main_map_content_right" id="map_main_map_content_right">
-                            <div class="map_bgsa">
-                                <div class="map_bgsa map-body map-body-noheader">
-
-                                </div>
-                            </div>
+                        <div class=pop>
+                            <h3><a href="#">各地名优茶</a></h3>
+                            <dl>
+                                <dl>
+                                    <dt>绿茶</dt>
+                                    <dd>
+                                        <a class="ui-link" href="#">西湖龙井</a>
+                                        <a class="ui-link" href="#">龙井</a>
+                                        <a class="ui-link" href="#">黄山毛峰</a>
+                                        <a class="ui-link" href="#">安吉白茶</a>
+                                        <a class="ui-link" href="#">其他绿茶</a>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>乌龙茶</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">铁观音</a>
+                                        <a class="ui-link" href="">大红袍</a>
+                                        <a class="ui-link" href="">水仙</a>
+                                        <a class="ui-link" href="">肉桂</a>
+                                        <a class="ui-link" href="">台湾乌龙</a>
+                                        <a class="ui-link" href="">其他乌龙茶</a>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>红茶</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">金骏眉</a>
+                                        <a class="ui-link" href="">正山小种</a>
+                                        <a class="ui-link" href="">祁门红茶</a>
+                                        <a class="ui-link" href="">坦洋工夫</a>
+                                        <a class="ui-link" href="javascript:;">其他红茶</a>
+                                        <a class="un ui-link" href="">政和工夫</a>
+                                        <a class="ui-link" href="">滇红工夫</a>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>黑茶</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">白沙溪黑茶</a>
+                                        <a class="ui-link" href="">普洱茶饼</a>
+                                        <a class="ui-link" href="">普洱沱茶</a>
+                                        <a class="ui-link" href="">普洱茶砖</a>
+                                        <a class="ui-link" href="">普洱散茶</a>
+                                        <a class="ui-link" href="">其他黑茶</a>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>白茶</dt>
+                                    <dd>
+                                        <a class="ui-link" href="#">白牡丹</a>
+                                        <a class="ui-link" href="">白毫银针</a>
+                                        <a class="ui-link" href="">寿眉</a>
+                                        <a class="ui-link" href="">其他白茶</a>
+                                    </dd>
+                                </dl>
+                            </dl>
+                            <dl>
+                                <dt>品牌</dt>
+                                <dd>
+                                    <a href="">滋恩</a>
+                                    <a href="">远荣</a>
+                                    <a href="">顶峰</a>
+                                    <a href="">公泰</a>
+                                    <a href="">一品堂</a>
+                                    <a href="">好吉</a>
+                                    <a href="">绿雪芽</a>
+                                    <a href="">台湾梅山制茶</a>
+                                    <a href="">白沙溪</a>
+                                    <a href="">联兴茶叶</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>价格</dt>
+                                <dd>
+                                    <a href="">100元及以下</a>
+                                    <a href="">100-300元</a>
+                                    <a href="">300元及以上</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>净含量</dt>
+                                <dd>
+                                    <a href="">50g及以下</a>
+                                    <a href="">51-100g</a>
+                                    <a href="">101-250g</a>
+                                    <a href="">250g以上</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>包装</dt>
+                                <dd>
+                                    <a href="">经济自饮装</a>
+                                    <a href="">精美礼品装</a>
+                                </dd>
+                            </dl>
+                            <div class=clr></div>
                         </div>
-                    </div>
-                </div>
+                    </li>
+                    <li class=a2>
+                        <div class=tx><a href=""><div class="menu_i"><i class="layui-icon layui-icon-survey"></i></div><div class="menu_span">排水管线隐患</div></a> </div>
+                        <div class=pop>
+                            <h3><a href="">花草保健茶</a></h3>
+                            <dl>
+                                <dl>
+                                    <dt>瘦身</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">玫瑰荷叶茶</a>
+                                        <a class="ui-link" href="">玄米茶</a>
+                                        <a class="ui-link" href="">兰香子</a>
+                                        <a class="ui-link" href="">纤维泡腾片</a>
+                                        <a class="ui-link" href="">青梅苹果酸</a>
+                                        <a class="ui-link" href="">三草茶</a>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>美容</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">法兰西玫瑰</a>
+                                        <a class="ui-link" href="">冻干柠檬片</a>
+                                        <a class="un ui-link" href="">果粒茶</a>
+                                        <a class="ui-link" href="">大麦茶</a>
+                                        <a class="ui-link" href="">蜂蜜抹茶粉</a>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>丰胸</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">木瓜葛根粉</a>
+                                        <a class="ui-link" href="">蜂蜜木瓜粉</a>
+                                        <a class="ui-link" href="">红酒木瓜丽人饮</a>
+                                    </dd>
+                                </dl>
+                            </dl>
+                            <dl>
+                                <dt>品牌</dt>
+                                <dd>
+                                    <a href="">与花香</a>
+                                    <a href="">美丽快攻</a>
+                                    <a href="">顶峰</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>价格</dt>
+                                <dd>
+                                    <a href="">100元及以下</a>
+                                    <a href="">100-300元</a>
+                                    <a href="">300元及以上</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>净含量</dt>
+                                <dd>
+                                    <a href="">50g及以下</a>
+                                    <a href="">51-100g</a>
+                                    <a href="">101-250g</a>
+                                    <a href="">250g以上</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>包装</dt>
+                                <dd>
+                                    <a href="">经济自饮装</a>
+                                    <a href="">精美礼品装</a>
+                                </dd>
+                            </dl>
+                            <div class=clr></div>
+                        </div>
+                    </li>
+                    <li class=a3>
+                        <div class=tx><a href=""><div class="menu_i"><i class="layui-icon layui-icon-chart-screen"></i></div><div class="menu_span">数据报表</div></a> </div>
+                        <div class=pop>
+                            <h3><a href="">精选茶具</a></h3>
+                            <dl>
+                                <dl>
+                                    <dt>陶瓷</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">茶叶罐</a>
+                                        <a class="ui-link" href="">功夫茶具</a>
+                                        <a class="ui-link" href="">茶壶</a>
+                                        <a class="ui-link" href="">茶宠</a>
+                                        <a class="ui-link" href="">茶杯</a>
+                                        <a class="ui-link" href="">茶具礼盒</a>
+                                    </dd>
+                                </dl>
+                            </dl>
+                            <dl>
+                                <dt>品牌</dt>
+                                <dd>
+                                    <a href="">恒越</a>
+                                    <a href="">卓越</a>
+                                    <a href="">国尊陶瓷</a>
+                                    <a href="">宏远达</a>
+                                    <a href="">福万利</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>价格</dt>
+                                <dd>
+                                    <a href="">100元及以下</a>
+                                    <a href="">100-300元</a>
+                                    <a href="">300元及以上</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>包装</dt>
+                                <dd>
+                                    <a href="">经济自饮装</a>
+                                    <a href="">精美礼品装</a>
+                                </dd>
+                            </dl>
+                            <div class=clr></div>
+                        </div>
+                    </li>
+                    <li class=a4>
+                        <div class=tx>
+                            <a href="">
+                                <div class="menu_i"><i class="layui-icon layui-icon-set"></i></div>
+                                <div class="menu_span">系统设置</div>
+                            </a>
+                        </div>
+                        <div class=pop>
+                            <h3><a href="">可口茶食</a></h3>
+                            <dl>
+                                <dl>
+                                    <dt>干果</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">杏仁</a>
+                                        <a class="ui-link" href="">瓜子</a>
+                                        <a class="un ui-link" href="">开心果</a>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>零食</dt>
+                                    <dd>
+                                        <a class="ui-link" href="">水晶柠檬片</a>
+                                        <a class="ui-link" href="">方块酥</a>
+                                        <a class="ui-link" href="javascript:;">凤梨酥</a>
+                                        <a class="ui-link" href="">燕麦巧克力</a>
+                                    </dd>
+                                </dl>
+                            </dl>
+                            <dl>
+                                <dt>品牌</dt>
+                                <dd>
+                                    <a href="">赛园</a>
+                                    <a href="">新味</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>价格</dt>
+                                <dd>
+                                    <a href="">100元及以下</a>
+                                    <a href="">100-300元</a>
+                                    <a href="">300元及以上</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>净含量</dt>
+                                <dd>
+                                    <a href="">50g及以下</a>
+                                    <a href="">51-100g</a>
+                                    <a href="">101-250g</a>
+                                    <a href="">250g以上</a>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>包装</dt>
+                                <dd>
+                                    <a href="">经济自饮装</a>
+                                    <a href="">精美礼品装</a>
+                                </dd>
+                            </dl>
+                            <div class=clr></div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
+    <!-- 搜索框 -->
+    <div id="left-panel">
+        <div id="searchbox" class="clearfix">
+            <div id="searchbox-container">
+                <div id="sole-searchbox-content" class="searchbox-content">
+                    <input id="sole-input" class="searchbox-content-common" type="text" name="word" autocomplete="on" maxlength="256" placeholder="请输入井点编号\管段编号" value="">
+                    <div class="input-clear" title="清空" style="display: block;"></div>
+                </div>
+            </div>
+            <button id="search-button" data-title="搜索" data-tooltip="1"></button>
+        </div>
+    </div>
+    <!-- 查询结果 -->
+    <div id="result">
+        <div id="rTitle"><a>X</a></div>
+        <div id="rValue"></div>
+    </div>
+    <!-- 属性面板 -->
+    <div id="property">
+        <div id="title">管线属性<a>X</a></div>
+        <div id="panel">
+            <table>
+                <tr>
+                    <td class="title" width="25%">属性1：</td>
+                    <td class="value" width="75%">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <td class="title">属性1：</td>
+                    <td class="value">XXXXXXXXXX</td>
+                </tr>
+            </table>
+            <div id="imgs">相关图片：</div>
+            <img src="/image/map/item.png">
+        </div>
+    </div>
+    <div id="localtion">当前坐标：x=<span id="lng"></span>，y=<span id="lat"></span>，h=<span id="heght"></span></div>
 </div>
 @section Scripts{
     <!-- 全局js -->
@@ -87,21 +428,26 @@
     <script src="~/js/toastr/toastr.min.js"></script>
     <!-- layer -->
     <script src="~/js/layui/layui.all.js"></script>
+    <!-- layer -->
+    <script src="~/js/showmap.js"></script>
     <!-- cesuum -->
     <script src="~/js/cesium/Cesium.js?v=1"></script>
     <!-- 公共 -->
-    <script src="~/js/public.js"  async defer></script>
+    <script src="~/js/public.js" async defer></script>
     <!-- 异步加载 -->
     <script src="~/js/content.js" async defer></script>
     <!-- 上传插件 -->
     <script src="~/js/ajaxfileupload.js" async defer></script>
 
 
-
     <script>
         var viewer;
+        var scene;
+        let globe;
+        let canvas;
+        let ellipsoid;
         $(function () {
-            viewer = new Cesium.Viewer("3DPartView", {
+            viewer = new Cesium.Viewer("map", {
                 animation: false, //是否显示动画控件
                 baseLayerPicker: true, //是否显示图层选择控件
                 geocoder: true, //是否显示地名查找控件
@@ -116,77 +462,13 @@
             });
             viewer._cesiumWidget._creditContainer.style.display = "none";//地图地下的logo
 
-            getHeightWidth();
-            $(window).resize(function () {
-                getHeightWidth();
-            });
-
-
+            //定义
+            scene = viewer.scene;
+            globe = scene.globe;
+            canvas = viewer.scene.canvas;
+            ellipsoid = viewer.scene.globe.ellipsoid;
 
         });
-
-
-        function mentleft(direction, obj) {
-            $(obj).addClass('menthidden');
-            if (direction == 'left') {
-                $("#map_main_left").removeClass('menthidden');
-                $("#mentleft_left").removeClass('menthidden');
-                $("#map_main_map").css("left", "200px");
-                var width_map_mian_map = $("#map_main_map").width() - 200;
-                $("#map_main_map").css("width", width_map_mian_map + "px");
-            } else {
-                $("#map_main_left").addClass('menthidden');
-                $("#mentleft_right").removeClass('menthidden');
-                $("#map_main_map").css("left", "0");
-                var width_map_mian_map = $("#map_main_map").width() + 200;
-                $("#map_main_map").css("width", width_map_mian_map + "px");
-            }
-        }
-
-        function mentmiddle(direction, obj) {
-            $(obj).addClass('menthidden');
-            if (direction == 'down') {
-                $("#map_main_map_content_left_bottom").removeClass('menthidden');
-                $("#mentmiddle_down").removeClass('menthidden');
-                var hight = $("#map_main_map_content_left_top").height() - 300;
-                $("#map_main_map_content_left_top").css("height", hight + "px");
-
-            } else {
-                $("#map_main_map_content_left_bottom").addClass('menthidden');
-                $("#mentmiddle_up").removeClass('menthidden');
-                var hight = $("#map_main_map_content_left_top").height() + 300;
-                $("#map_main_map_content_left_top").css("height", hight + "px");
-            }
-        }
-
-        function mentright(direction, obj) {
-            $(obj).addClass('menthidden');
-            if (direction == 'down') {
-                $("#map_main_map_content_left_bottom").removeClass('menthidden');
-                $("#mentmiddle_down").removeClass('menthidden');
-                var hight = $("#map_main_map_content_left").height() - 300;
-                $("#map_main_map_content_left").css("height", hight + "px");
-
-            } else {
-                $("#map_main_map_content_left_bottom").addClass('menthidden');
-                $("#mentmiddle_up").removeClass('menthidden');
-                var hight = $("#map_main_map_content_left").height() + 300;
-                $("#map_main_map_content_left").css("height", hight + "px");
-            }
-        }
-
-        function getHeightWidth() {
-            var cliWidth = document.body.clientWidth; //浏览器宽
-            var cliHeight = window.innerHeight;//浏览器高
-            //根据浏览器宽高动态改变div的宽高
-            $("#map_content").width(cliWidth);
-            $("#map_content").height(cliHeight);
-            $("#map_top").width(cliWidth);
-            $("#map_main").height(cliHeight - 30);
-            $("#map_main_map").width(cliWidth - 201);
-            $("#map_main_map_content_left").height(cliHeight - 30);
-        }
-
     </script>
 }
 
