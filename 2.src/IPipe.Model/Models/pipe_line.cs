@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SqlSugar;
@@ -332,6 +333,10 @@ namespace IPipe.Model.Models
         public int UsedHole { get; set; }
         public string code { get; set; }
         public string line_Class { get; set; }
+
+        public List<pipe_line> Parents { get; set; }
+
+        public List<pipe_line> Childrs { get; set; }
 
     }
 }
