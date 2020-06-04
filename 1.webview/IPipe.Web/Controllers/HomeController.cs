@@ -234,17 +234,21 @@ namespace IPipe.Web.Controllers
 
             return new JsonResult(result);
         }
+        #endregion
+
+        #region 查询管
         /// <summary>
         /// 查询管
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetLineHolesDate(string kw)
+        public IActionResult GetQueryLineHolesDate(string kw)
         {
             var result = new MessageModel<bool>() { msg = "参数错误", response = false, success = true };
-            if (string.IsNullOrWhiteSpace(kw)) {
+            if (string.IsNullOrWhiteSpace(kw))
+            {
                 result.msg = "关键字为空！";
                 return new JsonResult(result);
-            }
+            } 
             var LineHoles = _ipipe_LineServices.GetQueryLineHolesDate(kw);
 
             //现将管
@@ -252,7 +256,5 @@ namespace IPipe.Web.Controllers
         }
         #endregion
 
-        #region 模型
-        #endregion
     }
 }

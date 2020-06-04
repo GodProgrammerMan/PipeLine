@@ -1,7 +1,8 @@
 
-                using IPipe.IRepository.Base;
-                using IPipe.Model.Models;
+using IPipe.IRepository.Base;
+using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
+using System.Collections.Generic;
 
 namespace IPipe.IRepository
                 {
@@ -10,7 +11,7 @@ namespace IPipe.IRepository
     /// </summary>	
     public interface Ipipe_lineRepository : IBaseRepository<pipe_line>
     {
-        LineHoleDateModel GetQueryLineHolesDate(string kw);
+        List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw);
         LineHoleDateModel GetLineHolesDate();
     }
 }

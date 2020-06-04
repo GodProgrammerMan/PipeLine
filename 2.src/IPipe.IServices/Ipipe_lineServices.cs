@@ -2,6 +2,7 @@
 using IPipe.IServices.BASE;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
+using System.Collections.Generic;
 
 namespace IPipe.IServices
 {
@@ -10,7 +11,7 @@ namespace IPipe.IServices
     /// </summary>	
     public interface Ipipe_lineServices : IBaseServices<pipe_line>
     {
-        LineHoleDateModel GetQueryLineHolesDate(string kw);
+        List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw);
         LineHoleDateModel GetLineHolesDate();
     }
 }

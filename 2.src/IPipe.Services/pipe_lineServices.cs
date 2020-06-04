@@ -4,6 +4,7 @@ using IPipe.IServices;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
 using IPipe.Services.BASE;
+using System.Collections.Generic;
 
 namespace IPipe.Services
 {
@@ -21,7 +22,7 @@ namespace IPipe.Services
             return _dal.GetLineHolesDate();
         }
 
-        public LineHoleDateModel GetQueryLineHolesDate(string kw)
+        public List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw)
         {
             return _dal.GetQueryLineHolesDate(kw);
         }

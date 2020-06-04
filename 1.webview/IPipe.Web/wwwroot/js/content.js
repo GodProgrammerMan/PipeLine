@@ -75,7 +75,6 @@ function getLineHoles() {
                 }
  
             });
-            console.log(flyX + "----" + flyY);
             flyTo(flyY, flyX , 800);
 
             //画管段

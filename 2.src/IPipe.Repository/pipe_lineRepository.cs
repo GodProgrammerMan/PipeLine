@@ -4,6 +4,7 @@ using IPipe.IRepository.UnitOfWork;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
 using IPipe.Repository.Base;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -48,11 +49,22 @@ namespace IPipe.Repository
             return lineHoleDateModel;
         }
 
-        public LineHoleDateModel GetQueryLineHolesDate(string kw)
+        public List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw)
         {
-            LineHoleDateModel lineHoleDateModel = new LineHoleDateModel();
+            List<QueryLineHoleMolde> queryLineHoleMoldes = new List<QueryLineHoleMolde>();
+            var holeList = Db.Queryable<pipe_hole>()
+                .Where(t=>t.Exp_No.Contains(kw))
+                .Take(4)
+                .OrderBy(t=>t.id,SqlSugar.OrderByType.Desc)
+                .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 1, eNo = t.Exp_No, id = t.id }).ToList();
 
-            return lineHoleDateModel;
+            var lineList = Db.Queryable<pipe_line>()
+                .Where(t=>t.Lno.Contains(kw))
+                .Take(4) 
+                .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 1, eNo = t.Lno, id = t.id }).ToList();
+
+
+            return queryLineHoleMoldes;
         }
     }
 }
