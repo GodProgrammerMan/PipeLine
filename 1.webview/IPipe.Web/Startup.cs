@@ -206,8 +206,6 @@ namespace IPipe.Web
 
             app.UseCors("pipeWeb");
 
-            // 跳转https
-            app.UseHttpsRedirection();
             // 使用静态文件
             app.UseStaticFiles(new StaticFileOptions
             {

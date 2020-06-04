@@ -60,9 +60,9 @@ function getLineHoles() {
                 }
                 if (i<5000) {
                     //画井点
-                    let holeUrl = '/js/cesiumhelp/model/S.glb';
+                    let holeUrl = '/js/cesiumhelp/model/F.glb';
                     if (item.hType == "WS")
-                        holeUrl = '/js/cesiumhelp/model/F.glb';
+                        holeUrl = '/js/cesiumhelp/model/S.glb';
                     var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
                         Cesium.Cartesian3.fromDegrees(item.coorWgsY, item.coorWgsX, 0.0));
                     var model = scene.primitives.add(Cesium.Model.fromGltf({

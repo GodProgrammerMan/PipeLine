@@ -12,16 +12,16 @@
 <div id="naviMain">
     <div id="idt_log">
         @*<img src="~/img/Logo_MSDI.png" />
-        <div id="site-identity">
-            <a href="https://msdi.ltd/" title="">
-                <h1 class="entry-title">
-                    排水管线管理及隐患调查GIS系统
-                </h1>
-            </a>
-            <strong>
-                GIS system of drainage pipeline management and hidden danger investigation
-            </strong>
-        </div>*@
+            <div id="site-identity">
+                <a href="https://msdi.ltd/" title="">
+                    <h1 class="entry-title">
+                        排水管线管理及隐患调查GIS系统
+                    </h1>
+                </a>
+                <strong>
+                    GIS system of drainage pipeline management and hidden danger investigation
+                </strong>
+            </div>*@
     </div>
     <div id="naviCenter">
         @*layui-bg-blue*@
@@ -127,7 +127,7 @@
                                             <div class="layui-form-item">
                                                 <label class="layui-form-label">导入井点</label>
                                                 <div class="layui-input-block">
-                                                    <input type="file"  name="file"  id="fileUploadHole" style="display: none" />
+                                                    <input type="file" name="file" id="fileUploadHole" style="display: none" />
                                                     <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="importHoles_bnt()">导入井点</button>
                                                 </div>
                                             </div>
@@ -420,7 +420,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div id="imgs">相关图片：</div>
             <img src="/image/map/item.png">
         </div>
@@ -444,40 +444,5 @@
     <script src="~/js/content.js" async defer></script>
     <!-- 上传插件 -->
     <script src="~/js/ajaxfileupload.js" async defer></script>
-
-
-    <script>
-        let viewer;
-        let scene;
-        let globe;
-        let canvas;
-        let ellipsoid;
-        let labels;
-        $(function () {
-            viewer = new Cesium.Viewer("map", {
-                animation: false, //是否显示动画控件
-                baseLayerPicker: true, //是否显示图层选择控件
-                geocoder: true, //是否显示地名查找控件
-                timeline: false, //是否显示时间线控件
-                sceneModePicker: true, //是否显示投影方式控件
-                navigationHelpButton: true, //是否显示帮助信息控件
-                infoBox: true, //是否显示点击要素之后显示的信息
-                imageryProvider: new Cesium.MapboxImageryProvider(
-                    {
-                        mapId: "mapbox.satellite",
-                    })
-            });
-            viewer._cesiumWidget._creditContainer.style.display = "none";//地图地下的logo
-
-            //定义
-            scene = viewer.scene;
-            globe = scene.globe;
-            canvas = viewer.scene.canvas;
-            ellipsoid = viewer.scene.globe.ellipsoid;
-            labels = scene.primitives.add(new Cesium.LabelCollection());
-
-        });
-
-    </script>
 }
 
