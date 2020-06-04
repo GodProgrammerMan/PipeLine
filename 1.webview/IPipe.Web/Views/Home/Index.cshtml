@@ -437,12 +437,98 @@
     <!-- layer -->
     <script src="~/js/showmap.js"></script>
     <!-- cesuum -->
-    <script src="~/js/cesium/Cesium.js?v=1"></script>
-    <!-- 公共 -->
-    <script src="~/js/public.js" async defer></script>
+    <script src="~/js/cesium/Cesium.js"></script>
     <!-- 异步加载 -->
     <script src="~/js/content.js" async defer></script>
-    <!-- 上传插件 -->
-    <script src="~/js/ajaxfileupload.js" async defer></script>
+
+    <script>
+        var viewer;
+        $(function () {
+
+            viewer = new Cesium.Viewer("3DPartView", {
+                animation: false, //是否显示动画控件
+                baseLayerPicker: true, //是否显示图层选择控件
+                geocoder: true, //是否显示地名查找控件
+                timeline: true, //是否显示时间线控件
+                sceneModePicker: true, //是否显示投影方式控件
+                navigationHelpButton: true, //是否显示帮助信息控件
+                infoBox: true, //是否显示点击要素之后显示的信息
+                imageryProvider: new Cesium.MapboxImageryProvider(
+                    {
+                        mapId: "mapbox.satellite",
+                    })
+            });
+            viewer._cesiumWidget._creditContainer.style.display = "none";//地图地下的logo
+
+
+
+            getHeightWidth();
+            $(window).resize(function () {
+                getHeightWidth();
+            });
+        });
+
+        function mentleft(direction, obj) {
+            $(obj).addClass('menthidden');
+            if (direction == 'left') {
+                $("#map_main_left").removeClass('menthidden');
+                $("#mentleft_left").removeClass('menthidden');
+                $("#map_main_map").css("left", "200px");
+                var width_map_mian_map = $("#map_main_map").width() - 200;
+                $("#map_main_map").css("width", width_map_mian_map + "px");
+            } else {
+                $("#map_main_left").addClass('menthidden');
+                $("#mentleft_right").removeClass('menthidden');
+                $("#map_main_map").css("left", "0");
+                var width_map_mian_map = $("#map_main_map").width() + 200;
+                $("#map_main_map").css("width", width_map_mian_map + "px");
+            }
+        }
+
+        function mentmiddle(direction, obj) {
+            $(obj).addClass('menthidden');
+            if (direction == 'down') {
+                $("#map_main_map_content_left_bottom").removeClass('menthidden');
+                $("#mentmiddle_down").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left_top").height() - 300;
+                $("#map_main_map_content_left_top").css("height", hight + "px");
+
+            } else {
+                $("#map_main_map_content_left_bottom").addClass('menthidden');
+                $("#mentmiddle_up").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left_top").height() + 300;
+                $("#map_main_map_content_left_top").css("height", hight + "px");
+            }
+        }
+
+        function mentright(direction, obj) {
+            $(obj).addClass('menthidden');
+            if (direction == 'down') {
+                $("#map_main_map_content_left_bottom").removeClass('menthidden');
+                $("#mentmiddle_down").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left").height() - 300;
+                $("#map_main_map_content_left").css("height", hight + "px");
+
+            } else {
+                $("#map_main_map_content_left_bottom").addClass('menthidden');
+                $("#mentmiddle_up").removeClass('menthidden');
+                var hight = $("#map_main_map_content_left").height() + 300;
+                $("#map_main_map_content_left").css("height", hight + "px");
+            }
+        }
+
+        function getHeightWidth() {
+            var cliWidth = document.body.clientWidth; //浏览器宽
+            var cliHeight = window.innerHeight;//浏览器高
+            //根据浏览器宽高动态改变div的宽高
+            $("#map_content").width(cliWidth);
+            $("#map_content").height(cliHeight);
+            $("#map_top").width(cliWidth);
+            $("#map_main").height(cliHeight - 30);
+            $("#map_main_map").width(cliWidth - 201);
+            $("#map_main_map_content_left").height(cliHeight - 30);
+        }
+
+    </script>
 }
 
