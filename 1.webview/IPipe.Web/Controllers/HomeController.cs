@@ -148,6 +148,10 @@ namespace IPipe.Web.Controllers
                             continue;
                         var s_Point = holeList.Where(t => t.Exp_No == dt.Rows[i][3].ToString()).First();
                         var e_Point = holeList.Where(t => t.Exp_No == dt.Rows[i][5].ToString()).First();
+                        var pSize = dt.Rows[i][14].ToString();
+                        if (pSize.IndexOf('X') < 0) 
+                            pSize = $"{pSize}X{pSize}";
+                        
                         pipe_line model = new pipe_line()
                         {
                             S_holeID = s_Point.id,
@@ -160,7 +164,7 @@ namespace IPipe.Web.Controllers
                             code = dt.Rows[i][9].ToString(),
                             Material = dt.Rows[i][10].ToString(),
                             ServiceLif = dt.Rows[i][11].ToString().ObjToInt(),
-                            PSize = dt.Rows[i][14].ToString(),
+                            PSize = pSize,
                             CabNum = dt.Rows[i][17].ToString().ObjToInt(),
                             TotalHole = dt.Rows[i][18].ToString().ObjToInt(),
                             UsedHole = dt.Rows[i][19].ToString().ObjToInt(),

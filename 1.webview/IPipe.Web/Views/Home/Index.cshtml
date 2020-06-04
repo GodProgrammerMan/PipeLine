@@ -4,7 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Styles{
-    <link href="~/css/site.min.css" rel="stylesheet">
     <link href="~/css/toastr/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/js/layui/css/layui.css" media="all">
     <link href="~/css/showmap.css" rel="stylesheet">
@@ -28,29 +27,29 @@
         @*layui-bg-blue*@
         <ul class="layui-nav layui-bg-blue">
             <li class="layui-nav-item">
-                <a href="">控制台</a>
+                <a href="javascript:void(0);">控制台</a>
             </li>
             <li class="layui-nav-item">
-                <a href="">资源管理</a>
+                <a href="javascript:void(0);">任务安排</a>
             </li>
             <li class="layui-nav-item">
-                <a href="">隐患上报</a>
+                <a href="javascript:void(0);" onclick="showBox('管段添加', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">隐患上报</a>
             </li>
             <li class="layui-nav-item">
-                <a href="">隐患警告<span class="layui-badge">9</span></a>
+                <a href="javascript:void(0);">隐患警告<span class="layui-badge">9</span></a>
             </li>
             <li class="layui-nav-item">
-                <a href="">公告消息<span class="layui-badge">9</span></a>
+                <a href="javascript:void(0);">公告消息<span class="layui-badge">9</span></a>
             </li>
             <li class="layui-nav-item">
-                <a href="">个人中心<span class="layui-badge-dot"></span></a>
+                <a href="javascript:void(0);">个人中心<span class="layui-badge-dot"></span></a>
             </li>
             <li class="layui-nav-item">
-                <a href=""><img src="//t.cn/RCzsdCq" class="layui-nav-img">我</a>
+                <a href="javascript:void(0);"><img src="//t.cn/RCzsdCq" class="layui-nav-img">我</a>
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;">修改信息</a></dd>
                     <dd><a href="javascript:;">安全管理</a></dd>
-                    <dd><a href="javascript:;">退了</a></dd>
+                    <dd><a href="javascript:;">退出</a></dd>
                 </dl>
             </li>
         </ul>
@@ -64,19 +63,19 @@
     <div id="menu">
         <div class="hc_lnav jslist">
             <div class="allbtn">
-                <ul style="width:100px" class="jspop box">
-                    <li class=a1>
-                        <div class=tx>
+                <ul class="jspop box">
+                    <li class="a1">
+                        <div class="tx">
                             <a href="#">
                                 <div class="menu_i"><i class="layui-icon layui-icon-templeate-1"></i></div>
-                                <div class="menu_span">GIS管线管理</div>
+                                <div class="menu_span">图层显示</div>
                             </a>
                         </div>
                         <div class=pop>
-                            <h3><a href="#">管</a></h3>
+                            <h3><a href="#">图层显示</a></h3>
                             <dl>
                                 <dl>
-                                    <dt>绿茶</dt>
+                                    <dt>是</dt>
                                     <dd>
                                         <a class="ui-link" href="#">西湖龙井</a>
                                         <a class="ui-link" href="#">龙井</a>
@@ -86,7 +85,7 @@
                                     </dd>
                                 </dl>
                                 <dl>
-                                    <dt>乌龙茶</dt>
+                                    <dt>编辑</dt>
                                     <dd>
                                         <a class="ui-link" href="">铁观音</a>
                                         <a class="ui-link" href="">大红袍</a>
@@ -97,83 +96,113 @@
                                     </dd>
                                 </dl>
                                 <dl>
-                                    <dt>红茶</dt>
+                                    <dt>显示</dt>
                                     <dd>
-                                        <a class="ui-link" href="">金骏眉</a>
-                                        <a class="ui-link" href="">正山小种</a>
-                                        <a class="ui-link" href="">祁门红茶</a>
-                                        <a class="ui-link" href="">坦洋工夫</a>
-                                        <a class="ui-link" href="javascript:;">其他红茶</a>
-                                        <a class="un ui-link" href="">政和工夫</a>
-                                        <a class="ui-link" href="">滇红工夫</a>
+                                        <a class="ui-link" href="">铁观音</a>
+                                        <a class="ui-link" href="">大红袍</a>
+                                        <a class="ui-link" href="">水仙</a>
+                                        <a class="ui-link" href="">肉桂</a>
+                                        <a class="ui-link" href="">台湾乌龙</a>
+                                        <a class="ui-link" href="">其他乌龙茶</a>
+                                    </dd>
+                                </dl>
+                            </dl>
+                            <div class="clr"></div>
+                        </div>
+                    </li>
+                    <li class="a2">
+                        <div class="tx">
+                            <a href="#">
+                                <div class="menu_i"><i class="layui-icon layui-icon-templeate-1"></i></div>
+                                <div class="menu_span">GIS管线管理</div>
+                            </a>
+                        </div>
+                        <div class="pop">
+                            <h3><a href="#">GIS管线管理</a></h3>
+                            <dl>
+                                <dl>
+                                    <dt>导入</dt>
+                                    <dd>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">导入井点</label>
+                                                <div class="layui-input-block">
+                                                    <input type="file"  name="file"  id="fileUploadHole" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="importHoles_bnt()">导入井点</button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">导入管段</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="file" name="file" id="fileUploadLine" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm  layui-btn-disabled" id="bnt_importLine" onclick="importLine_bnt()">导入管段</button>
+                                                </div>
+                                                <div class="layui-form-mid layui-word-aux">请先将井点导入，后将管段导入</div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                                 <dl>
-                                    <dt>黑茶</dt>
+                                    <dt>编辑管段</dt>
                                     <dd>
-                                        <a class="ui-link" href="">白沙溪黑茶</a>
-                                        <a class="ui-link" href="">普洱茶饼</a>
-                                        <a class="ui-link" href="">普洱沱茶</a>
-                                        <a class="ui-link" href="">普洱茶砖</a>
-                                        <a class="ui-link" href="">普洱散茶</a>
-                                        <a class="ui-link" href="">其他黑茶</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动新增</label>
+                                                <div class="layui-input-block">
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="showBox('管段', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">增加</button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动编辑</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-sm" onclick="showBox('管段添加', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">编辑</button>
+                                                </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要编辑的管段</div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动删除</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-radius layui-btn-disabled">删除</button>
+                                                </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要删除的管段</div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                                 <dl>
-                                    <dt>白茶</dt>
+                                    <dt>编辑井点</dt>
                                     <dd>
-                                        <a class="ui-link" href="#">白牡丹</a>
-                                        <a class="ui-link" href="">白毫银针</a>
-                                        <a class="ui-link" href="">寿眉</a>
-                                        <a class="ui-link" href="">其他白茶</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动新增</label>
+                                                <div class="layui-input-block">
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="showBox('管段添加', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">增加</button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动编辑</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-sm" onclick="showBox('管段添加', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">编辑</button>
+                                                </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要编辑的管井</div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动删除</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-radius layui-btn-disabled">删除</button>
+                                                </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要删除的管井</div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
-                            </dl>
-                            <dl>
-                                <dt>品牌</dt>
-                                <dd>
-                                    <a href="">滋恩</a>
-                                    <a href="">远荣</a>
-                                    <a href="">顶峰</a>
-                                    <a href="">公泰</a>
-                                    <a href="">一品堂</a>
-                                    <a href="">好吉</a>
-                                    <a href="">绿雪芽</a>
-                                    <a href="">台湾梅山制茶</a>
-                                    <a href="">白沙溪</a>
-                                    <a href="">联兴茶叶</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>价格</dt>
-                                <dd>
-                                    <a href="">100元及以下</a>
-                                    <a href="">100-300元</a>
-                                    <a href="">300元及以上</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>净含量</dt>
-                                <dd>
-                                    <a href="">50g及以下</a>
-                                    <a href="">51-100g</a>
-                                    <a href="">101-250g</a>
-                                    <a href="">250g以上</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>包装</dt>
-                                <dd>
-                                    <a href="">经济自饮装</a>
-                                    <a href="">精美礼品装</a>
-                                </dd>
                             </dl>
                             <div class=clr></div>
                         </div>
                     </li>
-                    <li class=a2>
-                        <div class=tx><a href=""><div class="menu_i"><i class="layui-icon layui-icon-survey"></i></div><div class="menu_span">排水管线隐患</div></a> </div>
-                        <div class=pop>
+                    <li class="a3">
+                        <div class="tx"><a href=""><div class="menu_i"><i class="layui-icon layui-icon-survey"></i></div><div class="menu_span">排水管线隐患</div></a> </div>
+                        <div class="pop">
                             <h3><a href="">花草保健茶</a></h3>
                             <dl>
                                 <dl>
@@ -206,43 +235,11 @@
                                     </dd>
                                 </dl>
                             </dl>
-                            <dl>
-                                <dt>品牌</dt>
-                                <dd>
-                                    <a href="">与花香</a>
-                                    <a href="">美丽快攻</a>
-                                    <a href="">顶峰</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>价格</dt>
-                                <dd>
-                                    <a href="">100元及以下</a>
-                                    <a href="">100-300元</a>
-                                    <a href="">300元及以上</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>净含量</dt>
-                                <dd>
-                                    <a href="">50g及以下</a>
-                                    <a href="">51-100g</a>
-                                    <a href="">101-250g</a>
-                                    <a href="">250g以上</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>包装</dt>
-                                <dd>
-                                    <a href="">经济自饮装</a>
-                                    <a href="">精美礼品装</a>
-                                </dd>
-                            </dl>
-                            <div class=clr></div>
+                            <div class="clr"></div>
                         </div>
                     </li>
-                    <li class=a3>
-                        <div class=tx><a href=""><div class="menu_i"><i class="layui-icon layui-icon-chart-screen"></i></div><div class="menu_span">数据报表</div></a> </div>
+                    <li class="a4">
+                        <div class="tx"><a href=""><div class="menu_i"><i class="layui-icon layui-icon-chart-screen"></i></div><div class="menu_span">数据报表</div></a> </div>
                         <div class=pop>
                             <h3><a href="">精选茶具</a></h3>
                             <dl>
@@ -268,32 +265,17 @@
                                     <a href="">福万利</a>
                                 </dd>
                             </dl>
-                            <dl>
-                                <dt>价格</dt>
-                                <dd>
-                                    <a href="">100元及以下</a>
-                                    <a href="">100-300元</a>
-                                    <a href="">300元及以上</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>包装</dt>
-                                <dd>
-                                    <a href="">经济自饮装</a>
-                                    <a href="">精美礼品装</a>
-                                </dd>
-                            </dl>
-                            <div class=clr></div>
+                            <div class="clr"></div>
                         </div>
                     </li>
-                    <li class=a4>
+                    <li class="a5">
                         <div class=tx>
                             <a href="">
                                 <div class="menu_i"><i class="layui-icon layui-icon-set"></i></div>
                                 <div class="menu_span">系统设置</div>
                             </a>
                         </div>
-                        <div class=pop>
+                        <div class="pop">
                             <h3><a href="">可口茶食</a></h3>
                             <dl>
                                 <dl>
@@ -314,38 +296,7 @@
                                     </dd>
                                 </dl>
                             </dl>
-                            <dl>
-                                <dt>品牌</dt>
-                                <dd>
-                                    <a href="">赛园</a>
-                                    <a href="">新味</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>价格</dt>
-                                <dd>
-                                    <a href="">100元及以下</a>
-                                    <a href="">100-300元</a>
-                                    <a href="">300元及以上</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>净含量</dt>
-                                <dd>
-                                    <a href="">50g及以下</a>
-                                    <a href="">51-100g</a>
-                                    <a href="">101-250g</a>
-                                    <a href="">250g以上</a>
-                                </dd>
-                            </dl>
-                            <dl>
-                                <dt>包装</dt>
-                                <dd>
-                                    <a href="">经济自饮装</a>
-                                    <a href="">精美礼品装</a>
-                                </dd>
-                            </dl>
-                            <div class=clr></div>
+                            <div class="clr"></div>
                         </div>
                     </li>
                 </ul>
@@ -373,48 +324,103 @@
     <div id="property">
         <div id="title">管线属性<a>X</a></div>
         <div id="panel">
-            <table>
-                <tr>
-                    <td class="title" width="25%">属性1：</td>
-                    <td class="value" width="75%">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <td class="title">属性1：</td>
-                    <td class="value">XXXXXXXXXX</td>
-                </tr>
-            </table>
+            <div class="layui-tab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">基本信息</li>
+                    <li>隐患信息</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <table>
+                            <tr>
+                                <td class="title" width="25%">属性1：</td>
+                                <td class="value" width="75%">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="layui-tab-item">
+                        <table>
+                            <tr>
+                                <td class="title" width="25%">属性1：</td>
+                                <td class="value" width="75%">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                            <tr>
+                                <td class="title">属性1：</td>
+                                <td class="value">XXXXXXXXXX</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
             <div id="imgs">相关图片：</div>
             <img src="/image/map/item.png">
         </div>
@@ -441,11 +447,12 @@
 
 
     <script>
-        var viewer;
-        var scene;
+        let viewer;
+        let scene;
         let globe;
         let canvas;
         let ellipsoid;
+        let labels;
         $(function () {
             viewer = new Cesium.Viewer("map", {
                 animation: false, //是否显示动画控件
@@ -467,8 +474,10 @@
             globe = scene.globe;
             canvas = viewer.scene.canvas;
             ellipsoid = viewer.scene.globe.ellipsoid;
+            labels = scene.primitives.add(new Cesium.LabelCollection());
 
         });
+
     </script>
 }
 

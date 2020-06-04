@@ -1,8 +1,11 @@
-// 上传Excel
-var importHole = function () {
+function importHoles_bnt() {
+    $("#fileUploadHole").click();
+}
+$("#fileUploadHole").change(function () {
     var loadindex = layer.load(1, {
         shade: [0.1, '#000']
     });
+    console.log($("#fileUploadHole").val()); 
     $.ajaxFileUpload({
         url: "/home/importHoleExcel",
         type: "POST",
@@ -12,12 +15,15 @@ var importHole = function () {
         crossDomain: true,
         timeout: 1900000,
         fileElementId: "fileUploadHole",
-        success: function (data) {
+        success: function (data, status) {
             layer.close(loadindex);
-            if (data.response) {
-                os('success', data.msg,'');
+            var datastr = $(data).find("body").text();
+            var jsondata = $.parseJSON(datastr);
+            layer.close(loadindex);
+            if (jsondata.response) {
+                os('success', jsondata.msg, '');
             } else {
-                os('error', data.msg, '');
+                os('error', jsondata.msg, '');
             }
         },
         error: function (erro) {
@@ -25,9 +31,16 @@ var importHole = function () {
             os('error', '请求出错了，请刷新页面后重试！', '');
         }
     });
+});
+function importLine_bnt() {
+    if ($("#bnt_importLine").hasClass("layui-btn-disabled")) {
+        os('warning', '请先导入井点Excel！', '');
+        return;
+    }
+    $("#fileUploadLine").click();
 }
-// 上传Excel
-var importLine = function () {
+$("#fileUploadLine").change(function () {
+    console.log($("#fileUploadLine").val()); 
     var loadindex = layer.load(1, {
         shade: [0.1, '#000']
     });
@@ -41,11 +54,13 @@ var importLine = function () {
         timeout: 1900000,
         fileElementId: "fileUploadLine",
         success: function (data) {
+            var datastr = $(data).find("body").text(); 
+            var jsondata = $.parseJSON(datastr);
             layer.close(loadindex);
-            if (data.response) {
-                os('success', data.msg, '');
+            if (jsondata.response) {
+                os('success', jsondata.msg, '');
             } else {
-                os('error', data.msg, '');
+                os('error', jsondata.msg, '');
             }
         },
         error: function (erro) {
@@ -53,7 +68,8 @@ var importLine = function () {
             os('error', '请求出错了，请刷新页面后重试！', '');
         }
     });
-}
+});
+
 
 //toastr提示 toast-top-full-width\toast-top-center
 function os(msgtype, msg, title, time, positionClass) {
@@ -74,4 +90,15 @@ function os(msgtype, msg, title, time, positionClass) {
         "hideMethod": "fadeOut"
     }
     toastr[msgtype](msg, title)
+}
+function showBox(titleStr, urlstr, area) {
+    titleStr = titleStr || "信息";
+    parent.layer.open({
+        title: titleStr,
+        type: 2,
+        area: area || ['90%', '90%'],
+        fix: false, //不固定
+        maxmin: true,
+        content: urlstr
+    });
 }

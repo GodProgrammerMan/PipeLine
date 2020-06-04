@@ -4,6 +4,7 @@ using IPipe.IRepository.UnitOfWork;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
 using IPipe.Repository.Base;
+using System.IO;
 using System.Linq;
 
 namespace IPipe.Repository
@@ -21,11 +22,11 @@ namespace IPipe.Repository
         {
             LineHoleDateModel lineHoleDateModel = new LineHoleDateModel();
             var holeDate = Db.Queryable<pipe_hole>()
-                .Select(t => new HoleDateMolde() { holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
+                .Select(t => new HoleDateMolde() { hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
                 .ToList();
             lineHoleDateModel.holeDateMoldes = holeDate;
             var LineDate = Db.Queryable<pipe_line>()
-                           .Select(t => new LineDateMolde() {line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
+                           .Select(t => new LineDateMolde() { pSize = t.PSize ,line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
                            .ToList();
             lineHoleDateModel.holeDateMoldes = holeDate;
             foreach (var item in LineDate)
@@ -40,6 +41,8 @@ namespace IPipe.Repository
                 item.eCoorWgsX = Ehole.CoorWgsX;
                 item.eCoorWgsY = Ehole.CoorWgsY;
                 item.sDeep = Ehole.Deep;
+                item.cCoorWgsX = (Shole.CoorWgsX + Ehole.CoorWgsX)/2;
+                item.cCoorWgsY = (Shole.CoorWgsY + Ehole.CoorWgsY) / 2; ;
             }
             lineHoleDateModel.lineDateMoldes = LineDate;
             return lineHoleDateModel;
