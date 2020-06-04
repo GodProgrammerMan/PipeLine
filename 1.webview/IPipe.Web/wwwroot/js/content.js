@@ -5,7 +5,7 @@ $(function () {
         viewer.dataSources.add(dataSource);
         var jsentities = dataSource.entities.values;
         var j = 1;
-        for (var i = 0; i < 1000; i++) {
+        for (var i = 0; i < 10; i++) {
             var entity = jsentities[i];
             entity.polygon.material = Cesium.Color.WHITE;
             entity.polygon.outline = false;
