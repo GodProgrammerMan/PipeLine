@@ -3,6 +3,7 @@ using IPipe.IServices;
 using IPipe.Model;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
+using IPipe.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
@@ -80,7 +81,7 @@ namespace IPipe.Web.Controllers
                             wellShape = dt.Rows[i][20].ToString(),
                             wellMater = dt.Rows[i][21].ToString(),
                             WellSize = dt.Rows[i][22].ToString(),
-                            WellPipes = dt.Rows[i][23].ToString(),
+                            WellPipes = dt.Rows[i][23].ToString().ObjToMoney(),
                             Address = dt.Rows[i][24].ToString(),
                             Belong = dt.Rows[i][26].ToString(),
                             MDate = dt.Rows[i][27].ToString().ObjToDate(),
@@ -149,8 +150,6 @@ namespace IPipe.Web.Controllers
                         var s_Point = holeList.Where(t => t.Exp_No == dt.Rows[i][3].ToString()).First();
                         var e_Point = holeList.Where(t => t.Exp_No == dt.Rows[i][5].ToString()).First();
                         var pSize = dt.Rows[i][14].ToString();
-                        if (pSize.IndexOf('X') < 0) 
-                            pSize = $"{pSize}X{pSize}";
                         
                         pipe_line model = new pipe_line()
                         {
@@ -236,21 +235,70 @@ namespace IPipe.Web.Controllers
         }
         #endregion
 
-        #region 查询管
+        #region 查询单个管段详细信息
+        [HttpPost]
+        public IActionResult GetLineInfoByID(IDParameter obj) {
+            var result = new MessageModel<LineInfoMolde>() { msg = "参数错误", response = null, success = true };
+            if (obj.id <= 0) 
+                return new JsonResult(result);
+            
+            var LineHoles = _ipipe_LineServices.GetLineInfoByID(obj.id);
+            if (LineHoles != null)
+            {
+                result.response = LineHoles;
+                result.msg = "获取管道数据成功！";
+            }
+            else
+                result.msg = "目前还没有该管道数据哦";
+            return new JsonResult(result);
+        }
+        #endregion
+
+        #region 查询单个管井信息
+        [HttpPost]
+        public IActionResult GetHoleInfoByID(IDParameter obj) {
+            var result = new MessageModel<HoleInfoMolde>() { msg = "参数错误",response = null, success = false };
+            if (obj.id <= 0)
+                return new JsonResult(result);
+
+            var LineHoles = _ipipe_HoleServices.GetHoleInfoByID(obj.id);
+            if (LineHoles != null)
+            {
+                result.success = true;
+                result.response = LineHoles;
+                result.msg = "获取管道数据成功！";
+            }
+            else
+                result.msg = "目前还没有该管道数据哦";
+            return new JsonResult(result);
+        }
+        #endregion
+
+        #region 查询管点和管端
         /// <summary>
         /// 查询管
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetQueryLineHolesDate(string kw)
+        [HttpPost]
+        public IActionResult GetQueryLineHolesDate(KWParameter obj)
         {
-            var result = new MessageModel<bool>() { msg = "参数错误", response = false, success = true };
-            if (string.IsNullOrWhiteSpace(kw))
+            var result = new MessageModel<List<QueryLineHoleMolde>>() { msg = "参数错误", response = null, success = false };
+            if (string.IsNullOrWhiteSpace(obj.kw))
             {
                 result.msg = "关键字为空！";
                 return new JsonResult(result);
             } 
-            var LineHoles = _ipipe_LineServices.GetQueryLineHolesDate(kw);
-
+            var LineHoles = _ipipe_LineServices.GetQueryLineHolesDate(obj.kw);
+            if (LineHoles.Count > 0)
+            {
+                result.msg = $"共发现{LineHoles.Count}条管道记录";
+                result.response = LineHoles;
+                result.success = true;
+            }
+            else {
+                result.msg = $"没有找到合适的管道记录";
+                result.response = LineHoles;
+            }
             //现将管
             return new JsonResult(result);
         }

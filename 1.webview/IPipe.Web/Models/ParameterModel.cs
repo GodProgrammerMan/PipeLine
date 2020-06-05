@@ -12,4 +12,10 @@ namespace IPipe.Web.Models
         public string departmentName { get; set; }
         public string name { get; set; }
     }
+    public class IDParameter { 
+        public int id { get; set; }
+    }
+    public class KWParameter {
+        public string kw { get; set; }
+    }
 }

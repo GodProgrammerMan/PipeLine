@@ -1,3 +1,30 @@
+function kwColse() {
+    $("#sole-input").val("")
+}
+
+function searchKW() {
+    $("#result").hide();
+    var kw = $("#sole-input").val();
+    if (kw === "") {
+        os('warning', '关键字为空！', '');
+        return;
+    }
+    var loadindex = layer.load(1, {
+        shade: [0.1, '#000']
+    });
+    $.post("/home/getQueryLineHolesDate", { kw: kw}, function (data, status) {
+        layer.close(loadindex);
+        if (!data.success) {
+            os('error', data.msg, '');
+        } else {
+            os('success', data.msg, '');
+            $("#result").show();
+            //查询绑数据的开始
+            console.log(data.response);
+        }
+    }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
+}
+
 function importHoles_bnt() {
     $("#fileUploadHole").click();
 }
@@ -5,7 +32,6 @@ $("#fileUploadHole").change(function () {
     var loadindex = layer.load(1, {
         shade: [0.1, '#000']
     });
-    console.log($("#fileUploadHole").val()); 
     $.ajaxFileUpload({
         url: "/home/importHoleExcel",
         type: "POST",
@@ -21,6 +47,7 @@ $("#fileUploadHole").change(function () {
             var jsondata = $.parseJSON(datastr);
             layer.close(loadindex);
             if (jsondata.response) {
+                $("#bnt_importLine").removeClass("layui-btn-disabled");
                 os('success', jsondata.msg, '');
             } else {
                 os('error', jsondata.msg, '');
@@ -40,7 +67,6 @@ function importLine_bnt() {
     $("#fileUploadLine").click();
 }
 $("#fileUploadLine").change(function () {
-    console.log($("#fileUploadLine").val()); 
     var loadindex = layer.load(1, {
         shade: [0.1, '#000']
     });
@@ -71,26 +97,6 @@ $("#fileUploadLine").change(function () {
 });
 
 
-//toastr提示 toast-top-full-width\toast-top-center
-function os(msgtype, msg, title, time, positionClass) {
-    time = (time === undefined || time === "" || time === null === undefined ? '7000' : time); // a默认值为1
-    positionClass = (positionClass === undefined || positionClass === "" || positionClass === null  ? 'toast-top-center' : positionClass); // b默认值为2
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "progressBar": true,
-        "positionClass": positionClass,
-        "showDuration": "400",
-        "hideDuration": "1000",
-        "timeOut": time,
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
-    toastr[msgtype](msg, title)
-}
 function showBox(titleStr, urlstr, area) {
     titleStr = titleStr || "信息";
     parent.layer.open({
@@ -101,4 +107,8 @@ function showBox(titleStr, urlstr, area) {
         maxmin: true,
         content: urlstr
     });
+}
+
+function initCesium() {
+    flyTo(113.9420364538, 22.7639518545, 300);
 }

@@ -13,6 +13,8 @@ namespace IPipe.IServices
     {
         List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw);
         LineHoleDateModel GetLineHolesDate();
+        LineInfoMolde GetLineInfoByID(int id);
+
     }
 }
                     

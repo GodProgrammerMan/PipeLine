@@ -22,6 +22,11 @@ namespace IPipe.Services
             return _dal.GetLineHolesDate();
         }
 
+        public LineInfoMolde GetLineInfoByID(int id)
+        {
+            return _dal.GetLineInfoByID(id);
+        }
+
         public List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw)
         {
             return _dal.GetQueryLineHolesDate(kw);

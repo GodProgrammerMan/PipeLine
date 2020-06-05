@@ -17,6 +17,9 @@ namespace IPipe.Web.Controllers
         List<pipe_line> list1 = new List<pipe_line>();
         List<pipe_line> list2 = new List<pipe_line>();
 
+		public IActionResult Index(){
+			return View();
+		}
         
         public void Compute(pipe_line pipe)
         {
@@ -24,8 +27,6 @@ namespace IPipe.Web.Controllers
 
 			getParents(pipe, LineList);
 			getChildrs(pipe, LineList);
-			pipe.Parents = list1;
-			pipe.Childrs = list2;
 
 		}
 

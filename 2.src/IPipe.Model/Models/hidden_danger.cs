@@ -17,48 +17,13 @@ namespace IPipe.Model.Models
         {
         }
                    /// <summary>
-           /// Desc:隐患内容
+           /// Desc:表ID
            /// Default:
            /// Nullable:False
            /// </summary>
         
-        public string content { get; set; }
-
-            
-           /// <summary>
-           /// Desc:地址雷达图
-           /// Default:
-           /// Nullable:False
-           /// </summary>
-        
-        public string GR_img { get; set; }
-
-            
-           /// <summary>
-           /// Desc:处理状态（0-未处理，1已处理，2，处理中）
-           /// Default:
-           /// Nullable:False
-           /// </summary>
-        
-        public int handleState { get; set; }
-
-            
-           /// <summary>
-           /// Desc:处理时间
-           /// Default:
-           /// Nullable:False
-           /// </summary>
-        
-        public DateTime handleTime { get; set; }
-
-            
-           /// <summary>
-           /// Desc:处理单位
-           /// Default:
-           /// Nullable:False
-           /// </summary>
-        
-        public string handUnit { get; set; }
+           [SugarColumn(IsPrimaryKey=true,IsIdentity=true)]
+        public int id { get; set; }
 
             
            /// <summary>
@@ -71,6 +36,15 @@ namespace IPipe.Model.Models
 
             
            /// <summary>
+           /// Desc:隐患内容
+           /// Default:
+           /// Nullable:False
+           /// </summary>
+        
+        public string content { get; set; }
+
+            
+           /// <summary>
            /// Desc:隐患时间
            /// Default:
            /// Nullable:False
@@ -80,13 +54,57 @@ namespace IPipe.Model.Models
 
             
            /// <summary>
-           /// Desc:表ID
+           /// Desc:处理时间
            /// Default:
            /// Nullable:False
            /// </summary>
         
-           [SugarColumn(IsPrimaryKey=true,IsIdentity=true)]
-        public int id { get; set; }
+        public DateTime handleTime { get; set; }
+
+            
+           /// <summary>
+           /// Desc:处理状态（0-未处理，1已处理，2，处理中）
+           /// Default:
+           /// Nullable:False
+           /// </summary>
+        
+        public int handleState { get; set; }
+
+            
+           /// <summary>
+           /// Desc:处理单位
+           /// Default:
+           /// Nullable:False
+           /// </summary>
+        
+        public string handUnit { get; set; }
+
+            
+           /// <summary>
+           /// Desc:地址雷达图
+           /// Default:
+           /// Nullable:False
+           /// </summary>
+        
+        public string GR_img { get; set; }
+
+            
+           /// <summary>
+           /// Desc:对象ID
+           /// Default:
+           /// Nullable:False
+           /// </summary>
+        
+        public int objID { get; set; }
+
+            
+           /// <summary>
+           /// Desc:对象表ID
+           /// Default:
+           /// Nullable:False
+           /// </summary>
+        
+        public string tableType { get; set; }
 
             
     }
