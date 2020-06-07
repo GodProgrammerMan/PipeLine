@@ -349,7 +349,8 @@ namespace IPipe.Model.Models
         
         public string line_Class { get; set; }
 
-            
+        public string parentIDs { get; set; }
+        public string subclassIDs { get; set; }
     }
 }
                     

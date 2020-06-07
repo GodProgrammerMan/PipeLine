@@ -2,29 +2,30 @@
 var buildingNumber;
 var buildIndex = 0;
 var lablesShow = false;
+var flowtoShow = false;
 var lineCLICKID = "";
 var holeCLICKID = null;
 $(function () {
-    //getbuildList();
+    getbuildList();
 
     getLineHoles();
-    flyTo(113.9420364538, 22.7639518545, 300);
+    flyTo(113.9190928199, 22.7842061118, 300);
 
     //鼠标事件监听
     var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
     //单击
     handler.setInputAction(function (movement) {
         var pick = viewer.scene.pick(movement.position);
-
+        console.log(pick);
         if ($('body').hasClass("cousline")) {
             console.log($('body').css("cursor"));
-            if (Cesium.defined(pick) && (pick.id.indexOf('pipe_') > -1)) {
+            if (Cesium.defined(pick) && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
                 //在判断是井还是管段
                 if (pick.id.indexOf('pipe_hole_') > -1) {
-                    //添加隐患点
+                    //添加管的隐患点
 
                 } else {
-                   //添加隐患点
+                   //添加管段的隐患点
 
                 }
             } else {
@@ -99,7 +100,7 @@ $(function () {
             $("#lat").html(lat_String);
         }
         var pick = viewer.scene.pick(movement.endPosition);
-        if (Cesium.defined(pick) && (pick.id.indexOf('pipe_') > -1)) {
+        if (Cesium.defined(pick) && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
 
         }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -109,6 +110,16 @@ $(function () {
         //获取当前相机高度
         height = Math.ceil(viewer.camera.positionCartographic.height);
 
+        //流向缩放出现和隐藏
+        if (height <= 100 && flowtoShow == false) {
+            flowtoPrimitive.show = true;
+            flowtoShow = true;
+        } else if (height > 100 && flowtoShow == true) {
+            flowtoPrimitive.show = false;
+            flowtoShow = false;
+        }
+        //flowtoPrimitive
+        //标签缩放出现和隐藏
         if (height <= 77 && lablesShow == false) {
             for (var i = 0; i < labels.length; i++) {
                 labels.get(i).show = true;
@@ -139,13 +150,14 @@ function getLineHoles() {
         } else {
             //画管段
             let line_instances = [];
+            var flowto_instances = [];
             let holecolor = Cesium.Color.ALICEBLUE;
             $.each(data.response.lineDateMoldes, function (i, item) {
                 var attributes = Cesium.Color.DEEPPINK;
-                let holeUrl = '/js/cesiumhelp/model/F.glb';
+                let holeUrl = '/js/cesiumhelp/model/11.glb';
                 if (item.line_Class === "WS") {
                     attributes = Cesium.Color.DEEPPINK;
-                    holeUrl = '/js/cesiumhelp/model/untitled.glb';
+                    holeUrl = '/js/cesiumhelp/model/11.glb';
                 } else {
                     attributes = Cesium.Color.DARKRED;
                 }
@@ -158,7 +170,7 @@ function getLineHoles() {
                         id: "pipe_hole_" + item.sholeID,
                         url: holeUrl,
                         modelMatrix: SmodelMatrix,
-                        scale: 10,
+                        scale: 6,
                         primitivesType: "holeType",
                         color: holecolor
                     }));
@@ -170,7 +182,7 @@ function getLineHoles() {
                         id: "pipe_hole_" + item.eholeID,
                         url: holeUrl,
                         modelMatrix: EmodelMatrix,
-                        scale: 10,
+                        scale: 6,
                         primitivesType: "holeType",
                         color: holecolor
                     }));
@@ -186,6 +198,16 @@ function getLineHoles() {
                         fillColor: attributes,
                         show: false
                     });
+
+                    //流向
+                    flowto_instances.push(new Cesium.GeometryInstance({
+                        id: "flowto_" + item.line_Class + "_" + item.lineID,
+                        geometry: new Cesium.PolylineGeometry({
+                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsY, item.sCoorWgsX, 6, item.eCoorWgsY, item.eCoorWgsX, 6]),
+                            width: 20.0,
+                            vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
+                        })
+                    }));
 
                     //画管
                     line_instances.push(new Cesium.GeometryInstance({
@@ -203,11 +225,30 @@ function getLineHoles() {
                 }
 
             });
+
+            //流向
+            flowtoPrimitive = new Cesium.Primitive({
+                geometryInstances: flowto_instances, //合并
+                //某些外观允许每个几何图形实例分别指定某个属性，例如：
+                appearance: new Cesium.PolylineMaterialAppearance({
+                    material: new Cesium.Material({
+                        fabric: {
+                            type: 'PolylineArrow',
+                            uniforms: {
+                                color: new Cesium.Color(1.0, 1.0, 0.0, 1.0)
+                            }
+                        }
+                    })
+                })
+            });
+            viewer.scene.primitives.add(flowtoPrimitive);
+
+            //管段
             linePrimitive = new Cesium.Primitive({
                 geometryInstances: line_instances, //合并
                 //某些外观允许每个几何图形实例分别指定某个属性，例如：
                 appearance: new Cesium.PerInstanceColorAppearance({ translucent: false, closed: true })
-            })
+            });
             viewer.scene.primitives.add(linePrimitive);
 
             os('success', data.msg, '', 7000, '');
@@ -221,35 +262,11 @@ function getLineHoles() {
 
 
 function getbuildList() {
-    var promise = Cesium.GeoJsonDataSource.load('/js/cesiumhelp/json/gm4.geojson');
-    promise.then(function (dataSource) {
-        viewer.dataSources.add(dataSource);
-        var jsentities = dataSource.entities.values;
-        var j = 1;
-        for (var i = 0; i < 1000; i++) {
-            var entity = jsentities[i];
-            entity.polygon.material = Cesium.Color.WHITE;
-            entity.polygon.outline = false;
-            entity.polygon.extrudedHeight = entity.properties.floor * 3;
-            buildIndex++;
-        }
-    });
-}
-
-function buing() {
-    var buildSetTime = setInterval(function () {
-        for (var i = 0; i < 20; i++) {
-            if (buildIndex > buildingNumber) {
-                clearTimeout(buildSetTime);
-                break;
-            }
-            var entity = jsentities[buildIndex];
-            entity.polygon.material = Cesium.Color.WHITE;
-            entity.polygon.outline = false;
-            entity.polygon.extrudedHeight = entity.properties.floor * 3;
-            buildIndex++;
-        }
-    }, 5000);
+    var palaceTileset = new Cesium.Cesium3DTileset({
+        url: '/js/cesiumhelp/3dTile/gm/tileset.json'
+        //或者url: 'http://ip:port/www/DAEPalace/tileset.json'
+    })
+    viewer.scene.primitives.add(palaceTileset);  
 }
 
 

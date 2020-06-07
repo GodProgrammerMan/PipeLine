@@ -17,7 +17,14 @@ namespace IPipe.Common.Helper
             db[1] = db[1] - 0.000321856414799981;
             return db;
         }
-
+        public static double[] WGS84TOBD(double[] wgsArr)
+        {
+            double[] gcj02 = WGS84ToGCJ02(wgsArr);
+            double[] db = gcj02ToBd(gcj02[0], gcj02[1]);
+            db[0] = db[0] + 0.000325802700999134;
+            db[1] = db[1] - 0.000321856414799981;
+            return db;
+        }
         /**
          * 第一个为x，第二位y，第三个为z
          * 

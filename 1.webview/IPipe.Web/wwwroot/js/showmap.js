@@ -5,6 +5,7 @@ let canvas;
 let ellipsoid;
 let labels;
 let linePrimitive;
+let flowtoPrimitive;
 let holePrimitive = [];
 
 $(document).ready(function () {

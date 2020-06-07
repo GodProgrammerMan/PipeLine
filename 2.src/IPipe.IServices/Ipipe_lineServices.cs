@@ -12,9 +12,10 @@ namespace IPipe.IServices
     public interface Ipipe_lineServices : IBaseServices<pipe_line>
     {
         List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw);
-        LineHoleDateModel GetLineHolesDate();
+        LineHoleDateModel GetLineHolesDate(int type=1);
         LineInfoMolde GetLineInfoByID(int id);
-
+        List<TreeLineMolde> getLineListBytree();
+        void UpdateParentsIDSChildrsIDS(string parentsIDS, string ChildrsIDS,int id);
     }
 }
                     

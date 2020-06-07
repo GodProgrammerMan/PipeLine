@@ -1,91 +1,35 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN">
-
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="xbsj-labels" content="Earth起步"></meta>
-    <title>EarthSDK以cesium方式加载影像</title>
-    <!-- 0 引入js文件 -->
-    <script src="//earthsdk.com/v/last/XbsjEarth/XbsjEarth.js"></script>
-    <style>
-        html, body {
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>排水管线管理及隐患调查GIS系统</title>
+    <style type="text/css">
+        body, html, #allmap {
             width: 100%;
             height: 100%;
-            margin: 0px;
-            padding: 0px;
+            overflow: hidden;
+            margin: 0;
+            font-family: "微软雅黑";
         }
     </style>
+    <link rel="stylesheet" href="~/js/layui/layer_mobile/need/layer.css" />
+
 </head>
-
 <body>
-    <div id="earthContainer" style="width: 100%; height: 100%; background: grey">
-    </div>
-    <script>
-        function startup() {
-            var earth = new XE.Earth('earthContainer');
-
-            earth.sceneTree.root = {
-                "children": [
-                    {
-                        "czmObject": {
-                            "name": "默认离线影像",
-                            "xbsjType": "Imagery",
-                            "xbsjImageryProvider": {
-                                "createTileMapServiceImageryProvider": {
-                                    "url": XE.HTML.cesiumDir + 'Assets/Textures/NaturalEarthII',
-                                    "fileExtension": 'jpg',
-                                },
-                                "type": "createTileMapServiceImageryProvider"
-                            }
-                        }
-                    },
-                ]
-            };
-
-
-            // earth加载代码
-            /*
-            earth.sceneTree.root.children.push({
-                czmObject: {
-                    "xbsjType": "Tileset",
-                    "xbsjGuid": "6ad851af-c6ab-4a61-a54c-991f15a57d00",
-                    "name": "光明区",
-                    "url": "file://C:/Users/msda002/Desktop/梁泽祥工作文件夹/演示系统需求/光明区/tileset.json",
-                    "xbsjPosition": [
-                        1.988307208238075,
-                        0.397168730990367,
-                        0
-                    ],
-                    "xbsjClippingPlanes": {},
-                    "xbsjCustomShader": {}
-                }
-            });
-
-            // 指定相机位置
-            earth.camera.position = [1.9880377070258168,0.39578288962602437,7166.918258458224];
-            earth.camera.rotation = [6.283185307179584,-0.7901696231715438,6.283185307179586];
-            */
-
-            // cesium加载代码
-            var viewer = earth.czm.viewer;
-            var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-                url: 'file://C:/Users/msda002/Desktop/梁泽祥工作文件夹/演示系统需求/光明区/tileset.json',
-                modelMatrix: Cesium.Matrix4.fromArray([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
-            }));
-            viewer.flyTo(tileset);
-
-
-            // 仅为测试
-            window.earth = earth;
-            window.viewer = viewer;
-            window.tileset = tileset;
-        }
-
-        // 1 XE.ready()会加载Cesium.js等其他资源，注意ready()返回一个Promise对象。
-        XE.ready().then(startup);
-    </script>
+    <div id="allmap"></div>
+    <script src="~/js/jquery.min.js"></script>
+    <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=bhb1z8SEID2CyM1HGyG2Pis9DQmY6G0H"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=bhb1z8SEID2CyM1HGyG2Pis9DQmY6G0H"></script>
+    <script src="//mapv.baidu.com/build/mapv.min.js"></script>
+    <script src="https://code.bdstatic.com/npm/mapvgl@1.0.0-beta.55/dist/mapvgl.min.js"></script>
+    <!-- layer -->
+    <script src="~/js/layui/layui.all.js"></script>
+    <script src="~/js/getscript.js"></script>
+    <script src="~/js/layui/layer_mobile/layer.js"></script>
+    <script src="~/js/cesiumhelp/Test.js" async defer></script>
 </body>
-
 </html>

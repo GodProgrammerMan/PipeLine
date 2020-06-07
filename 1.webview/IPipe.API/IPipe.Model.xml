@@ -1114,5 +1114,20 @@
             数据类型
             </summary>
         </member>
+        <member name="P:IPipe.Model.ViewModels.TreeLineMolde.sHoleID">
+            <summary>
+            开始井
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.TreeLineMolde.eHoleID">
+            <summary>
+            结束井
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.TreeLineMolde.id">
+            <summary>
+            当前Line的id
+            </summary>
+        </member>
     </members>
 </doc>

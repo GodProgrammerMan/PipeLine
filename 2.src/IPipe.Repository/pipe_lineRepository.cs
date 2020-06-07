@@ -21,14 +21,22 @@ namespace IPipe.Repository
         {
         }
 
-        public LineHoleDateModel GetLineHolesDate()
+        public LineHoleDateModel GetLineHolesDate(int type)
         {
+            bool isBd = type != 1;
             LineHoleDateModel lineHoleDateModel = new LineHoleDateModel();
-            var holeDate = Db.Queryable<pipe_hole>()
-                .Where(t=>t.CoorWgsX>=22.7302 && t.CoorWgsX <=22.7977 && t.CoorWgsY >= 113.8891&& t.CoorWgsY <= 113.9572)
+            var WSholeDate = Db.Queryable<pipe_hole>()
+                .Where(t=>t.HType.Equals("WS"))
+                .Select(t => new HoleDateMolde() { hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
+                .Take(1000)
+                .ToList();
+            var YSholeDate = Db.Queryable<pipe_hole>()
+                .Where(t => t.HType.Equals("YS"))
+                .Take(1000)
                 .Select(t => new HoleDateMolde() { hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
                 .ToList();
-            lineHoleDateModel.holeDateMoldes = holeDate;
+            WSholeDate.AddRange(YSholeDate);
+            lineHoleDateModel.holeDateMoldes = WSholeDate;
             var LineDate = Db.Queryable<pipe_line>()
                            .Select(t => new LineDateMolde() { pSize = t.PSize ,line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
                            .ToList();
@@ -36,18 +44,25 @@ namespace IPipe.Repository
             List<LineDateMolde> relineDateMoldes = new List<LineDateMolde>();
             foreach (var item in LineDate)
             {
-                if (!holeDate.Any(t => t.holeID == item.sholeID) || !holeDate.Any(t => t.holeID == item.eholeID))
+                if (!WSholeDate.Any(t => t.holeID == item.sholeID) || !WSholeDate.Any(t => t.holeID == item.eholeID))
                     continue;
-                var Shole = holeDate.Where(t => t.holeID == item.sholeID).First();
-                var Ehole = holeDate.Where(t => t.holeID == item.eholeID).First();
-                item.sCoorWgsX = Shole.CoorWgsX;
-                item.sCoorWgsY = Shole.CoorWgsY;
+                var Shole = WSholeDate.Where(t => t.holeID == item.sholeID).First();
+                var Ehole = WSholeDate.Where(t => t.holeID == item.eholeID).First();
+                double [] sCoorWgs=new double[] { Shole.CoorWgsX, Shole.CoorWgsY };
+                double[] eCoorWgs = new double[] { Ehole.CoorWgsX, Ehole.CoorWgsY };
+                if (isBd) {
+                     sCoorWgs = CoordinateCalculation.WGS84TOBD(sCoorWgs);
+                     eCoorWgs = CoordinateCalculation.WGS84TOBD(eCoorWgs);
+                }
+
+                item.sCoorWgsX = sCoorWgs[0];
+                item.sCoorWgsY = sCoorWgs[1];
                 item.eDeep = Shole.Deep;
-                item.eCoorWgsX = Ehole.CoorWgsX;
-                item.eCoorWgsY = Ehole.CoorWgsY;
+                item.eCoorWgsX = eCoorWgs[0];
+                item.eCoorWgsY = eCoorWgs[1];
                 item.sDeep = Ehole.Deep;
-                item.cCoorWgsX = ((Shole.CoorWgsX + Ehole.CoorWgsX) / 2).ToString("0.0000#").ObjToMoney();
-                item.cCoorWgsY = ((Shole.CoorWgsY + Ehole.CoorWgsY) / 2).ToString("0.0000#").ObjToMoney();
+                item.cCoorWgsX = ((sCoorWgs[0] + eCoorWgs[0]) / 2).ToString("0.0000#").ObjToMoney();
+                item.cCoorWgsY = ((sCoorWgs[1] + eCoorWgs[1]) / 2).ToString("0.0000#").ObjToMoney();
                 if (!reholeDateMoldes.Any(t => t.holeID == Shole.holeID))
                     reholeDateMoldes.Add(Shole);
                 if (!reholeDateMoldes.Any(t => t.holeID == Ehole.holeID))
@@ -72,6 +87,11 @@ namespace IPipe.Repository
             return lineInfoMolde;
         }
 
+        public List<TreeLineMolde> getLineListBytree()
+        {
+            return Db.Queryable<pipe_line>().Select(t=> new TreeLineMolde() { eHoleID = t.E_holeID, id = t.id, sHoleID =t.S_holeID }).ToList();
+        }
+
         public List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw)
         {
             var holeList = Db.Queryable<pipe_hole>()
@@ -88,6 +108,14 @@ namespace IPipe.Repository
                 holeList.AddRange(lineList);
             }
             return holeList;
+        }
+
+        public void UpdateParentsIDSChildrsIDS(string parentsIDS, string childrsIDS, int id)
+        {
+            Db.Updateable<pipe_line>()
+                .SetColumns(it => new pipe_line() { parentIDs = parentsIDS, subclassIDs = childrsIDS })
+                .Where(t => t.id == id)
+                .ExecuteCommand();
         }
     }
 }

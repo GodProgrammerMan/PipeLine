@@ -1,18 +1,99 @@
-//Cesium token
-Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyOTJlMDMzZi1kYjY4LTQ3M2ItYWJjMC0xMDczYjE1ODE1ZjYiLCJpZCI6Mjg2MTAsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTEyNjM4MTl9.oV3PVWMVf8AnQImbPeH0OeinxXT8K83iyl8ZVJwISyM';
+let map;
+var Laledata = [];
+let showZoom = 18;
+let currZoom;
+$(function () {
+    //初始化地图
+    initMap();
 
-var viewer = new Cesium.Viewer("cesiumContainer", {
-    animation: false, //是否显示动画控件
-    baseLayerPicker: true, //是否显示图层选择控件
-    geocoder: false, //是否显示地名查找控件
-    timeline: false, //是否显示时间线控件
-    sceneModePicker: false, //是否显示投影方式控件
-    navigationHelpButton: false, //是否显示帮助信息控件
-    infoBox: false, //是否显示点击要素之后显示的信息
-    imageryProvider: new Cesium.MapboxImageryProvider(
-        {
-            mapId: "mapbox.satellite",
-            accessToken:'pk.eyJ1IjoibHp4bWFwYm94IiwiYSI6ImNqejcyYjgxODBhOWQzaG1qNG16MHZxaWEifQ.kJXpweRK26c7ZZy_EyT7Ig'
-        }),
-    baseLayerPicker: false
+    //加载管线
+    addLineOverlays();
+
 });
+
+function initMap() {
+    map = new BMapGL.Map("allmap");    // 创建Map实例
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    map.setHeading(64.5);
+    map.setTilt(73);
+    map.centerAndZoom(new BMapGL.Point(113.91347, 22.73615), 20);  // 初始化地图,设置中心点坐标和地图级别
+
+    //地图更改缩放级别结束时触发触发此事件
+    map.addEventListener("zoomend", function (e) {
+        var thisZoom = map.getZoom();
+
+        if (thisZoom < showZoom) {
+          //  map.clearOverlays();
+        } else {
+           // map.clearOverlays();
+            addAreaOverlay();//添加管线域覆盖物
+        }
+        currZoom = thisZoom;
+    });
+    //地图更改缩放级别结束时触发触发此事件
+    map.addEventListener("zoomend", function (e) {
+        if (currZoom < showZoom) {
+            //map.clearOverlays();
+        } else {
+            //map.clearOverlays();
+            addAreaOverlay();//添加管线域覆盖物
+        }
+    });
+
+    //地图移动结束时触发
+    map.addEventListener("dragend", function (e) {
+        var bounds = map.getBounds();
+        var sw = bounds.getSouthWest();
+        var ne = bounds.getNorthEast();
+        console.log(sw);
+    });
+}
+
+//添加管线覆盖物
+function addLineOverlays() {
+    var loadindex = layer.open({
+        type: 2
+        , content: '加载管线数据中'
+    });
+    $.post("/home/getLineHolesDateForBd", {}, function (data, status) {
+        layer.close(loadindex);
+        if (!data.response) {
+            layerMsg('msg', data.msg)
+        } else {
+            $.each(data.response.lineDateMoldes, function (i, item) {
+                if (i>800 && i < 1000) {
+                    var polyline = new BMapGL.Polyline([
+                        new BMapGL.Point(item.sCoorWgsX, item.sCoorWgsY),
+                        new BMapGL.Point(item.eCoorWgsX, item.eCoorWgsY)
+                    ], { strokeColor: "red", strokeWeight: 2, strokeOpacity: 0.5 });
+
+                    map.addOverlay(polyline);
+                    //管径
+
+
+                }
+            });
+            layerMsg('msg', data.msg)
+        }
+    }).error(function () {
+        layer.close(loadindex);
+        layerTS('请求数据出错，请稍后再试！')
+    });
+}
+
+function layerTS(msg, bntMgs) {
+    bntMgs = (bntMgs === undefined || bntMgs === "" || bntMgs === null ? '我知道了' : bntMgs); // b默认值为2
+    //信息框
+    layer.open({
+        content: msg
+        , btn: bntMgs
+    });
+}
+
+function layerMsg(skin,msg) {
+    layer.open({
+        content: msg
+        , skin: skin
+        , time: 2 //2秒后自动关闭
+    });
+}

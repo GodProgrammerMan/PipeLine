@@ -105,8 +105,9 @@ namespace IPipe.Model.Models
            /// </summary>
         
         public string tableType { get; set; }
+        public double CoorWgsY { get; set; }
+        public double CoorWgsX { get; set; }
 
-            
     }
 }
                     

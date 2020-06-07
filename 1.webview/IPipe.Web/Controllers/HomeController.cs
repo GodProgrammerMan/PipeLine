@@ -213,6 +213,21 @@ namespace IPipe.Web.Controllers
         #endregion
 
         #region 管段大范围请求
+        [HttpPost]
+        public IActionResult GetLineHolesDateForBd() {
+            var result = new MessageModel<LineHoleDateModel>() { msg = "参数错误", response = null, success = true };
+            var LineHoles = _ipipe_LineServices.GetLineHolesDate(0);
+            if (LineHoles != null && LineHoles.holeDateMoldes.Count > 0 && LineHoles.lineDateMoldes.Count > 0)
+            {
+                result.response = LineHoles;
+                result.msg = "获取管道数据成功！";
+            }
+            else
+                result.msg = "目前还没有管道数据哦";
+
+
+            return new JsonResult(result);
+        }
         /// <summary>
         /// 获取管线和管井数据
         /// </summary>

@@ -5,63 +5,75 @@ using System.Linq;
 using System.Threading.Tasks;
 using IPipe.IServices;
 using IPipe.Model.Models;
+using IPipe.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IPipe.Web.Controllers
 {
     public class TestController : Controller
     {
+		readonly Ipipe_holeServices _ipipe_HoleServices;
+		readonly Ipipe_lineServices _ipipe_LineServices;
 
-        readonly Ipipe_lineServices _ipipe_LineServices;
+		public TestController(Ipipe_holeServices ipipe_HoleServices, Ipipe_lineServices ipipe_LineServices)
+		{
+			_ipipe_HoleServices = ipipe_HoleServices;
+			_ipipe_LineServices = ipipe_LineServices;
+		}
 
-        List<pipe_line> list1 = new List<pipe_line>();
-        List<pipe_line> list2 = new List<pipe_line>();
+		string parentsIDS = "0,";
+		string ChildrsIDS = "0,";
 
 		public IActionResult Index(){
+			//处理
+			//List<TreeLineMolde> treeList = _ipipe_LineServices.getLineListBytree();
+			//foreach (var item in treeList)
+			//{
+			//	//计算
+			//	Compute(item, treeList);
+			//	//修改
+			//	_ipipe_LineServices.UpdateParentsIDSChildrsIDS(parentsIDS.TrimEnd(','), ChildrsIDS.TrimEnd('.'), item.id);
+
+			//}
 			return View();
 		}
         
-        public void Compute(pipe_line pipe)
+        public void Compute(TreeLineMolde  treeLineMolde, List<TreeLineMolde> treeList)
         {
-            List<pipe_line> LineList = _ipipe_LineServices.Query().Result;
+			parentsIDS = "0,";
+		    ChildrsIDS = "0,";
+			getParents(treeLineMolde, treeList);
+			getChildrs(treeLineMolde, treeList);
 
-			getParents(pipe, LineList);
-			getChildrs(pipe, LineList);
 
 		}
 
-		private void getParents(pipe_line pipe, List<pipe_line> list)
+		private void getParents(TreeLineMolde treeLineMolde, List<TreeLineMolde> treeList)
 		{
-			for (int i = 0; list != null && i < list.Count; i++)
+			foreach (var item in treeList)
 			{
-				if (list[i].E_Point == pipe.S_Point && !isExist(list1, list[i]))
-				{
-					list1.Add(list[i]);
-					getParents(list[i], list);
+				if (item.eHoleID == treeLineMolde.sHoleID && !isExist(parentsIDS,item.id)) {
+					parentsIDS += $"{item.id},";
+					getParents(item, treeList);
 				}
 			}
 		}
 
-		private void getChildrs(pipe_line pipe, List<pipe_line> list)
+		private void getChildrs(TreeLineMolde treeLineMolde, List<TreeLineMolde> treeList)
 		{
-			for (int i = 0; list != null && i < list.Count; i++)
+			foreach (var item in treeList)
 			{
-				if (list[i].S_Point == pipe.E_Point && !isExist(list2, list[i]))
+				if (item.sHoleID == treeLineMolde.eHoleID && !isExist(ChildrsIDS, item.id))
 				{
-					list2.Add(list[i]);
-					getChildrs(list[i], list);
+					ChildrsIDS += $"{item.id},";
+					getChildrs(item, treeList);
 				}
 			}
 		}
 
-		private Boolean isExist(List<pipe_line> list, pipe_line pipe)
+		private Boolean isExist(string IDS, int id)
 		{
-			for (int i = 0; list != null && i < list.Count; i++)
-			{
-				if (list[i].S_Point == pipe.S_Point && list[i].E_Point == pipe.E_Point)
-					return true;
-			}
-			return false;
+			return IDS.IndexOf($",{id},") > -1;
 		}
 	}
 }

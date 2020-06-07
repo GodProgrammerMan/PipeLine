@@ -17,9 +17,9 @@ namespace IPipe.Services
             base.BaseDal = dal;
         }
 
-        public LineHoleDateModel GetLineHolesDate()
+        public LineHoleDateModel GetLineHolesDate(int type=1)
         {
-            return _dal.GetLineHolesDate();
+            return _dal.GetLineHolesDate(type);
         }
 
         public LineInfoMolde GetLineInfoByID(int id)
@@ -27,9 +27,19 @@ namespace IPipe.Services
             return _dal.GetLineInfoByID(id);
         }
 
+        public List<TreeLineMolde> getLineListBytree()
+        {
+            return _dal.getLineListBytree();
+        }
+
         public List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw)
         {
             return _dal.GetQueryLineHolesDate(kw);
+        }
+
+        public void UpdateParentsIDSChildrsIDS(string parentsIDS, string ChildrsIDS, int id)
+        {
+             _dal.UpdateParentsIDSChildrsIDS(parentsIDS, ChildrsIDS, id);
         }
     }
 }
