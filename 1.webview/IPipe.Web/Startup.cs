@@ -80,12 +80,11 @@ namespace IPipe.Web
 
             services.Configure<KestrelServerOptions>(x => x.AllowSynchronousIO = true)
                     .Configure<IISServerOptions>(x => x.AllowSynchronousIO = true);
-
             services.AddControllersWithViews(o =>
             {
                 // 全局异常过滤
                 o.Filters.Add(typeof(GlobalExceptionsFilter));
-            });
+            }).AddRazorRuntimeCompilation();
 
             _services = services;
         }

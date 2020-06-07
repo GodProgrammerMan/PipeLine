@@ -15,17 +15,31 @@ $(function () {
     var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
     //单击
     handler.setInputAction(function (movement) {
+        let cartesian = viewer.camera.pickEllipsoid(movement.position, ellipsoid);
         var pick = viewer.scene.pick(movement.position);
         console.log(pick);
         if ($('body').hasClass("cousline")) {
             console.log($('body').css("cursor"));
             if (Cesium.defined(pick) && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
+                let x = 0; 
+                let y = 0; 
+                let h = 0; 
+                if (cartesian) {
+                    let cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+                    x = Cesium.Math.toDegrees(cartographic.latitude).toFixed(10);
+                    y = Cesium.Math.toDegrees(cartographic.longitude).toFixed(10);
+                    h = (viewer.camera.positionCartographic.height / 1000).toFixed(10);
+                }
                 //在判断是井还是管段
                 if (pick.id.indexOf('pipe_hole_') > -1) {
                     //添加管的隐患点
-
+                    var holeID = pick.id.split('_')[2];
+                    showBox('管点隐患上报', '/HiddenDanger/index?action=add&ty=1&x=' + x + '&y=' + y + '&h=' + h + '&objID=' + holeID, ['1100px', '700px']);
+                    
                 } else {
+                    var LineID = lineCLICKID.split('_')[3];
                    //添加管段的隐患点
+                    showBox('管段隐患上报', '/HiddenDanger/index?action=add&ty=2&x=' + x + '&y=' + y + '&h=' + h + '&objID=' + LineID, ['1100px', '700px']);
 
                 }
             } else {

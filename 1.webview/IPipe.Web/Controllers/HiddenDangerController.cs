@@ -17,7 +17,7 @@ namespace IPipe.Web.Controllers
             _ihidden_DangerServices = ihidden_DangerServices;
             _ipipe_LineServices = ipipe_LineServices;
         }
-        public IActionResult Index()
+        public IActionResult Index(string action="add",int ty=1,double x=0,double y=0,double z=0,int objID=0)
         {
             return View();
         }
