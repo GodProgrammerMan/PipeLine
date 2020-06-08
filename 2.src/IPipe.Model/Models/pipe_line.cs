@@ -90,7 +90,7 @@ namespace IPipe.Model.Models
 
             
            /// <summary>
-           /// Desc:检测方法
+           /// Desc:材质
            /// Default:
            /// Nullable:False
            /// </summary>

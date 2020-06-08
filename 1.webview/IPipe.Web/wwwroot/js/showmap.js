@@ -95,8 +95,6 @@ function getHeightWidth() {
     var cliWidth = document.body.clientWidth; //浏览器宽
     var cliHeight = window.innerHeight;//浏览器高
     //根据浏览器宽高动态改变div的宽高
-    console.log(cliWidth);
-    console.log(cliHeight - 50);
     $("#map").height(cliHeight - 54);
     $("#map").width(cliWidth);
 }

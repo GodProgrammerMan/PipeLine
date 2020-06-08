@@ -33,7 +33,7 @@
                 <a href="javascript:void(0);">任务安排</a>
             </li>
             <li class="layui-nav-item">
-                <a href="javascript:void(0);" onclick="showBox('隐患上报', '/HiddenDanger/index?action=add', ['1100px', '700px']);">隐患上报</a>
+                <a href="javascript:void(0);" onclick="showBox('管段添加', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">隐患上报</a>
             </li>
             <li class="layui-nav-item">
                 <a href="javascript:void(0);">隐患警告<span class="layui-badge">9</span></a>
@@ -67,7 +67,7 @@
                     <li class="a1">
                         <div class="tx">
                             <a href="#">
-                                <div class="menu_i"><i class="layui-icon layui-icon-templeate-1"></i></div>
+                                <div class="menu_i" title="图层显示"><i class="layui-icon layui-icon-templeate-1"></i></div>
                                 <div class="menu_span">图层显示</div>
                             </a>
                         </div>
@@ -331,98 +331,51 @@
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
-                        <table>
+                        <table id="InfoTab1">
                             <tr>
-                                <td class="title" width="25%">属性1：</td>
-                                <td class="value" width="75%">XXXXXXXXXX</td>
+                                <td class="title" width="20%"></td>
+                                <td class="value" width="80%"></td>
                             </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
+                            <tr><td class="title"></td><td class="value"></td></tr>
                         </table>
                     </div>
                     <div class="layui-tab-item">
-                        <table>
-                            <tr>
-                                <td class="title" width="25%">属性1：</td>
-                                <td class="value" width="75%">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                            <tr>
-                                <td class="title">属性1：</td>
-                                <td class="value">XXXXXXXXXX</td>
-                            </tr>
-                        </table>
+                        <table id="InfoTab2"></table>
                     </div>
                 </div>
             </div>
-
-            <div id="imgs">相关图片：</div>
-            <img src="/image/map/item.png">
+            <!--
+    <div id="imgs">相关图片：</div>
+    <img src="/image/map/item.png">
+     -->
         </div>
     </div>
     <div id="localtion">当前坐标：x=<span id="lng"></span>，y=<span id="lat"></span>，h=<span id="heght"></span></div>

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "上报隐患";
+    ViewData["Title"] = "EditPipeHole";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Styles{
@@ -7,35 +7,22 @@
     <link rel="stylesheet" href="~/css/site.min.css" media="all">
 }
 <form action="" class="layui-form form-cus">
+
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">隐患名称</label> <div class="layui-input-inline"><input type="text" id="departmentName" value="" name="departmentName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
         </div>
         <div class="layui-inline">
-            <label class="layui-form-label">处理单位</label> <div class="layui-input-inline"><input type="text" id="aliasName" name="aliasName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
+            <label class="layui-form-label">部门别名</label> <div class="layui-input-inline"><input type="text" id="aliasName" value="@(Model?.aliasName)" name="aliasName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
         </div>
     </div>
     <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">发现隐患时间</label> <div class="layui-input-inline"><input type="text" id="faxTime" name="departmentName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">处理时间</label> <div class="layui-input-inline"><input type="text" id="chuliTime" name="aliasName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">处理状态</label>
-        <select name="city" lay-verify="">
-            <!option value="0">待处理</!option>
-            <!option value="1">进行中</!option>
-            <!option value="2">已处理</!option>
-        </select>
-        <div class="layui-form-mid layui-word-aux"></div>
+        <label class="layui-form-label">排序</label> <div class="layui-input-inline"><input type="number" name="sort" id="sort" value="" maxlength="20" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"> <span class="help-block">请输入0~100之间的数字,值为0代表</span></div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">隐患内容</label>
         <div class="layui-input-block">
-            <textarea name="remarks" id="remarks" placeholder="请输入隐患内容" class="layui-textarea" autocomplete="off" lay-verify="required" lay-vertype="tips"></textarea>
+            <textarea name="remarks" id="remarks" placeholder="请输入隐患内容" class="layui-textarea" autocomplete="off" lay-verify="required" lay-vertype="tips">@(Model?.remarks)</textarea>
         </div>
     </div>
     <ul class="addpic-list cur-image clearfix">
@@ -43,7 +30,7 @@
             <div class="add-photo default" style="height:200px;">
                 <input name="images" id="logo" type="hidden" class="imgv" value="">
                 <div class="select-newimg fyt-cloud @( string.IsNullOrWhiteSpace(Model?.logo)?"":"layui-hide")" style="padding-top: 60px;" id="imgCutBox">
-                    <i class="layui-icon layui-icon-add-circle sizeioc"></i> <span>地质雷达图</span>
+                    <i class="layui-icon layui-icon-add-circle sizeioc"></i> <span>选择组图片</span>
                 </div>
                 <div class="add-photo-wall @(string.IsNullOrWhiteSpace(Model?.logo)?"layui-hide":"")">
                     <img id="imgShow" src="@(Model?.logo)" style="height:200px;">
@@ -51,7 +38,7 @@
                         <a href="javascript:$('#imgCutBox').click();" class="photo-tool fyt-cloud"><i class="layui-icon layui-icon-edit"></i>更换</a>
                         <a href="javascript:void(0)" onclick="deleteFile()" class="photo-tool last"><i class="layui-icon layui-icon-delete"></i>删除</a>
                     </div>
-                    <div class="cover">地质雷达图</div>
+                    <div class="cover">组图片</div>
                 </div>
             </div>
         </li>
@@ -62,6 +49,7 @@
         </div>
     </div>
     <input type="hidden" name="id" id="id" value="@Model?.id" />
+    <input type="hidden" name="parentID" id="parentID" value="@(ViewBag.parentID==null?0:ViewBag.parentID)" />
 </form>
 @section Scripts{
     <!-- 全局js -->
@@ -69,19 +57,14 @@
     <!-- layer -->
     <script src="~/js/layui/layui.all.js"></script>
     <script>
-        layui.use(['element', 'form', 'laydate'], function () {
+        layui.use(['element', 'form'], function () {
             var form = layui.form;
             var element = layui.element;
-            var laydate = layui.laydate;
-            laydate.render({
-                elem: '#faxTime' //指定元素
-            });
-            laydate.render({
-                elem: '#chuliTime' //指定元素
-            });
             //监听提交
-            //监听提交
-
+            form.on('submit(formDemo)', function (data) {
+                layer.msg(JSON.stringify(data.field));
+                return false;
+            });
         });
     </script>
 }

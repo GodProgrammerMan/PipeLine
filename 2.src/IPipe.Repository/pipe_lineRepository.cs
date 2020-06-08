@@ -103,7 +103,7 @@ namespace IPipe.Repository
             var lineList = Db.Queryable<pipe_line>()
                 .Where(t=>t.Lno.Contains(kw))
                 .Take(4) 
-                .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 2, eNo = t.Lno, id = t.id }).ToList();
+                .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 1, eNo = t.Lno, id = t.id }).ToList();
             if (holeList != null) {
                 holeList.AddRange(lineList);
             }

@@ -19,8 +19,14 @@ function searchKW() {
         } else {
             os('success', data.msg, '');
             $("#result").show();
-            //查询绑数据的开始
+            // 查询绑数据的开始
             console.log(data.response);
+            var context = "";
+            for (var i = 0; i < data.response.length; i++) {
+                var item = data.response[i];
+                context += "<div id='" + item.id + "' data-type='" + item.dataType + "'>" + item.eNo + "</div>";
+            }
+            $("#rValue").html(context);
         }
     }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
 }
