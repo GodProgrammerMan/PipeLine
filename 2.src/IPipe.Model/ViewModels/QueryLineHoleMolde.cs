@@ -12,7 +12,7 @@ namespace IPipe.Model.ViewModels
         public double CoorWgsX { get; set; }
         public string addreess { get; set; }
         /// <summary>
-        /// 数据类型,1-是管井，2-是管段
+        /// 数据类型
         /// </summary>
         public int dataType { get; set; }
     }
