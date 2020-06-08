@@ -289,7 +289,7 @@ namespace IPipe.Web.Controllers
         }
         #endregion
 
-        #region 查询管点和管端
+        #region 查询管点和管段
         /// <summary>
         /// 查询管
         /// </summary>

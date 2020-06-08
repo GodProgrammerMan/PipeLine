@@ -19,6 +19,9 @@ namespace IPipe.Web.Controllers
         }
         public IActionResult Index(string action="add",int ty=1,double x=0,double y=0,double z=0,int objID=0)
         {
+            //创建和编辑隐患
+
+
             return View();
         }
 

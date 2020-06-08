@@ -15,15 +15,14 @@ $(function () {
     var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
     //单击
     handler.setInputAction(function (movement) {
-        let cartesian = viewer.camera.pickEllipsoid(movement.position, ellipsoid);
         var pick = viewer.scene.pick(movement.position);
-        console.log(pick);
+
         if ($('body').hasClass("cousline")) {
-            console.log($('body').css("cursor"));
-            if (Cesium.defined(pick) && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
-                let x = 0; 
-                let y = 0; 
-                let h = 0; 
+            if (Cesium.defined(pick) && scene.pickPositionSupported && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
+                var cartesian = viewer.scene.pickPosition(movement.position);
+                let x = 0;
+                let y = 0;
+                let h = 0;
                 if (cartesian) {
                     let cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
                     x = Cesium.Math.toDegrees(cartographic.latitude).toFixed(10);
@@ -35,12 +34,14 @@ $(function () {
                     //添加管的隐患点
                     var holeID = pick.id.split('_')[2];
                     showBox('管点隐患上报', '/HiddenDanger/index?action=add&ty=1&x=' + x + '&y=' + y + '&h=' + h + '&objID=' + holeID, ['1100px', '700px']);
-                    
+                    //添加隐患成功后渲染
+                    addYHMolde("hole_hy_" + holeID, y * 1, x * 1, 4, "井点" + holeID + "隐患");
                 } else {
-                    var LineID = lineCLICKID.split('_')[3];
-                   //添加管段的隐患点
+                    var LineID = pick.id.split('_')[3];
+                    //添加管段的隐患点
                     showBox('管段隐患上报', '/HiddenDanger/index?action=add&ty=2&x=' + x + '&y=' + y + '&h=' + h + '&objID=' + LineID, ['1100px', '700px']);
-
+                    //添加隐患成功后渲染
+                    addYHMolde("line_hy_" + LineID, y * 1, x * 1, 1.6, "管段" + LineID + "隐患");
                 }
             } else {
                 os('info', "请选择存在隐患的管段或者井,双击则取消！", '');
@@ -85,7 +86,7 @@ $(function () {
                 var loadindex = layer.load(1, {
                     shade: [0.1, '#000']
                 });
-                $.post("/home/getLineInfoByID", { id: LineID}, function (data, status) {
+                $.post("/home/getLineInfoByID", { id: LineID }, function (data, status) {
                     layer.close(loadindex);
                     if (!data.success) {
                         os('error', data.msg, '');
@@ -95,10 +96,10 @@ $(function () {
                         //管段绑数据的开始
                         console.log(data.response);
                     }
-                }).error(function () {layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
+                }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
             }
 
-        } 
+        }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     //移动
     handler.setInputAction(function (movement) {
@@ -225,7 +226,7 @@ function getLineHoles() {
 
                     //画管
                     line_instances.push(new Cesium.GeometryInstance({
-                        id: "pipe_line_" + item.line_Class+"_" + item.lineID,
+                        id: "pipe_line_" + item.line_Class + "_" + item.lineID,
                         geometry: new Cesium.PolylineVolumeGeometry({
                             polylinePositions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsY, item.sCoorWgsX, 0.5, item.eCoorWgsY, item.eCoorWgsX, 0.5]),
                             vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
@@ -280,7 +281,7 @@ function getbuildList() {
         url: '/js/cesiumhelp/3dTile/gm/tileset.json'
         //或者url: 'http://ip:port/www/DAEPalace/tileset.json'
     })
-    viewer.scene.primitives.add(palaceTileset);  
+    viewer.scene.primitives.add(palaceTileset);
 }
 
 
@@ -362,4 +363,45 @@ function recoveryHoleColor() {
         holeCLICKID.primitive.color = Cesium.Color.ALICEBLUE;
     }
     holeCLICKID = null;
+}
+
+function addYHMolde(id, longitude, latitude, heght, yhtext) {
+    console.log(longitude + 0.002);
+    console.log(yhtext);
+    console.log(longitude);
+    console.log(latitude);
+    //隐患lables
+    labels.add({
+        id: "yh_labels_" + id,
+        position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 5),
+        text: yhtext,
+        font: '20px Helvetica',
+        fillColor: Cesium.Color.RED,
+        show: true
+    });
+
+    //隐患箭头
+    var addyh = new Cesium.Primitive({
+        geometryInstances: new Cesium.GeometryInstance({
+            id: "yh_" + id,
+            geometry: new Cesium.PolylineGeometry({
+                positions: Cesium.Cartesian3.fromDegreesArrayHeights([longitude, latitude, 5, longitude, latitude, heght]),
+                width: 20.0,
+                vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
+            })
+        }), //合并
+        //某些外观允许每个几何图形实例分别指定某个属性，例如：
+        appearance: new Cesium.PolylineMaterialAppearance({
+            material: new Cesium.Material({
+                fabric: {
+                    type: 'PolylineArrow',
+                    uniforms: {
+                        color: Cesium.Color.RED
+                    }
+                }
+            })
+        })
+    });
+
+    viewer.scene.primitives.add(addyh);
 }

@@ -1111,7 +1111,7 @@
         </member>
         <member name="P:IPipe.Model.ViewModels.QueryLineHoleMolde.dataType">
             <summary>
-            数据类型
+            数据类型,1-是管井，2-是管段
             </summary>
         </member>
         <member name="P:IPipe.Model.ViewModels.TreeLineMolde.sHoleID">
