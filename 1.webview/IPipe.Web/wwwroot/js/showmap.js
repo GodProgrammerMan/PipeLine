@@ -7,10 +7,80 @@ let labels;
 let linePrimitive;
 let flowtoPrimitive;
 let holePrimitive = [];
+let cctvDate;
 
 $(document).ready(function () {
-    layui.use('element', function () {
+    layui.use(['form', 'element'], function () {
         var element = layui.element;
+        var form = layui.form;
+        form.on('checkbox(lineShow)', function (data) {
+            layer.msg("当前状态不支持该操作");
+        });
+        form.on('checkbox(hoelShow)', function (data) {
+            layer.msg("当前状态不支持该操作");
+        });
+        form.on('checkbox(CCTVShow)', function (data) {
+            if (data.elem.checked) {//显示
+                initCesium();
+                //并飞到该区域
+                $.get('/home/getCCTVGrade', null, function (res, status) {
+                    cctvDate = res;
+                    $.each(res, function (i, item) {
+                        if (item.grade === 1) {
+                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREEN);
+                        } else if (item.grade === 2) {
+                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.YELLOW);
+                        } else if (item.grade === 3) {
+                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.VIOLET);
+                        } else if (item.grade === 4) {
+                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.RED);
+                        }
+                    });
+                });
+            } else {
+                $.each(cctvDate, function (i, item) {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+                });
+            }
+        });
+        form.on('checkbox(psizeShow)', function (data) {
+            layer.msg("当前状态不支持该操作");
+        });
+        form.on('checkbox(flowShow)', function (data) {
+            if (data.elem.checked) {
+                for (var i = 0; i < labels.length; i++) {
+                    labels.get(i).show = true;
+                }
+                lablesShow = true;
+            } else {
+                for (var i = 0; i < labels.length; i++) {
+                    labels.get(i).show = false;
+                }
+                lablesShow = false;
+            }
+        });
+        form.on('checkbox(yhShow)', function (data) {
+            if (data.elem.checked) {
+                for (var i = 0; i < yhPairList.length; i++) {
+                    yhPairList[i].show = true;
+                }
+            } else {
+                for (var i = 0; i < yhPairList.length; i++) {
+                    yhPairList[i].show = false;
+                }
+            }
+        });
+        form.on('checkbox(exShow)', function (data) {
+            layer.msg("当前状态不支持该操作");
+        });
+        form.on('checkbox(buildShow)', function (data) {
+            layer.msg("当前状态不支持该操作");
+        });
     });
     otherThing();
     // Cesium
@@ -43,9 +113,9 @@ $(document).ready(function () {
     canvas = viewer.scene.canvas;
     ellipsoid = viewer.scene.globe.ellipsoid;
     labels = scene.primitives.add(new Cesium.LabelCollection({
-            scene:2,
+        scene: 2,
         blendOption: Cesium.BlendOption.TRANSLUCENT
-       }
+    }
     ));
 });
 

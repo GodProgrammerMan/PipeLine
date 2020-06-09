@@ -25,6 +25,62 @@ namespace IPipe.Common.Helper
             db[1] = db[1] - 0.000321856414799981;
             return db;
         }
+
+        public static double[] BdTOwgs84(double x, double y)
+        {
+            var s_gcjo2 = bd09togcj02(x, y);
+            var s_wgs84 = gcj02towgs84(s_gcjo2[0], s_gcjo2[1]);
+            return s_wgs84;
+        }
+
+        /**
+        * GCJ02 转换为 WGS84
+        * @param lng
+        * @param lat
+        * @returns {*[]}
+        */
+        public static double[] gcj02towgs84(double lng, double lat)
+        {
+            if (out_of_china(lng, lat))
+            {
+                return new double[] { lng, lat };
+            }
+            else
+            {
+                var dlat = transformlat(lng - 105.0, lat - 35.0);
+                var dlng = transformlng(lng - 105.0, lat - 35.0);
+                var radlat = lat / 180.0 * PI;
+                var magic = Math.Sin(radlat);
+                magic = 1 - ee * magic * magic;
+                var sqrtmagic = Math.Sqrt(magic);
+                dlat = (dlat * 180.0) / ((a * (1 - ee)) / (magic * sqrtmagic) * PI);
+                dlng = (dlng * 180.0) / (a / sqrtmagic * Math.Cos(radlat) * PI);
+                var mglat = lat + dlat;
+                var mglng = lng + dlng;
+                return new double[] { lng * 2 - mglng, lat * 2 - mglat };
+            }
+        }
+
+
+        /**
+        * 百度坐标系 (BD-09) 与 火星坐标系 (GCJ-02)的转换
+        * 即 百度 转 谷歌、高德
+        * @param bd_lon
+        * @param bd_lat
+        * @returns {*[]}
+        */
+        public static double[] bd09togcj02(double bd_lon, double bd_lat)
+        {
+            var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+            var x = bd_lon - 0.0065;
+            var y = bd_lat - 0.006;
+            var z = Math.Sqrt(x * x + y * y) - 0.00002 * Math.Sin(y * x_pi);
+            var theta = Math.Atan2(y, x) - 0.000003 * Math.Cos(x * x_pi);
+            var gg_lng = z * Math.Cos(theta);
+            var gg_lat = z * Math.Sin(theta);
+            return new double[] { gg_lng, gg_lat };
+        }
+
         /**
          * 第一个为x，第二位y，第三个为z
          * 

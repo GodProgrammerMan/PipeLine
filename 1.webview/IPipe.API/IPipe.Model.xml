@@ -1079,6 +1079,11 @@
             返回数据集
             </summary>
         </member>
+        <member name="P:IPipe.Model.ViewModels.HoleCoorXYMolde.id">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:IPipe.Model.ViewModels.HoleInfoMolde.model">
             <summary>
             实体数据
@@ -1127,6 +1132,16 @@
         <member name="P:IPipe.Model.ViewModels.TreeLineMolde.id">
             <summary>
             当前Line的id
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.YhDataMolde.testMsg">
+            <summary>
+            隐患信息
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.YhDataMolde.id">
+            <summary>
+            隐患ID
             </summary>
         </member>
     </members>

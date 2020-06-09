@@ -1,44 +1,129 @@
-﻿@{
-    ViewData["Title"] = "EditPipeHole";
+﻿@using IPipe.Model.Models;
+@model hidden_danger;
+@{
+    ViewData["Title"] = "上报隐患";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool isAdd = false;
+    if ("add".Equals(ViewBag.action))
+    {
+        isAdd = true;
+    }
 }
 @section Styles{
     <link rel="stylesheet" href="~/js/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="~/css/site.min.css" media="all">
+    <link href="~/js/cropper/cropper.min.css" rel="stylesheet" />
+    <style>
+        .help-block {
+            color: #999;
+            font-size: 12px;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .form-cus {
+            width: 70%;
+            float: right;
+        }
+
+        .layui-form-item .layui-input-inline {
+            width: 235px;
+        }
+
+        .cur-image {
+            width: 24%;
+            position: absolute;
+            left: 25px;
+            top: 0px;
+            margin-bottom: 0px;
+        }
+
+
+            .cur-image .add-photo.default {
+                height: 170px;
+            }
+
+            .cur-image .select-newimg {
+                padding-top: 55px;
+            }
+
+            .cur-image .add-photo img {
+                height: 170px;
+            }
+
+        .form-cus .layui-form-item.cell {
+            display: table;
+        }
+
+            .form-cus .layui-form-item.cell .layui-inline {
+                display: table-cell;
+            }
+
+        .widget-footer {
+            border: 1px solid #f6f9fd !important;
+            background-color: #f6f9fd;
+            text-align: center;
+            color: rgb(163, 175, 183);
+        }
+
+            .widget-footer span {
+                display: block;
+                line-height: 25px;
+                color: #333;
+            }
+        .layui-unselect {
+            width:auto;
+        }
+    </style>
 }
 <form action="" class="layui-form form-cus">
-
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">隐患名称</label> <div class="layui-input-inline"><input type="text" id="departmentName" value="" name="departmentName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">部门别名</label> <div class="layui-input-inline"><input type="text" id="aliasName" value="@(Model?.aliasName)" name="aliasName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
+            <label class="layui-form-label">隐患名称</label> <div class="layui-input-block"><input type="text" id="hd_name" value="@(isAdd? ViewBag.name: Model?.hd_name)" name="hd_name" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input" style="width: 567px;"></div>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">排序</label> <div class="layui-input-inline"><input type="number" name="sort" id="sort" value="" maxlength="20" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"> <span class="help-block">请输入0~100之间的数字,值为0代表</span></div>
+        <div class="layui-inline">
+            <label class="layui-form-label">处理单位</label> <div class="layui-input-inline"><input type="text" id="handUnit" value="@(Model?.handUnit)" name="handUnit" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">发现隐患时间</label> <div class="layui-input-inline"><input type="text" id="hd_time" value="@(Model?.hd_time)" name="departmentName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">处理时间</label> <div class="layui-input-inline"><input type="text" id="handleTime" value="@(Model?.handleTime)" name="aliasName" maxlength="50" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">处理状态</label>
+        <select name="handleState" id="handleState" lay-verify="">
+            <!option value="0" @(Model?.handleState == 0 ? "selected" : "")>待处理</!option>
+            <!option value="1" @(Model?.handleState == 1 ? "selected" : "")>已处理</!option>
+            <!option value="2" @(Model?.handleState == 2 ? "selected" : "")>处理中</!option>
+        </select>
+        <div class="layui-form-mid layui-word-aux"></div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">隐患内容</label>
         <div class="layui-input-block">
-            <textarea name="remarks" id="remarks" placeholder="请输入隐患内容" class="layui-textarea" autocomplete="off" lay-verify="required" lay-vertype="tips">@(Model?.remarks)</textarea>
+            <textarea name="content" id="content" placeholder="请输入隐患内容" class="layui-textarea" autocomplete="off" lay-verify="required" lay-vertype="tips">@(Model?.content)</textarea>
         </div>
     </div>
     <ul class="addpic-list cur-image clearfix">
         <li>
             <div class="add-photo default" style="height:200px;">
-                <input name="images" id="logo" type="hidden" class="imgv" value="">
-                <div class="select-newimg fyt-cloud @( string.IsNullOrWhiteSpace(Model?.logo)?"":"layui-hide")" style="padding-top: 60px;" id="imgCutBox">
-                    <i class="layui-icon layui-icon-add-circle sizeioc"></i> <span>选择组图片</span>
+                <input name="images" id="GR_img" type="hidden" class="imgv" value="">
+                <div class="select-newimg fyt-cloud @( string.IsNullOrWhiteSpace(Model?.GR_img)?"":"layui-hide")" style="padding-top: 60px;" id="imgCutBox">
+                    <i class="layui-icon layui-icon-add-circle sizeioc"></i> <span>地质雷达图</span>
                 </div>
-                <div class="add-photo-wall @(string.IsNullOrWhiteSpace(Model?.logo)?"layui-hide":"")">
-                    <img id="imgShow" src="@(Model?.logo)" style="height:200px;">
+                <div class="add-photo-wall @(string.IsNullOrWhiteSpace(Model?.GR_img)?"layui-hide":"")">
+                    <img id="imgShow" src="@(Model?.GR_img)" style="height:200px;">
                     <div class="phote-edit">
                         <a href="javascript:$('#imgCutBox').click();" class="photo-tool fyt-cloud"><i class="layui-icon layui-icon-edit"></i>更换</a>
                         <a href="javascript:void(0)" onclick="deleteFile()" class="photo-tool last"><i class="layui-icon layui-icon-delete"></i>删除</a>
                     </div>
-                    <div class="cover">组图片</div>
+                    <div class="cover">地质雷达图</div>
                 </div>
             </div>
         </li>
@@ -49,7 +134,10 @@
         </div>
     </div>
     <input type="hidden" name="id" id="id" value="@Model?.id" />
-    <input type="hidden" name="parentID" id="parentID" value="@(ViewBag.parentID==null?0:ViewBag.parentID)" />
+    <input type="hidden" name="ty" id="ty" value="@(isAdd?ViewBag.ty:Model?.tableType)" />
+    <input type="hidden" name="CoorWgsX" id="CoorWgsX" value="@(isAdd?ViewBag.x:Model?.CoorWgsX)" />
+    <input type="hidden" name="CoorWgsY" id="CoorWgsY" value="@(isAdd?ViewBag.y:Model?.CoorWgsY)" />
+    <input type="hidden" name="objID" id="objID" value="@(isAdd?ViewBag.objID:Model?.objID)" />
 </form>
 @section Scripts{
     <!-- 全局js -->
@@ -57,15 +145,81 @@
     <!-- layer -->
     <script src="~/js/layui/layui.all.js"></script>
     <script>
-        layui.use(['element', 'form'], function () {
+        layui.use(['element', 'form', 'laydate'], function () {
             var form = layui.form;
             var element = layui.element;
-            //监听提交
-            form.on('submit(formDemo)', function (data) {
-                layer.msg(JSON.stringify(data.field));
-                return false;
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#hd_time' //指定元素
+            });
+            laydate.render({
+                elem: '#handleTime' //指定元素
+            });
+        });
+
+                $("#submit").on('click', function () {
+            $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
+            var loadindex = layer.load(1, {
+                shade: [0.1, '#000']
+            });
+            var params = {
+                id: '@(!isAdd? Model?.id : 0)'
+                , hd_name: $("#hd_name").val()
+                , GR_img: $("#GR_img").val()
+                , content: $("#content").val()
+                , hd_time: $("#hd_time").val()
+                , handleTime: $("#handleTime").val()
+                , handleState: $("#handleState").val()
+                , handUnit: $("#handUnit").val()
+                , objID: $("#objID").val()
+                , tableType: $("#ty").val()
+                , CoorWgsY: $("#CoorWgsY").val()
+                , CoorWgsX: $("#CoorWgsX").val()
+                , action: '@(ViewBag.action)'
+            };
+
+            $.post("/hiddenDanger/EditHiddenDanger", params, function (data, status) {
+                $('#submit').attr('disabled', false).find('i').addClass('layui-hide');
+                layer.close(loadindex);
+                if (!data.response) {
+                    layer.msg(data.msg, { icon: 2 });
+                } else {
+
+                }
+            }).error(function () { $('#submit').attr('disabled', false).find('i').addClass('layui-hide');layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
+        })
+    </script>
+
+    <script src="~/js/cropper/cropper.min.js"></script>
+    <script>
+        function deleteFile() {
+            $("#imgCutBox").removeClass("layui-hide");
+            $(".add-photo-wall").addClass("layui-hide");
+            $("#headPortrait").val("");
+        }
+        function blobToDataURL(blob, callback) {
+            var a = new FileReader();
+            a.onload = function (e) { callback(e.target.result); };
+            a.readAsDataURL(blob);
+        }
+
+        var imgData;
+        $(document).ready(function () {
+            $("#imgCutBox").imgCutBox({
+                aspectRatio: 0,//比例
+                limit: false,
+                imgSave: function (me, blob) {
+                    $("#imgCutBox").addClass("layui-hide");
+                    $(".add-photo-wall").removeClass("layui-hide");
+
+                    blobToDataURL(blob, function (dataurl) {
+                        $("#headPortrait").val(dataurl);
+                        $("#imgShow").attr("src", dataurl);
+                    });
+                }
             });
         });
     </script>
+    @await Html.PartialAsync("/Views/Shared/ImageUpPage.cshtml")
 }
 

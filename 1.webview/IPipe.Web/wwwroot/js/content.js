@@ -5,28 +5,48 @@ var lablesShow = false;
 var flowtoShow = false;
 var lineCLICKID = "";
 var holeCLICKID = null;
+var yhPairList = [];
 $(function () {
+    //建筑物
     getbuildList();
-
+    //线与井点数据
     getLineHoles();
-    flyTo(113.9190928199, 22.7842061118, 300);
+    //隐患点数据
+    getYhData();
+
+    initCesium();//起始点
 
     //鼠标事件监听
     var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
     //单击
     handler.setInputAction(function (movement) {
         var pick = viewer.scene.pick(movement.position);
-        console.log(pick);
         if ($('body').hasClass("cousline")) {
-            console.log($('body').css("cursor"));
             if (Cesium.defined(pick) && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
+                var cartesian = viewer.scene.pickPosition(movement.position);
+                let x = 0;
+                let y = 0;
+                let h = 0;
+                if (cartesian) {
+                    let cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+                    y = Cesium.Math.toDegrees(cartographic.latitude).toFixed(10);
+                    x = Cesium.Math.toDegrees(cartographic.longitude).toFixed(10);
+                    h = (viewer.camera.positionCartographic.height / 1000).toFixed(10);
+                }
+
                 //在判断是井还是管段
+                var objID = pick.id.split('$')[1];
+                var name = pick.id.split('_')[2];
                 if (pick.id.indexOf('pipe_hole_') > -1) {
                     //添加管的隐患点
-
+                    showBox('管点' + name + '隐患上报', '/HiddenDanger/index?action=add&ty=1&x=' + x + '&y=' + y + '&name=管点' + name + '隐患&objID=' + objID, ['1100px', '700px']);
+                    //添加隐患成功后渲染
+                    addYHMolde("hole_hy_" + objID, y * 1, x * 1, 4, "井点" + name + "隐患");
                 } else {
-                   //添加管段的隐患点
-
+                    //添加管段的隐患点
+                    showBox('管段' + name + '隐患上报', '/HiddenDanger/index?action=add&ty=2&x=' + x + '&y=' + y + '&name=管段' + name + '隐患&objID=' + objID, ['1100px', '700px']);
+                    //添加隐患成功后渲染
+                    addYHMolde("line_hy_" + objID, y * 1, x * 1, 1.6, "管段" + name + "隐患");
                 }
             } else {
                 os('info', "请选择存在隐患的管段或者井,双击则取消！", '');
@@ -41,7 +61,7 @@ $(function () {
                 holeCLICKID = pick;
                 pick.primitive.color = Cesium.Color.CHOCOLATE;
                 //请求管点信息
-                var holeID = pick.id.split('_')[2];
+                var holeID = pick.id.split('$')[1];
                 var loadindex = layer.load(1, {
                     shade: [0.1, '#000']
                 });
@@ -53,51 +73,7 @@ $(function () {
                         os('success', data.msg, '');
                         $("#property").show();
                         //管点绑数据的开始
-                        var context = "";
-                        context += "<tr><td>项目名称：</td><td>" + data.response.model.prj_Name + "</td></tr>";
-                        context += "<tr><td>Exp_No：</td><td>" + data.response.model.exp_No + "</td></tr>";
-                        context += "<tr><td>井盖类型：</td><td>" + data.response.model.hType + "</td></tr>";
-                        context += "<tr><td>ZType：</td><td>" + data.response.model.zType + "</td></tr>";
-                        context += "<tr><td>深圳独立坐标：</td><td>" + data.response.model.szCoorX + "," + data.response.model.szCoorY + "</td></tr>";
-                        context += "<tr><td>高度：</td><td>" + data.response.model.hight + "</td></tr>";
-                        context += "<tr><td>角度：</td><td>" + data.response.model.rotation + "</td></tr>";
-                        context += "<tr><td>沙井特点：</td><td>" + data.response.model.feature + "</td></tr>";
-                        context += "<tr><td>沙井类型：</td><td>" + data.response.model.subsid + "</td></tr>";
-                        context += "<tr><td>材质：</td><td>" + data.response.model.feaMateria + "</td></tr>";
-                        context += "<tr><td>Spec：</td><td>" + data.response.model.spec + "</td></tr>";
-                        context += "<tr><td>深度：</td><td>" + data.response.model.deep + "</td></tr>";
-                        context += "<tr><td>沙井形状：</td><td>" + data.response.model.wellShape + "</td></tr>";
-                        context += "<tr><td>沙井材质：</td><td>" + data.response.model.wellMater + "</td></tr>";
-                        context += "<tr><td>井管数：</td><td>" + data.response.model.wellPipes + "</td></tr>";
-                        context += "<tr><td>沙井大小：</td><td>" + data.response.model.wellSize + "</td></tr>";
-                        context += "<tr><td>地址：</td><td>" + data.response.model.address + "</td></tr>";
-                        context += "<tr><td>归属：</td><td>" + data.response.model.belong + "</td></tr>";
-                        context += "<tr><td>时间：</td><td>" + data.response.model.mDate + "</td></tr>";
-                        context += "<tr><td>地图编码：</td><td>" + data.response.model.mapCode + "</td></tr>";
-                        context += "<tr><td>所属单位：</td><td>" + data.response.model.sUnit + "</td></tr>";
-                        context += "<tr><td>所属单位：</td><td>" + data.response.model.sUnit + "</td></tr>";
-                        context += "<tr><td>日期：</td><td>" + data.response.model.sDate + "</td></tr>";
-                        context += "<tr><td>更新日期：</td><td>" + data.response.model.updateTime + "</td></tr>";
-                        context += "<tr><td>可见度：</td><td>" + data.response.model.visibility + "</td></tr>";
-                        context += "<tr><td>状态：</td><td>" + data.response.model.status + "</td></tr>";
-                        context += "<tr><td>pointPosit：</td><td>" + data.response.model.pointPosit + "</td></tr>";
-                        context += "<tr><td>操作人员：</td><td>" + data.response.model.operator + "</td></tr>";
-                        context += "<tr><td>备注：</td><td>" + data.response.model.note + "</td></tr>";
-                        $("#InfoTab1").html(context);
-                        $("#InfoTab1 tr td:even").addClass("title");
-                        $("#InfoTab1 tr td:odd").addClass("value");
-
-                        var context = "";
-                        for (var i = 0; i < data.response.dangers.length; i++) {
-                            var item = data.response.dangers[i];
-                            context += "<tr><td colspan='2'>" + item.content + "</td></tr>";
-                            context += "<tr><td colspan='2'>位置：" + item.coorWgsX + "," + item.coorWgsY + "</td></tr>";
-                            context += "<tr><td width='50%' align='center'>" + item.handUnit + "</td><td width='50%' align='center'>" + item.handleTime + "</td></tr>";
-                            context += "<tr><td colspan='2'><img src='" + item.gR_img + "'/></td></tr>";
-                            context += "<tr><td colspan='2' style='height:12px;'></td></tr>";
-                        }
-                        $("#InfoTab2").html(context);
-
+                        bindingHoleDate(data);
                     }
                 }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
             } else {
@@ -111,7 +87,7 @@ $(function () {
                 var attributes = linePrimitive.getGeometryInstanceAttributes(pick.id);
                 attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.CYAN);
                 //请求管线信息
-                var LineID = lineCLICKID.split('_')[3];
+                var LineID = lineCLICKID.split('$')[1];
                 var loadindex = layer.load(1, {
                     shade: [0.1, '#000']
                 });
@@ -123,57 +99,10 @@ $(function () {
                         // os('success', data.msg, '');
                         $("#property").show();
                         //管段绑数据的开始
-                        var context = "";
-                        context += "<tr><td>项目名称：</td><td>" + data.response.model.prj_Name + "</td></tr>";
-                        context += "<tr><td>起始井号：</td><td>" + data.response.model.s_Point + "</td></tr>";
-                        context += "<tr><td>终止井号：</td><td>" + data.response.model.e_Point + "</td></tr>";
-                        context += "<tr><td>起始井深度：</td><td>" + data.response.model.s_Deep + "</td></tr>";
-                        context += "<tr><td>终止井深度：</td><td>" + data.response.model.e_Deep + "</td></tr>";
-                        context += "<tr><td>材质：</td><td>" + data.response.model.material + "</td></tr>";
-                        context += "<tr><td>code：</td><td>" + data.response.model.code + "</td></tr>";
-                        context += "<tr><td>ServiceLif：</td><td>" + data.response.model.serviceLif + "</td></tr>";
-                        context += "<tr><td>管径大小：</td><td>" + data.response.model.pSize + "</td></tr>";
-                        context += "<tr><td>数量：</td><td>" + data.response.model.cabNum + "</td></tr>";
-                        context += "<tr><td>总数：</td><td>" + data.response.model.totalHole + "</td></tr>";
-                        context += "<tr><td>流向：</td><td>" + data.response.model.flowDir + "</td></tr>";
-                        context += "<tr><td>地址：</td><td>" + data.response.model.address + "</td></tr>";
-                        context += "<tr><td>道路编号：</td><td>" + data.response.model.roadcode + "</td></tr>";
-                        context += "<tr><td>填埋方式：</td><td>" + data.response.model.emBed + "</td></tr>";
-                        context += "<tr><td>调查日期：</td><td>" + data.response.model.mDate + "</td></tr>";
-                        context += "<tr><td>SUnit：</td><td>" + data.response.model.sUnit + "</td></tr>";
-                        context += "<tr><td>SDate：</td><td>" + data.response.model.sDate + "</td></tr>";
-                        context += "<tr><td>更新日期：</td><td>" + data.response.model.updateTime + "</td></tr>";
-                        context += "<tr><td>管线编号：</td><td>" + data.response.model.lno + "</td></tr>";
-                        context += "<tr><td>管线类型：</td><td>" + data.response.model.lineType + "</td></tr>";
-                        context += "<tr><td>PDS：</td><td>" + data.response.model.pDS + "</td></tr>";
-                        context += "<tr><td>当前状态：</td><td>" + data.response.model.status + "</td></tr>";
-                        context += "<tr><td>管道长度：</td><td>" + data.response.model.pipeLength + "</td></tr>";
-                        context += "<tr><td>操作人员：</td><td>" + data.response.model.operator + "</td></tr>";
-                        context += "<tr><td>记录：</td><td>" + data.response.model.note + "</td></tr>";
-                        context += "<tr><td>startbotto：</td><td>" + data.response.model.startbotto + "</td></tr>";
-                        context += "<tr><td>startcrow：</td><td>" + data.response.model.startcrow + "</td></tr>";
-                        context += "<tr><td>endbotto：</td><td>" + data.response.model.endbotto + "</td></tr>";
-                        context += "<tr><td>endcrow：</td><td>" + data.response.model.endcrow + "</td></tr>";
-                        context += "<tr><td>Angel：</td><td>" + data.response.model.angel + "</td></tr>";
-                        context += "<tr><td>SHAPE_Leng：</td><td>" + data.response.model.sHAPE_Leng + "</td></tr>";
-                        context += "<tr><td>管道类型：</td><td>" + data.response.model.line_Class + "</td></tr>";
-                        $("#InfoTab1").html(context);
-
-                        $("#InfoTab1 tr td:even").addClass("title");
-                        $("#InfoTab1 tr td:odd").addClass("value");
-
-                        var context = "";
-                        for (var i = 0; i < data.response.dangers.length; i++) {
-                            var item = data.response.dangers[i];
-                            context += "<tr><td colspan='2'>" + item.content + "</td></tr>";
-                            context += "<tr><td colspan='2'>位置：" + item.coorWgsX + "," + item.coorWgsY + "</td></tr>";
-                            context += "<tr><td width='50%' align='center'>" + item.handUnit + "</td><td width='50%' align='center'>" + item.handleTime + "</td></tr>";
-                            context += "<tr><td colspan='2'><img src='" + item.gR_img + "'/></td></tr>";
-                            context += "<tr><td colspan='2' style='height:12px;'></td></tr>";
-                        }
-                        $("#InfoTab2").html(context);
+                        bindingLineDate(data);
                     }
-                }).error(function () {layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
+                }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
+
             }
 
         } 
@@ -217,11 +146,20 @@ $(function () {
                 labels.get(i).show = true;
             }
             lablesShow = true;
+
+            for (var i = 0; i < yhPairList.length; i++) {
+                yhPairList[i].show = true;
+            }
+
         } else if (height > 77 && lablesShow == true) {
             for (var i = 0; i < labels.length; i++) {
                 labels.get(i).show = false;
             }
             lablesShow = false;
+
+            for (var i = 0; i < yhPairList.length; i++) {
+                yhPairList[i].show = false; 
+            }
         }
     })
 
@@ -256,10 +194,10 @@ function getLineHoles() {
                 //添加psize标签
                 if (i < 1000) {
                     var SmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-                        Cesium.Cartesian3.fromDegrees(item.sCoorWgsY, item.sCoorWgsX, 0.0));
+                        Cesium.Cartesian3.fromDegrees(item.sCoorWgsX, item.sCoorWgsY, 0.0));
                     //画S管点
                     var WSmodel = scene.primitives.add(Cesium.Model.fromGltf({
-                        id: "pipe_hole_" + item.sholeID,
+                        id: "pipe_hole_" + item.s_Point +"_$" + item.sholeID,
                         url: holeUrl,
                         modelMatrix: SmodelMatrix,
                         scale: 6,
@@ -269,9 +207,9 @@ function getLineHoles() {
                     holePrimitive.push(WSmodel);
                     //画E管点
                     var EmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-                        Cesium.Cartesian3.fromDegrees(item.eCoorWgsY, item.eCoorWgsX, 0.0));
+                        Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY , 0.0));
                     var YSmodel = scene.primitives.add(Cesium.Model.fromGltf({
-                        id: "pipe_hole_" + item.eholeID,
+                        id: "pipe_hole_" + item.e_Point +"_$" + item.eholeID,
                         url: holeUrl,
                         modelMatrix: EmodelMatrix,
                         scale: 6,
@@ -284,7 +222,7 @@ function getLineHoles() {
                     //管径
                     labels.add({
                         id: "line_labels_" + item.lineID,
-                        position: Cesium.Cartesian3.fromDegrees(item.cCoorWgsY, item.cCoorWgsX, 1.2),
+                        position: Cesium.Cartesian3.fromDegrees(item.cCoorWgsX, item.cCoorWgsY, 1.2),
                         text: item.pSize,
                         font: '20px Helvetica',
                         fillColor: attributes,
@@ -292,10 +230,22 @@ function getLineHoles() {
                     });
 
                     //流向
+                    let slx = (item.sCoorWgsX + item.cCoorWgsX) / 2;
+                    slx = (slx + item.cCoorWgsX) / 2;
+                    slx = (slx + item.cCoorWgsX) / 2;
+                    let sly = (item.sCoorWgsY + item.cCoorWgsY) / 2;
+                    sly = (sly + item.cCoorWgsY) / 2;
+                    sly = (sly + item.cCoorWgsY) / 2;
+                    let elx = (item.cCoorWgsX + item.eCoorWgsX) / 2;
+                    elx = (elx + item.cCoorWgsX) / 2;
+                    elx = (elx + item.cCoorWgsX) / 2;
+                    let ely = (item.cCoorWgsY + item.eCoorWgsY) / 2;
+                    ely = (ely + item.cCoorWgsY) / 2;
+                    ely = (ely + item.cCoorWgsY) / 2;
                     flowto_instances.push(new Cesium.GeometryInstance({
                         id: "flowto_" + item.line_Class + "_" + item.lineID,
                         geometry: new Cesium.PolylineGeometry({
-                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsY, item.sCoorWgsX, 6, item.eCoorWgsY, item.eCoorWgsX, 6]),
+                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([slx, sly, 5, elx, ely , 5]),
                             width: 20.0,
                             vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
                         })
@@ -303,9 +253,9 @@ function getLineHoles() {
 
                     //画管
                     line_instances.push(new Cesium.GeometryInstance({
-                        id: "pipe_line_" + item.line_Class+"_" + item.lineID,
+                        id: "pipe_line_" + item.lno + "_"+ item.line_Class + "$" + item.lineID,
                         geometry: new Cesium.PolylineVolumeGeometry({
-                            polylinePositions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsY, item.sCoorWgsX, 0.5, item.eCoorWgsY, item.eCoorWgsX, 0.5]),
+                            polylinePositions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsX, item.sCoorWgsY, 0.5, item.eCoorWgsX, item.eCoorWgsY , 0.5]),
                             vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
                             shapePositions: computeCircle(0.3)
                         }),
@@ -331,7 +281,8 @@ function getLineHoles() {
                             }
                         }
                     })
-                })
+                }),
+                show: false
             });
             viewer.scene.primitives.add(flowtoPrimitive);
 
@@ -440,4 +391,361 @@ function recoveryHoleColor() {
         holeCLICKID.primitive.color = Cesium.Color.ALICEBLUE;
     }
     holeCLICKID = null;
+}
+function recoveryHoleColor() {
+    if (holeCLICKID != null) {
+        holeCLICKID.primitive.color = Cesium.Color.ALICEBLUE;
+    }
+    holeCLICKID = null;
+}
+
+//隐患点
+function getYhData() {
+    $.get('/home/getYhData', null, function (res, status) {
+        if (res.response != null) {
+            $.each(res.response, function (i, item) {
+                var heg = 1.6;
+                if (item.tableType === "pipe_hole") 
+                    heg = 4;
+                addYHMolde(item.id, item.coorWgsX, item.coorWgsY, heg, item.testMsg);
+            });
+        } 
+    });
+}
+
+function addYHMolde(id, longitude, latitude, heght, yhtext) {
+    //隐患lables
+    labels.add({
+        id: "yh_labels_" + id,
+        position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 5),
+        text: yhtext,
+        font: '20px Helvetica',
+        fillColor: Cesium.Color.RED,
+        show: false
+    });
+
+    //隐患箭头
+    var addyh = new Cesium.Primitive({
+        geometryInstances: new Cesium.GeometryInstance({
+            id: "yh_" + id,
+            geometry: new Cesium.PolylineGeometry({
+                positions: Cesium.Cartesian3.fromDegreesArrayHeights([longitude, latitude, 5, longitude, latitude, heght]),
+                width: 20.0,
+                vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
+            })
+        }), //合并
+        //某些外观允许每个几何图形实例分别指定某个属性，例如：
+        appearance: new Cesium.PolylineMaterialAppearance({
+            material: new Cesium.Material({
+                fabric: {
+                    type: 'PolylineArrow',
+                    uniforms: {
+                        color: Cesium.Color.RED
+                    }
+                }
+            })
+        }),
+        show: false
+    });
+    yhPairList.push(addyh);
+    viewer.scene.primitives.add(addyh);
+}
+
+function bindingHoleDate(data) {
+    var context = "";
+    context += "<tr><td>项目名称：</td><td>" + data.response.model.prj_Name + "</td></tr>";
+    context += "<tr><td>Exp_No：</td><td>" + data.response.model.exp_No + "</td></tr>";
+    context += "<tr><td>井盖类型：</td><td>" + data.response.model.hType + "</td></tr>";
+    context += "<tr><td>ZType：</td><td>" + data.response.model.zType + "</td></tr>";
+    context += "<tr><td>深圳独立坐标：</td><td>" + data.response.model.szCoorX + "," + data.response.model.szCoorY + "</td></tr>";
+    context += "<tr><td>高度：</td><td>" + data.response.model.hight + "</td></tr>";
+    context += "<tr><td>角度：</td><td>" + data.response.model.rotation + "</td></tr>";
+    context += "<tr><td>沙井特点：</td><td>" + data.response.model.feature + "</td></tr>";
+    context += "<tr><td>沙井类型：</td><td>" + data.response.model.subsid + "</td></tr>";
+    context += "<tr><td>材质：</td><td>" + data.response.model.feaMateria + "</td></tr>";
+    context += "<tr><td>Spec：</td><td>" + data.response.model.spec + "</td></tr>";
+    context += "<tr><td>深度：</td><td>" + data.response.model.deep + "</td></tr>";
+    context += "<tr><td>沙井形状：</td><td>" + data.response.model.wellShape + "</td></tr>";
+    context += "<tr><td>沙井材质：</td><td>" + data.response.model.wellMater + "</td></tr>";
+    context += "<tr><td>井管数：</td><td>" + data.response.model.wellPipes + "</td></tr>";
+    context += "<tr><td>沙井大小：</td><td>" + data.response.model.wellSize + "</td></tr>";
+    context += "<tr><td>地址：</td><td>" + data.response.model.address + "</td></tr>";
+    context += "<tr><td>归属：</td><td>" + data.response.model.belong + "</td></tr>";
+    context += "<tr><td>时间：</td><td>" + data.response.model.mDate + "</td></tr>";
+    context += "<tr><td>地图编码：</td><td>" + data.response.model.mapCode + "</td></tr>";
+    context += "<tr><td>所属单位：</td><td>" + data.response.model.sUnit + "</td></tr>";
+    context += "<tr><td>所属单位：</td><td>" + data.response.model.sUnit + "</td></tr>";
+    context += "<tr><td>日期：</td><td>" + data.response.model.sDate + "</td></tr>";
+    context += "<tr><td>更新日期：</td><td>" + data.response.model.updateTime + "</td></tr>";
+    context += "<tr><td>可见度：</td><td>" + data.response.model.visibility + "</td></tr>";
+    context += "<tr><td>状态：</td><td>" + data.response.model.status + "</td></tr>";
+    context += "<tr><td>pointPosit：</td><td>" + data.response.model.pointPosit + "</td></tr>";
+    context += "<tr><td>操作人员：</td><td>" + data.response.model.operator + "</td></tr>";
+    context += "<tr><td>备注：</td><td>" + data.response.model.note + "</td></tr>";
+    $("#InfoTab1").html(context);
+    $("#InfoTab1 tr td:even").addClass("title");
+    $("#InfoTab1 tr td:odd").addClass("value");
+
+    var context = "";
+    for (var i = 0; i < data.response.dangers.length; i++) {
+        var item = data.response.dangers[i];
+        context += "<tr><td colspan='2'>" + item.content + "</td></tr>";
+        context += "<tr><td colspan='2'>位置：" + item.coorWgsX + "," + item.coorWgsY + "</td></tr>";
+        context += "<tr><td width='50%' align='center'>" + item.handUnit + "</td><td width='50%' align='center'>" + item.handleTime + "</td></tr>";
+        context += "<tr><td colspan='2'><img src='" + item.gR_img + "'/></td></tr>";
+        context += "<tr><td colspan='2' style='height:12px;'></td></tr>";
+    }
+    $("#InfoTab2").html(context);
+}
+function bindingLineDate(data) {
+    var context = "";
+    //context += "<tr><td>项目名称：</td><td>" + data.response.model.prj_Name + "</td></tr>";
+    context += "<tr><td>起始井号：</td><td>" + data.response.model.s_Point + "</td></tr>";
+    context += "<tr><td>终止井号：</td><td>" + data.response.model.e_Point + "</td></tr>";
+    context += "<tr><td>起始井深度：</td><td>" + data.response.model.s_Deep + "</td></tr>";
+    context += "<tr><td>终止井深度：</td><td>" + data.response.model.e_Deep + "</td></tr>";
+    context += "<tr><td>材质：</td><td>" + data.response.model.material + "</td></tr>";
+    context += "<tr><td>code：</td><td>" + data.response.model.code + "</td></tr>";
+    context += "<tr><td>ServiceLif：</td><td>" + data.response.model.serviceLif + "</td></tr>";
+    context += "<tr><td>管径大小：</td><td>" + data.response.model.pSize + "</td></tr>";
+    context += "<tr><td>数量：</td><td>" + data.response.model.cabNum + "</td></tr>";
+    context += "<tr><td>总数：</td><td>" + data.response.model.totalHole + "</td></tr>";
+    context += "<tr><td>流向：</td><td>" + data.response.model.flowDir + "</td></tr>";
+    context += "<tr><td>地址：</td><td>" + data.response.model.address + "</td></tr>";
+    context += "<tr><td>道路编号：</td><td>" + data.response.model.roadcode + "</td></tr>";
+    context += "<tr><td>填埋方式：</td><td>" + data.response.model.emBed + "</td></tr>";
+    context += "<tr><td>调查日期：</td><td>" + data.response.model.mDate + "</td></tr>";
+    context += "<tr><td>SUnit：</td><td>" + data.response.model.sUnit + "</td></tr>";
+    context += "<tr><td>SDate：</td><td>" + data.response.model.sDate + "</td></tr>";
+    context += "<tr><td>更新日期：</td><td>" + data.response.model.updateTime + "</td></tr>";
+    context += "<tr><td>管线编号：</td><td>" + data.response.model.lno + "</td></tr>";
+    context += "<tr><td>管线类型：</td><td>" + data.response.model.lineType + "</td></tr>";
+    //context += "<tr><td>PDS：</td><td>" + data.response.model.pDS + "</td></tr>";
+    context += "<tr><td>当前状态：</td><td>" + data.response.model.status + "</td></tr>";
+    context += "<tr><td>管道长度：</td><td>" + data.response.model.pipeLength + "</td></tr>";
+    context += "<tr><td>操作人员：</td><td>" + data.response.model.operator + "</td></tr>";
+    context += "<tr><td>记录：</td><td>" + data.response.model.note + "</td></tr>";
+    context += "<tr><td>startbotto：</td><td>" + data.response.model.startbotto + "</td></tr>";
+    context += "<tr><td>startcrow：</td><td>" + data.response.model.startcrow + "</td></tr>";
+    context += "<tr><td>endbotto：</td><td>" + data.response.model.endbotto + "</td></tr>";
+    context += "<tr><td>endcrow：</td><td>" + data.response.model.endcrow + "</td></tr>";
+    context += "<tr><td>Angel：</td><td>" + data.response.model.angel + "</td></tr>";
+    //context += "<tr><td>SHAPE_Leng：</td><td>" + data.response.model.sHAPE_Leng + "</td></tr>";
+    context += "<tr><td>管道类型：</td><td>" + data.response.model.line_Class + "</td></tr>";
+    $("#InfoTab1").html(context);
+
+    $("#InfoTab1 tr td:even").addClass("title");
+    $("#InfoTab1 tr td:odd").addClass("value");
+
+    var context = "";
+    for (var i = 0; i < data.response.dangers.length; i++) {
+        var item = data.response.dangers[i];
+        context += "<tr><td colspan='2'>" + item.content + "</td></tr>";
+        context += "<tr><td colspan='2'>位置：" + item.coorWgsX + "," + item.coorWgsY + "</td></tr>";
+        context += "<tr><td width='50%' align='center'>" + item.handUnit + "</td><td width='50%' align='center'>" + item.handleTime + "</td></tr>";
+        context += "<tr><td colspan='2'><img src='" + item.gR_img + "'/></td></tr>";
+        context += "<tr><td colspan='2' style='height:12px;'></td></tr>";
+    }
+    $("#InfoTab2").html(context);
+
+    //cctv数据
+    if (data.response.cctvID != 0) {
+        var load  = layer.msg('正在获取CCTV资料...', {
+            icon: 16
+            , shade: 0.01
+        });
+        //获取cctv信息
+        $.get('/home/getCCTVInfoByID', { pipeid: data.response.cctvID }, function (res, status) {
+            layer.close(load);
+            if (res.response != null) {
+                let cctvdata = $.parseJSON(res.response);
+                $("#cctvInfo").html(bindingCCTVDate(cctvdata.msg));
+                os('success', "获取cctv资料成功！", '');
+            } else {
+                os('error', "该CCTV数据远程系统正在占用，请稍后再试！", '');
+            }
+        });
+
+        $("#cctvInfoTab").show();
+    } else {
+        $("#cctvInfoTab").hide();
+    }
+}
+
+function bindingCCTVDate(pipe) {
+    var path = "http://106.53.90.211:8080/cctvImage/";
+    var itemhtml = '';
+    var imgs1Src = '/cctv-ch/img/00001.png';
+    if (pipe.items != null) {
+        $.each(pipe.items, function (index, item) {
+            var aStr = "";
+            if (item.path == null || item.path.length <= 0) {
+                item.path = '';
+            } else if (index == 0) {
+                imgs1Src = path + item.path + ".png";
+            }
+            if (index == 0) {
+                aStr = "▶";
+            }
+            itemhtml += '<tr onclick="tab3_tr(this)">' +
+                '<td align="center"><a>' + aStr + '</a></td>' +
+                '<td>' + item.dist + '</td>' +
+                '<td>' + item.code + '</td>' +
+                '<td>' + item.grade + '</td>' +
+                '<td>' + item.location + '</td>' +
+                '<td>' + item.picture + '</td>' +
+                '<td>' + item.remarks + '</td>' +
+                '<td style="display:none">' + item.path + '</td>' +
+                '</tr>';
+        });
+    }
+
+    if (itemhtml == "" || itemhtml.length <= 0) {
+        itemhtml = '<tr onclick="tab3_tr(this)">' +
+            '<td align="center"><a>▶</a></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td style="display:none"></td>' +
+            '</tr>' +
+            '<tr onclick="tab3_tr(this)">' +
+            '<td align="center"><a></a></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td style="display:none"></td>' +
+            '</tr>';
+    }
+
+
+    var s_Str = "";
+    if (pipe.value[3] != 0)
+        s_Str = '<div class="tishi">管段结构性缺陷等级为' + getkeyvlaue(pipe.sMEvaluate)[0] + ',' + getkeyvlaue(pipe.sMEvaluate)[1] + ',' + getkeyvlaue(pipe.sEvaluate)[1] + '。</div>';
+
+    var m_Str = "";
+    if (pipe.value[8] != 0)
+        m_Str = '<div class="tishi">管段结构性缺陷等级为' + getkeyvlaue(pipe.yEvaluate)[0] + ',' + getkeyvlaue(pipe.yMEvaluate)[1] + ',' + getkeyvlaue(pipe.yEvaluate)[1] + '。</div>';
+
+
+    var sm_Str = '<div class="tishi">管段修复等级为' + getkeyvlaue(pipe.rIEvaluate)[0] + ',' + getkeyvlaue(pipe.rIEvaluate)[1] + '；养护等级为' + getkeyvlaue(pipe.mIEvaluate)[0] + ',' + getkeyvlaue(pipe.mIEvaluate)[1] + '。</div>';
+
+    var html = '<table id="tab1" class="cesium-infoBox-defaultTable">' +
+        '<tbody><tr>' +
+        '<td  align="right">录像文件</td>' +
+        '<td  align="center" id="videoid">' + pipe.video + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td align="right">检测方向</td>' +
+        '<td align="center" id="direction">' + pipe.direction + '</td>' +
+        '<td align="right">检测日期</td>' +
+        '<td align="center" id="date">' + pipe.date + '</td>' +
+        '</tr>' +
+        '</tbody></table>' +
+        '<table id="tab2">' +
+        '<tbody><tr height="30px">' +
+        '<td style="text-indent:10px;">视频</td>' +
+        '<td style="text-indent:10px;">图片</td>' +
+        '</tr>' +
+        '<tr align="center">' +
+        '<td><video onclick="video(this)" ondblclick="dbvideo(this)" id="video" poster="/img/poster.png" controls="controls" style="width: 186px;"></video></td>' +
+        '<td><img id="image" src="' + imgs1Src + '" title="图片浏览" onclick="imgset(this)"  style="width: 240px;"></td>' +
+        '</tr>' +
+        '</tbody></table><div class="clear"></div>' +
+        '<div id="itemMemu">' +
+        '<div>记录数据</div>' +
+        '</div>' +
+        '<div id="showItem">' +
+        '<table id="tab3">' +
+        '<thead>' +
+        '<tr height="30px">' +
+        '<th width="4%" rowspan="2"></th>' +
+        '<th width="12%" rowspan="2">距离(m)</th>' +
+        '<th width="12%" rowspan="2">缺陷代码</th>' +
+        '<th width="12%" rowspan="2">等级</th>' +
+        '<th width="12%" rowspan="2">位置</th>' +
+        '<th width="12%" rowspan="2">照片序号</th>' +
+        '<th width="36%" rowspan="2">备注</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody id="pipeItem">' + itemhtml +
+        '</tbody>' +
+        '</table>' +
+        '</div>' +
+        '<input type="file" id="file1" accept="video/*" style="display:none" onchange="file1change(this)"><input type="file" id="file2" accept="image/*" style="display:none">' +
+        '<div class="footerShell">' +
+        '<div class="footer">' +
+        '<div>' +
+        '<div class="layui-card-header">管段分析</div>' +
+        '</div>' + s_Str + m_Str + sm_Str +
+        '</div>' +
+        '</div>';
+    return html;
+}
+function getkeyvlaue(kv) {
+    var keyvlaue = [];
+    for (var key in kv) {
+        keyvlaue[0] = key;
+        keyvlaue[1] = kv[key];
+    }
+    return keyvlaue;
+}
+function imgset(obj) {
+    var imgsrc = $(obj).attr("src");
+    layer.open({
+        type: 1,
+        title: false,
+        closeBtn: 0,
+        area: '350px',
+        skin: 'layui-layer-nobg', //没有背景色
+        shadeClose: true,
+        content: '<div id="tong" class="hide" ><img style="width:350px;" src="' + imgsrc + '"></div>'
+    });
+}
+
+function file1change(obj) {
+    if (!obj.files || !obj.files[0])
+        return false;
+    var url = getURL(obj.files[0]);
+    $("#video").attr("src", url);
+    $("#video").attr("poster", "");
+    obj.value = "";
+}
+
+/** 根据文件获取路径 */
+function getURL(file) {
+    var url = null;
+    if (window.createObjectURL != undefined)
+        url = window.createObjectURL(file);
+    else if (window.URL != undefined)
+        url = window.URL.createObjectURL(file);
+    else if (window.webkitURL != undefined)
+        url = window.webkitURL.createObjectURL(file);
+    return url;
+}
+
+function tab3_tr(obj) {
+    var path = "http://106.53.90.211:8080/cctvImage/";
+    $("#tab3 tbody tr a").text("");
+    $(obj).find("td:eq(0) a").text("▶");
+    var value = $(obj).find("td:last").text();
+    if (value != "" && value.length < 40)
+        $("#image").attr("src", path + value + ".png");
+    else
+        $("#image").attr("src", "/cctv-ch/img/00001.png");
+
+}
+
+function dbvideo(obj) {
+    $("#file1").click();
+    console.log("");
+}
+function video(obj) {
+    if ($(obj).attr("src") != undefined && $(obj).attr("src") != "")
+        obj.paused ? obj.play() : obj.pause();
 }

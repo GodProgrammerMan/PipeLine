@@ -4,6 +4,7 @@ using IPipe.IServices;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
 using IPipe.Services.BASE;
+using System.Collections.Generic;
 
 namespace IPipe.Services
 {
@@ -16,9 +17,19 @@ namespace IPipe.Services
             base.BaseDal = dal;
         }
 
+        public List<HoleCoorXYMolde> getHoleCoorXY()
+        {
+            return _dal.GetHoleCoor();
+        }
+
         public HoleInfoMolde GetHoleInfoByID(int id)
         {
             return _dal.GetHoleInfoByID(id);
+        }
+
+        public void UpdateWgsXY(double X, double Y, int id)
+        {
+             _dal.UpdateWgsXY(X,Y,id);
         }
     }
 }

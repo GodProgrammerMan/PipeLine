@@ -116,5 +116,5 @@ function showBox(titleStr, urlstr, area) {
 }
 
 function initCesium() {
-    flyTo(113.9190928199, 22.7842061118, 300);
+    flyTo(113.9190282019, 22.7821815641, 300);
 }

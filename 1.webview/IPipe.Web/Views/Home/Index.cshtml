@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="~/js/layui/css/layui.css" media="all">
     <link href="~/css/showmap.css" rel="stylesheet">
     <link href="~/js/cesium/Widgets/widgets.css" rel="stylesheet">
+    <style>
+        .layui-form-label {
+           width:122px;
+        }
+    </style>
 }
 <div id="naviMain">
     <div id="idt_log">
@@ -75,35 +80,66 @@
                             <h3><a href="#">图层显示</a></h3>
                             <dl>
                                 <dl>
-                                    <dt>是</dt>
+                                    <dt>管道数据</dt>
                                     <dd>
-                                        <a class="ui-link" href="#">西湖龙井</a>
-                                        <a class="ui-link" href="#">龙井</a>
-                                        <a class="ui-link" href="#">黄山毛峰</a>
-                                        <a class="ui-link" href="#">安吉白茶</a>
-                                        <a class="ui-link" href="#">其他绿茶</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">管段</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="lineShow">
+                                                </div>
+                                                <label class="layui-form-label">管点</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="hoelShow">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">CCTV按等级显示</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="显示" lay-skin="primary" lay-filter="CCTVShow">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">管径</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="psizeShow">
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                                 <dl>
-                                    <dt>编辑</dt>
+                                    <dt>流向与隐患</dt>
                                     <dd>
-                                        <a class="ui-link" href="">铁观音</a>
-                                        <a class="ui-link" href="">大红袍</a>
-                                        <a class="ui-link" href="">水仙</a>
-                                        <a class="ui-link" href="">肉桂</a>
-                                        <a class="ui-link" href="">台湾乌龙</a>
-                                        <a class="ui-link" href="">其他乌龙茶</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">流向</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="flowShow">
+                                                </div>
+                                                <label class="layui-form-label">隐患</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="yhShow">
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                                 <dl>
-                                    <dt>显示</dt>
+                                    <dt>其他</dt>
                                     <dd>
-                                        <a class="ui-link" href="">铁观音</a>
-                                        <a class="ui-link" href="">大红袍</a>
-                                        <a class="ui-link" href="">水仙</a>
-                                        <a class="ui-link" href="">肉桂</a>
-                                        <a class="ui-link" href="">台湾乌龙</a>
-                                        <a class="ui-link" href="">其他乌龙茶</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">地球</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="exShow">
+                                                </div>
+                                                <label class="layui-form-label">建筑白膜</label>
+                                                <div class="layui-input-block">
+                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="buildShow">
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                             </dl>
@@ -203,35 +239,40 @@
                     <li class="a3">
                         <div class="tx"><a href=""><div class="menu_i"><i class="layui-icon layui-icon-survey"></i></div><div class="menu_span">排水管线隐患</div></a> </div>
                         <div class="pop">
-                            <h3><a href="">花草保健茶</a></h3>
                             <dl>
                                 <dl>
-                                    <dt>瘦身</dt>
+                                    <dt>管隐患</dt>
                                     <dd>
-                                        <a class="ui-link" href="">玫瑰荷叶茶</a>
-                                        <a class="ui-link" href="">玄米茶</a>
-                                        <a class="ui-link" href="">兰香子</a>
-                                        <a class="ui-link" href="">纤维泡腾片</a>
-                                        <a class="ui-link" href="">青梅苹果酸</a>
-                                        <a class="ui-link" href="">三草茶</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">隐患统计</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                                <label class="layui-form-label">隐患任务</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
+                                
                                 <dl>
-                                    <dt>美容</dt>
+                                    <dt>井隐患</dt>
                                     <dd>
-                                        <a class="ui-link" href="">法兰西玫瑰</a>
-                                        <a class="ui-link" href="">冻干柠檬片</a>
-                                        <a class="un ui-link" href="">果粒茶</a>
-                                        <a class="ui-link" href="">大麦茶</a>
-                                        <a class="ui-link" href="">蜂蜜抹茶粉</a>
-                                    </dd>
-                                </dl>
-                                <dl>
-                                    <dt>丰胸</dt>
-                                    <dd>
-                                        <a class="ui-link" href="">木瓜葛根粉</a>
-                                        <a class="ui-link" href="">蜂蜜木瓜粉</a>
-                                        <a class="ui-link" href="">红酒木瓜丽人饮</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">隐患统计</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                                <label class="layui-form-label">隐患任务</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                             </dl>
@@ -241,28 +282,40 @@
                     <li class="a4">
                         <div class="tx"><a href=""><div class="menu_i"><i class="layui-icon layui-icon-chart-screen"></i></div><div class="menu_span">数据报表</div></a> </div>
                         <div class=pop>
-                            <h3><a href="">精选茶具</a></h3>
                             <dl>
                                 <dl>
-                                    <dt>陶瓷</dt>
+                                    <dt>隐患统计</dt>
                                     <dd>
-                                        <a class="ui-link" href="">茶叶罐</a>
-                                        <a class="ui-link" href="">功夫茶具</a>
-                                        <a class="ui-link" href="">茶壶</a>
-                                        <a class="ui-link" href="">茶宠</a>
-                                        <a class="ui-link" href="">茶杯</a>
-                                        <a class="ui-link" href="">茶具礼盒</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">隐患处理统计</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                                <label class="layui-form-label">隐患未处理统计</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                             </dl>
                             <dl>
-                                <dt>品牌</dt>
+                                <dt>管道数据</dt>
                                 <dd>
-                                    <a href="">恒越</a>
-                                    <a href="">卓越</a>
-                                    <a href="">国尊陶瓷</a>
-                                    <a href="">宏远达</a>
-                                    <a href="">福万利</a>
+                                    <form class="layui-form" action="">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">管段数据统计</label>
+                                            <div class="layui-input-block">
+
+                                            </div>
+                                            <label class="layui-form-label">管点数据统计</label>
+                                            <div class="layui-input-block">
+
+                                            </div>
+                                        </div>
+                                    </form>
                                 </dd>
                             </dl>
                             <div class="clr"></div>
@@ -276,23 +329,39 @@
                             </a>
                         </div>
                         <div class="pop">
-                            <h3><a href="">可口茶食</a></h3>
                             <dl>
                                 <dl>
-                                    <dt>干果</dt>
+                                    <dt>开发接口</dt>
                                     <dd>
-                                        <a class="ui-link" href="">杏仁</a>
-                                        <a class="ui-link" href="">瓜子</a>
-                                        <a class="un ui-link" href="">开心果</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">接口类别</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                                <label class="layui-form-label">接口安全</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                                 <dl>
-                                    <dt>零食</dt>
+                                    <dt>安全设置</dt>
                                     <dd>
-                                        <a class="ui-link" href="">水晶柠檬片</a>
-                                        <a class="ui-link" href="">方块酥</a>
-                                        <a class="ui-link" href="javascript:;">凤梨酥</a>
-                                        <a class="ui-link" href="">燕麦巧克力</a>
+                                        <form class="layui-form" action="">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">数据导出</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                                <label class="layui-form-label">数据存储</label>
+                                                <div class="layui-input-block">
+
+                                                </div>
+                                            </div>
+                                        </form>
                                     </dd>
                                 </dl>
                             </dl>
@@ -328,8 +397,9 @@
                 <ul class="layui-tab-title">
                     <li class="layui-this">基本信息</li>
                     <li>隐患信息</li>
+                    <li id="cctvInfoTab" style="display:none;">CCTV信息</li>
                 </ul>
-                <div class="layui-tab-content">
+                <div class="layui-tab-content" style="max-height:634px;overflow-y:scroll;">
                     <div class="layui-tab-item layui-show">
                         <table id="InfoTab1">
                             <tr>
@@ -370,6 +440,22 @@
                     <div class="layui-tab-item">
                         <table id="InfoTab2"></table>
                     </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-collapse">
+                            <div class="layui-colla-item">
+                                <h2 class="layui-colla-title">2018年11月15日CCTV资料</h2>
+                                <div class="layui-colla-content layui-show" id="cctvInfo">
+
+                                </div>
+                            </div>
+                            <div class="layui-colla-item">
+                                <h2 class="layui-colla-title">2016年8月15日CCTV资料</h2>
+                                <div class="layui-colla-content">
+                                    CCTV数据已导出
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!--
@@ -378,7 +464,7 @@
      -->
         </div>
     </div>
-    <div id="localtion">当前坐标：x=<span id="lng"></span>，y=<span id="lat"></span>，h=<span id="heght"></span></div>
+    <div id="localtion">当前坐标：经度：<span id="lng"></span>，纬度：<span id="lat"></span>，高度：<span id="heght"></span></div>
     <!-- 作图菜单 -->
     <div class="PathInner" id="PathMenu">
         <div class="PathMain">

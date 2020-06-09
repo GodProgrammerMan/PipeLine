@@ -7,6 +7,7 @@ namespace IPipe.Model.ViewModels
 {
     public class LineInfoMolde
     {
+        public int cctvID { get; set; }
         /// <summary>
         /// 实体数据
         /// </summary>

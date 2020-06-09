@@ -27,18 +27,18 @@ namespace IPipe.Repository
             LineHoleDateModel lineHoleDateModel = new LineHoleDateModel();
             var WSholeDate = Db.Queryable<pipe_hole>()
                 .Where(t=>t.HType.Equals("WS"))
-                .Select(t => new HoleDateMolde() { hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
+                .Select(t => new HoleDateMolde() { hight = t.hight,szCoorX = t.szCoorX, szCoorY = t.szCoorY, hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
                 .Take(1000)
                 .ToList();
             var YSholeDate = Db.Queryable<pipe_hole>()
                 .Where(t => t.HType.Equals("YS"))
                 .Take(1000)
-                .Select(t => new HoleDateMolde() { hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
+                .Select(t => new HoleDateMolde() { hight = t.hight, szCoorX = t.szCoorX , szCoorY = t.szCoorY,hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
                 .ToList();
             WSholeDate.AddRange(YSholeDate);
             lineHoleDateModel.holeDateMoldes = WSholeDate;
             var LineDate = Db.Queryable<pipe_line>()
-                           .Select(t => new LineDateMolde() { pSize = t.PSize ,line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
+                           .Select(t => new LineDateMolde() { Lno =  t.Lno,pSize = t.PSize ,line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
                            .ToList();
             List<HoleDateMolde> reholeDateMoldes = new List<HoleDateMolde>();
             List<LineDateMolde> relineDateMoldes = new List<LineDateMolde>();
@@ -51,18 +51,19 @@ namespace IPipe.Repository
                 double [] sCoorWgs=new double[] { Shole.CoorWgsX, Shole.CoorWgsY };
                 double[] eCoorWgs = new double[] { Ehole.CoorWgsX, Ehole.CoorWgsY };
                 if (isBd) {
-                     sCoorWgs = CoordinateCalculation.WGS84TOBD(sCoorWgs);
-                     eCoorWgs = CoordinateCalculation.WGS84TOBD(eCoorWgs);
+                     sCoorWgs = CoordinateCalculation.shenzhenToBd(Shole.szCoorX, Shole.szCoorY, Shole.hight);
+                     eCoorWgs = CoordinateCalculation.shenzhenToBd(Ehole.szCoorX, Ehole.szCoorY, Shole.hight);
                 }
-
+                item.S_Point = Shole.Exp_No;
+                item.E_Point = Ehole.Exp_No;
                 item.sCoorWgsX = sCoorWgs[0];
                 item.sCoorWgsY = sCoorWgs[1];
                 item.eDeep = Shole.Deep;
                 item.eCoorWgsX = eCoorWgs[0];
                 item.eCoorWgsY = eCoorWgs[1];
                 item.sDeep = Ehole.Deep;
-                item.cCoorWgsX = ((sCoorWgs[0] + eCoorWgs[0]) / 2).ToString("0.0000#").ObjToMoney();
-                item.cCoorWgsY = ((sCoorWgs[1] + eCoorWgs[1]) / 2).ToString("0.0000#").ObjToMoney();
+                item.cCoorWgsX = ((sCoorWgs[0] + eCoorWgs[0]) / 2).ObjToMoney();
+                item.cCoorWgsY = ((sCoorWgs[1] + eCoorWgs[1]) / 2).ObjToMoney();
                 if (!reholeDateMoldes.Any(t => t.holeID == Shole.holeID))
                     reholeDateMoldes.Add(Shole);
                 if (!reholeDateMoldes.Any(t => t.holeID == Ehole.holeID))

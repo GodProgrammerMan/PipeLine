@@ -1,0 +1,223 @@
+﻿@{
+    Layout = null;
+}
+    <script type="text/html" id="imgWrapper">
+        <div style="padding:20px;">
+            <div class="layui-row" style="margin:10px 0;">
+                <div class="layui-col-md3">
+                    <input id="cutBoxImgData" type="file" style="display:none;" />
+                    <a class="layui-btn layui-btn-primary" onclick="$('#cutBoxImgData').click();"><i class="layui-icon layui-icon-picture"></i> 选择图片</a>
+                </div>
+                <div class="layui-col-md9">
+                    <span id="cutBoxImgName" style="line-height:38px;"></span>
+                </div>
+            </div>
+            <div class="layui-row" style="margin:10px 0;">
+                <h5 id="cutBoxTip" style="color:red;">注：选择的图片宽度要大于<span id="cutBoxLabelWidth"></span>像素，裁剪后宽度需大于<span id="cutBoxLabelMinWidth"></span>像素小于<span id="cutBoxLabelMaxWidth"></span>像素。</h5>
+                <div class="layui-col-md8">
+                    <div style="width:100%; height:300px; box-shadow: inset 0 0 5px rgba(0,0,0,.25); background-color: #fcfcfc;">
+                        <img id="cutBoxImg" style="max-height:100%;max-width:100%;" />
+                    </div>
+                </div>
+                <div class="layui-col-md4" style="text-align:center;">
+                    <div style="font-size:20px; margin-bottom:10px;">效果预览</div>
+                    <div class="img-preview" style="width: 280px; height: 210px; overflow:hidden; margin:auto;">
+                    </div>
+                    <p style="color: red;">像素大小（宽：<span id="cutBoxWidth"></span>，高：<span id="cutBoxHeight"></span>）</p>
+                </div>
+            </div>
+            <div class="row" style="margin:10px 0;">
+                <div class="layui-col-md4">
+                    <div class="btn-group">
+                        <a class="layui-btn" onclick="if (cropper) cropper.rotate(-45);"><i class="fa fa-mail-reply"></i> 向左旋转</a>
+                        <a class="layui-btn" onclick="if (cropper) cropper.rotate(45);"><i class="fa fa-mail-forward"></i> 向右旋转</a>
+                    </div>
+                </div>
+                <div class="layui-col-md4">
+                    <div class="btn-group">
+                        <a class="layui-btn" onclick="if (cropper) cropper.zoom(0.1);"><i class="fa fa-search-plus"></i> 放大</a>
+                        <a class="layui-btn" onclick="if (cropper) cropper.zoom(-0.1);"><i class="fa fa-search-minus"></i> 缩小</a>
+                        <a class="layui-btn" onclick="if (cropper) cropper.reset();"><i class="layui-icon layui-icon-refresh-3"></i> 重置</a>
+                    </div>
+                </div>
+                <div class="layui-col-md4">
+                    <a id="cutBoxSaveBtn" class="layui-btn layui-btn-normal"><i class="fa fa-save"></i> 保存修改</a>
+                </div>
+            </div>
+        </div>
+    </script>
+
+<script>
+    var cropper;
+    $.fn.imgCutBox = function (options) {
+        var imgIndex, _this, _targetImg, filename, _layero;
+        var defaults = {
+            aspectRatio: 4 / 3,//比例
+            minWidth: 280,//最小宽度
+            maxWidth: 800,//最大宽度
+            limit: true,//是否限制像素
+            inited: function () {//初始化完成时调用
+
+            },
+            fileChange: function (base64Str) {//图片改变时调用
+
+            },
+            imgSave: function (me, blob, filename) {//图片保存时调用
+
+            }
+        }
+
+        options = $.extend({}, defaults, options);
+
+        $(this).click(function () {
+            _this = $(this);
+            imgEdit();
+            options.inited();
+        });
+
+        //编辑弹窗
+        function imgEdit() {
+            imgIndex = layer.open({
+                title: "裁剪图片",
+                type: 1,
+                content: $("#imgWrapper").html(),
+                area: ['90%','95%'],
+                success: function (layero, index) {
+                    _layero = layero;
+                    _targetImg = $("#" + _this.attr("for"));
+
+                    if (!options.limit) {
+                        layero.find("#cutBoxTip").hide();
+                    } else {
+                        layero.find("#cutBoxTip").show();
+                        layero.find("#cutBoxLabelWidth").text(options.minWidth);
+                        layero.find("#cutBoxLabelMinWidth").text(options.minWidth);
+                        layero.find("#cutBoxLabelMaxWidth").text(options.maxWidth);
+                    }
+
+                    layero.find("#cutBoxImgData").bind("change", function () {
+                        ImgDataChange(this);
+                    });
+                    layero.find("#cutBoxSaveBtn").bind("click", function () {
+                        SaveBtnClick();
+                    });
+                    options.inited();
+                },
+                end: function () {
+                    destroy();
+                }
+            });
+        }
+
+        //设置图片剪裁插件
+        function setCropper(url) {
+            if (cropper) {
+                cropper.replace(url);
+            } else {
+                var cutBoxImg = document.getElementById("cutBoxImg");
+                cutBoxImg.onload = function () {
+                    cropper = new Cropper(cutBoxImg, {
+                        aspectRatio: options.aspectRatio,
+                        viewMode: 1,
+                        preview: ".img-preview",
+                        ready: function () {
+                            var data = this.cropper.getData();
+                            _layero.find("#cutBoxWidth").text(Math.floor(data.width));
+                            _layero.find("#cutBoxHeight").text(Math.floor(data.height));
+                        },
+                        crop: function () {
+                            var data = this.cropper.getData();
+                            _layero.find("#cutBoxWidth").text(Math.floor(data.width));
+                            _layero.find("#cutBoxHeight").text(Math.floor(data.height));
+                        }
+                    });
+                    console.log(cropper);
+                }
+                cutBoxImg.src = url;
+            }
+        }
+
+        //图片转base64
+        function ImgDataChange(me) {
+            var _this = me;
+            var reader = new FileReader();
+            var file = _this.files[0];
+            var imgUrlBase64;
+            if (file) {
+                var index = layer.load();
+                imgUrlBase64 = reader.readAsDataURL(file);
+                reader.onload = function (e) {
+                    var img = new Image(), dataUrl = reader.result;
+                    img.onload = function () {
+                        if (options.limit && img.width <= options.minWidth) {//判断选择图片宽度是否大于280
+                            layer.alert("请选择宽度大于" + options.minWidth + "像素的图片。");
+                        } else {
+                            _layero.find("#cutBoxImgName").text(_this.value);
+                            setCropper(dataUrl);
+                            filename = file.name;
+                        }
+                        img = null;
+                    }
+                    img.src = dataUrl;
+                    if (index) {
+                        layer.close(index);
+                    }
+                    options.fileChange(dataUrl);
+                }
+            } else {
+                headBase64 = null;
+            }
+        }
+
+        //保存裁剪图片
+        function SaveBtnClick() {
+            if (cropper) {
+                var cas = cropper.getCroppedCanvas({
+                    fillColor: '#fff',
+                });
+                if (options.limit && (cas.width <= options.minWidth || cas.width >= options.maxWidth)) {
+                    layer.alert("裁剪后宽度需大于" + options.minWidth + "像素小于" + options.maxWidth + "像素。");
+                } else {
+                    if (!HTMLCanvasElement.prototype.toBlob) {
+                        Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+                            value: function (callback, type, quality) {
+
+                                var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+                                    len = binStr.length,
+                                    arr = new Uint8Array(len);
+
+                                for (var i = 0; i < len; i++) {
+                                    arr[i] = binStr.charCodeAt(i);
+                                }
+
+                                callback(new Blob([arr], { type: type || 'image/png' }));
+                            }
+                        });
+                    }
+                    cas.toBlob(function (e) {
+                        var url = window.URL.createObjectURL(e);
+                        _targetImg.attr("src", url);
+                        options.imgSave(_this, e, filename);
+                    });
+                    layer.close(imgIndex);
+                }
+            } else {
+                layer.alert("保存图片失败，请先选择一张图片进行剪裁。");
+            }
+        }
+
+        function destroy() {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            //$("#cutBoxImgName").text("");
+            //$("#cutBoxWidth").text("");
+            //$("#cutBoxHeight").text("");
+            //$("#cutBoxImgData").unbind("change").val("");
+            //$("#cutBoxSaveBtn").unbind("click");
+            //$("#cutBoxImg").attr("src", "");
+        }
+    };
+</script>

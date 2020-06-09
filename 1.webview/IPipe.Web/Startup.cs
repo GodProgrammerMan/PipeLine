@@ -85,7 +85,7 @@ namespace IPipe.Web
             {
                 // 全局异常过滤
                 o.Filters.Add(typeof(GlobalExceptionsFilter));
-            });
+            }).AddRazorRuntimeCompilation();
 
             _services = services;
         }

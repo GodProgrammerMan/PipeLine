@@ -167,14 +167,14 @@
 #property {
 	top: 70px;
 	right: 20px;
-	width: 320px;
+	width: 500px;
 	height: 760px;
 	background-color: #fff;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	position: fixed;
 	z-index: 10;
-	display:none;
+	display: none;
 }
 
 #title {
@@ -295,7 +295,7 @@ body.hc_list .hc_lnav .allbtn ul{display:block}
 .hc_lnav .allbtn ul li .pop dl:hover{background-color:#f3f3f3}
 .hc_lnav .allbtn ul li .pop dl a{color:#666666;margin-left:12px;margin-right:12px}
 .hc_lnav .allbtn ul li .pop dl a.un{color:#a5a5a5}
-.hc_lnav .allbtn ul li .pop dt{padding-left:0px;width:72px;}
+.hc_lnav .allbtn ul li .pop dt{padding-left:0px;width:100px;}
 .hc_lnav .allbtn ul li .pop dd{width:565px;margin-left:-12px;}
 .hc_lnav .allbtn ul li .pop .act{width:640px;height:80px;overflow:hidden;padding-top:10px}
 .hc_lnav .allbtn:hover ul,.hc_lnav .allbtn ul li .pop:hover{display:block}/*控制一级菜单显示隐藏*/
@@ -453,4 +453,191 @@ body.hc_list .hc_lnav .allbtn ul{display:block}
 }
 .cousline {
 	cursor: Crosshair;
+}
+
+#tab1 {
+	width: 100%;
+	font-size: 14px;
+	border-collapse: collapse;
+	border: 2px solid #666;
+}
+
+	#tab1 tr {
+		height: 33px;
+		border-bottom: 1px solid #666;
+	}
+
+		#tab1 tr td {
+			border: 1px solid #666;
+		}
+
+			#tab1 tr td input {
+				width: 100%;
+				height: 28px;
+				text-indent: 5px;
+				border: none;
+			}
+
+	#tab1 .select {
+		width: 100%;
+		height: 30px;
+		text-indent: 5px;
+		border: none;
+	}
+
+#tab2 {
+	width: 100%;
+	font-size: 14px;
+	border: 2px solid #666;
+}
+
+#video, #image {
+	height: 150px;
+	cursor: pointer;
+}
+
+#itemMemu {
+	float: right;
+	width: 100%;
+	height: 30px;
+	border: 2px solid #666;
+	border-bottom: 1px solid #666;
+}
+
+	#itemMemu div {
+		width: 80px;
+		height: 100%;
+		font-size: 15px;
+		font-weight: 700;
+		text-indent: 10px;
+		line-height: 30px;
+	}
+
+#showItem {
+	width: 100%;
+	border: 2px solid #666;
+	background-color: #F1F1F1;
+	border-bottom: 1px solid #666;
+	border-top: none;
+	overflow-y: scroll;
+}
+
+#tab3 {
+	width: 100%;
+	table-layout: fixed;
+	background-color: #F1F1F1;
+	color: #1b1b18;
+}
+
+	#tab3 thead {
+		color: #fff;
+		font-size: 1px;
+		text-align: center;
+		background-color: #1e9fff;
+	}
+
+	#tab3 tbody tr {
+		height: 25px;
+		background-color: #fff;
+		cursor: pointer;
+	}
+
+		#tab3 tbody tr td {
+			font-size: 13px;
+			text-indent: 6px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+#remark {
+	width: 100%;
+	height: 26px;
+	font-size: 14px;
+	border: 2px solid #666;
+	border-top: none;
+	text-align: left;
+}
+
+	#remark span {
+		width: 98px;
+		line-height: 26px;
+		text-align: right;
+		border-right: 1px solid #666;
+	}
+
+	#remark input {
+		width: 100%;
+		height: 24px;
+		text-indent: 5px;
+		border: none;
+	}
+
+#pagebox {
+	width: 34px;
+	height: 26px;
+	text-align: center;
+	margin: 20px 0px 20px 812px;
+	border: 2px solid #393D49;
+	border-radius: 3px 0px 0px 3px;
+}
+
+#pagebtn {
+	width: 40px;
+	height: 32px;
+	margin: 20px 0px 20px 0px;
+	font-size: 17px;
+	font-weight: 700;
+	color: #000000;
+	background-color: #fff;
+	border: 2px solid #393D49;
+	border-radius: 0px 3px 3px 0px;
+	border-left: none;
+}
+
+	#pagebtn:hover {
+		color: #999999;
+		cursor: pointer;
+	}
+
+#control {
+	width: 40px;
+	height: 40px;
+	top: 45%;
+	left: 30px;
+	position: absolute;
+	font-size: 30px;
+	color: #ffffff;
+	text-indent: 4px;
+	line-height: 38px;
+	background-color: #AAA;
+	border-radius: 40px;
+}
+
+#contro2 {
+	width: 40px;
+	height: 40px;
+	top: 45%;
+	right: 30px;
+	position: absolute;
+	font-size: 30px;
+	color: #ffffff;
+	text-indent: 10px;
+	line-height: 38px;
+	background-color: #AAA;
+	border-radius: 40px;
+}
+
+	#control:hover, #contro2:hover {
+		cursor: pointer;
+		color: #ffff00;
+	}
+
+.tishi {
+	width: 100%;
+	height: 45px;
+	color: #040404;
+	font-size: 14px;
+	border: 1px solid #666;
+	background: #fff;
 }

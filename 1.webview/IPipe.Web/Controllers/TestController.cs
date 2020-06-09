@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IPipe.Common.Helper;
 using IPipe.IServices;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
@@ -25,6 +26,15 @@ namespace IPipe.Web.Controllers
 		string ChildrsIDS = "0,";
 
 		public IActionResult Index(){
+			//List<HoleCoorXYMolde> holes = _ipipe_HoleServices.getHoleCoorXY();
+			//foreach (var item in holes)
+			//{
+			//	double[] bd = CoordinateCalculation.shenzhenToBd(item.CoorX,item.CoorY,item.hight);
+
+			//	var wgs84 = CoordinateCalculation.BdTOwgs84(bd[0], bd[1]);
+
+			//	_ipipe_HoleServices.UpdateWgsXY(wgs84[0], wgs84[1], item.id);
+			//}
 			//处理
 			//List<TreeLineMolde> treeList = _ipipe_LineServices.getLineListBytree();
 			//foreach (var item in treeList)
