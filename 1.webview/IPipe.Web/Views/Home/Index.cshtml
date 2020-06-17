@@ -10,7 +10,7 @@
     <link href="~/js/cesium/Widgets/widgets.css" rel="stylesheet">
     <style>
         .layui-form-label {
-           width:122px;
+            width: 122px;
         }
     </style>
 }
@@ -62,7 +62,15 @@
     </div>
 </div>
 <!-- 地图 -->
-<div id="map">
+<div class="map_main" id="map_main">
+    <!-- 二维 -->
+    <div id="bdmap">
+
+    </div>
+    <!-- 三维 -->
+    <div id="map">
+
+    </div>
     <img id="control" src="~/img/-ioc.png" />
     <!-- 菜单 -->
     <div id="menu">
@@ -84,25 +92,31 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">管段</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="lineShow">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">管段</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="lineShow">
+                                                    </div>
                                                 </div>
-                                                <label class="layui-form-label">管点</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="hoelShow">
-                                                </div>
-                                            </div>
-                                            <div class="layui-form-item">
-                                                <label class="layui-form-label">CCTV按等级显示</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="显示" lay-skin="primary" lay-filter="CCTVShow">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">管点</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="hoelShow">
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">管径</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="psizeShow">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">CCTV按等级显示</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="显示" lay-skin="primary" lay-filter="CCTVShow">
+                                                    </div>
+                                                </div>
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">管径</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="psizeShow">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -113,13 +127,17 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">流向</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="flowShow">
+                                                <div  class="layui-inline">
+                                                    <label class="layui-form-label">流向</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="flowShow">
+                                                    </div>
                                                 </div>
-                                                <label class="layui-form-label">隐患</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="yhShow">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">隐患</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="yhShow">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -130,13 +148,17 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">地球</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="exShow">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">地球</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="exShow">
+                                                    </div>
                                                 </div>
-                                                <label class="layui-form-label">建筑白膜</label>
-                                                <div class="layui-input-block">
-                                                    <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="buildShow">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">建筑白膜</label>
+                                                    <div class="layui-input-block">
+                                                        <input type="checkbox" name="" title="隐藏" lay-skin="primary" lay-filter="buildShow">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -257,7 +279,7 @@
                                         </form>
                                     </dd>
                                 </dl>
-                                
+
                                 <dl>
                                     <dt>井隐患</dt>
                                     <dd>
@@ -440,7 +462,7 @@
                     <div class="layui-tab-item">
                         <table id="InfoTab2"></table>
                     </div>
-                    <div class="layui-tab-item">
+                    <div class="layui-tab-item" id="cctvinfdiv">
                         <div class="layui-collapse">
                             <div class="layui-colla-item">
                                 <h2 class="layui-colla-title">2018年11月15日CCTV资料</h2>
@@ -459,12 +481,19 @@
                 </div>
             </div>
             <!--
-    <div id="imgs">相关图片：</div>
-    <img src="/image/map/item.png">
-     -->
+            <div id="imgs">相关图片：</div>
+            <img src="/image/map/item.png">
+             -->
         </div>
     </div>
     <div id="localtion">当前坐标：经度：<span id="lng"></span>，纬度：<span id="lat"></span>，高度：<span id="heght"></span></div>
+    <!-- 二三维切换 -->
+    <div class="map23Toolbar">
+        <div class="map23Toolbar_main" style="">
+            <div class="map23Toolbar_main_23d"><input type="checkbox" name="qhckbox" id="qhckbox"><label class="map23Toolbar_span" for="qhckbox">二三维切换</label></div>
+            <div class="map23Toolbar_main_qh"><input type="checkbox" name="plckbox" id="plckbox"><label class="map23Toolbar_span" for="plckbox">并列</label></div>
+        </div>
+    </div>
     <!-- 作图菜单 -->
     <div class="PathInner" id="PathMenu">
         <div class="PathMain">
@@ -494,6 +523,7 @@
         </div>
     </div>
 </div>
+
 @section Scripts{
     <!-- 全局js -->
     <script src="~/js/jquery.min.js"></script>
@@ -505,6 +535,9 @@
     <script src="~/js/cesium/Cesium.js?v=1"></script>
     <!-- showmap -->
     <script src="~/js/showmap.js"></script>
+    <!---百度二维地图 -->
+    <script type="text/javascript" src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=bhb1z8SEID2CyM1HGyG2Pis9DQmY6G0H"></script>
+    <script src="~/js/getscript.js"></script>
     <!-- 异步加载 -->
     <script src="~/js/ajaxfileupload.js" async defer></script>
     <!-- public -->
@@ -513,5 +546,7 @@
     <script src="~/js/content.js" async defer></script>
     <!-- 异步加载 -->
     <script src="~/js/lanrenzhijia.js" async defer></script>
+    <!-- 异步加载 -->
+    <script src="~/js/bdMap.js" async defer></script>
 }
 

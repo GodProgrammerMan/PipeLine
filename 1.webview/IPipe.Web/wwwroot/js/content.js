@@ -6,6 +6,7 @@ var flowtoShow = false;
 var lineCLICKID = "";
 var holeCLICKID = null;
 var yhPairList = [];
+let ceHoleList = [];
 $(function () {
     //建筑物
     getbuildList();
@@ -21,8 +22,9 @@ $(function () {
     //单击
     handler.setInputAction(function (movement) {
         var pick = viewer.scene.pick(movement.position);
+
         if ($('body').hasClass("cousline")) {
-            if (Cesium.defined(pick) && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
+            if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined" ) && (pick.id.indexOf('pipe_') > -1)) {
                 var cartesian = viewer.scene.pickPosition(movement.position);
                 let x = 0;
                 let y = 0;
@@ -41,12 +43,12 @@ $(function () {
                     //添加管的隐患点
                     showBox('管点' + name + '隐患上报', '/HiddenDanger/index?action=add&ty=1&x=' + x + '&y=' + y + '&name=管点' + name + '隐患&objID=' + objID, ['1100px', '700px']);
                     //添加隐患成功后渲染
-                    addYHMolde("hole_hy_" + objID, y * 1, x * 1, 4, "井点" + name + "隐患");
+                    //addYHMolde("hole_hy_" + objID, y * 1, x * 1, 4, "井点" + name + "隐患");
                 } else {
                     //添加管段的隐患点
                     showBox('管段' + name + '隐患上报', '/HiddenDanger/index?action=add&ty=2&x=' + x + '&y=' + y + '&name=管段' + name + '隐患&objID=' + objID, ['1100px', '700px']);
                     //添加隐患成功后渲染
-                    addYHMolde("line_hy_" + objID, y * 1, x * 1, 1.6, "管段" + name + "隐患");
+                    //addYHMolde("line_hy_" + objID, y * 1, x * 1, 1.6, "管段" + name + "隐患");
                 }
             } else {
                 os('info', "请选择存在隐患的管段或者井,双击则取消！", '');
@@ -54,7 +56,7 @@ $(function () {
         }
         recoveryLineColor();
         recoveryHoleColor();
-        if (Cesium.defined(pick) && (pick.id.indexOf('pipe_') > -1)) {
+        if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined") && (pick.id.indexOf('pipe_') > -1)) {
             //管点、点击
             if (pick.id.indexOf('pipe_hole_') > -1) {
                 $("#property").hide();
@@ -115,22 +117,32 @@ $(function () {
             let cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
             let lat_String = Cesium.Math.toDegrees(cartographic.latitude).toFixed(10),
                 log_String = Cesium.Math.toDegrees(cartographic.longitude).toFixed(10),
-                alti_String = (viewer.camera.positionCartographic.height / 1000).toFixed(10);
+                alti_String = (viewer.camera.positionCartographic.height).toFixed(10);
             $("#heght").html(alti_String);
             $("#lng").html(log_String);
             $("#lat").html(lat_String);
         }
         var pick = viewer.scene.pick(movement.endPosition);
-        if (Cesium.defined(pick) && (pick.id.indexOf != "undefined" || pick.id.indexOf != undefined) && (pick.id.indexOf('pipe_') > -1)) {
+        if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined" ) && (pick.id.indexOf('pipe_') > -1)) {
 
         }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
     //相机
+    //缩放和缩放
     viewer.scene.camera.moveEnd.addEventListener(function () {
-        //获取当前相机高度
-        height = Math.ceil(viewer.camera.positionCartographic.height);
-
+        //获取当前相机中心点与高度
+        var centerPosition = getCenterPosition();
+        height = centerPosition.height;
+        var bd09 = wgs84tobd09(centerPosition.lon, centerPosition.lat);
+        IsDBdiv();
+        if (!IsBddiv) {
+            var zoom = getBDMapZoom(height);
+            map.panTo(new BMapGL.Point(bd09[0], bd09[1]));
+            map.setZoom(zoom);
+        }
+        //console.log(centerPosition);
+        //console.log(bd09);
         //流向缩放出现和隐藏
         if (height <= 100 && flowtoShow == false) {
             flowtoPrimitive.show = true;
@@ -165,6 +177,84 @@ $(function () {
 
 })
 
+/* 获取百度层级 */
+function getBDMapZoom(height) {
+    var zoom = 21;
+    if (height <= 99.6) {
+        zoom = 21;
+    } else if (height <= 114.3 && height > 99.6) {
+        zoom = 20.8;
+    } else if (height <= 131.3 && height > 114.3) {
+        zoom = 20.6;
+    } else if (height <= 150.9 && height > 131.3) {
+        zoom = 20.4;
+    } else if (height <= 173.3 && height > 150.9) {
+        zoom = 20.2;
+    } else if (height <= 200 && height > 173.3) {
+        zoom = 20;
+    } else if (height <= 228.6 && height > 200) {
+        zoom = 19.8;
+    } else if (height <= 262.6 && height > 228.6) {
+        zoom = 19.6;
+    } else if (height <= 300 && height > 262.6) {
+        zoom = 19.4;
+    } else if (height <= 346.6 && height > 300) {
+        zoom = 19.2;
+    } else if (height <= 399 && height > 346.6) {
+        zoom = 19;
+    } else if (height <= 457 && height > 399) {
+        zoom = 18.8;
+    } else if (height <= 525 && height > 457) {
+        zoom = 18.6;
+    } else if (height <= 604 && height > 525) {
+        zoom = 18.4;
+    } else if (height <= 693 && height > 604) {
+        zoom = 18.2;
+    } else if (height <= 796 && height > 693) {
+        zoom = 18;
+    } else if (height <= 915 && height > 796) {
+        zoom = 17.8;
+    } else if (height <= 1051 && height > 915) {
+        zoom = 17.6;
+    } else if (height <= 1207 && height > 1051) {
+        zoom = 17.4;
+    } else if (height <= 1387.4 && height > 1207) {
+        zoom = 17.2;
+    } else if (height <= 1594 && height > 1387.4) {
+        zoom = 17;
+    } else {
+        zoom = 16.8;
+    }
+    return zoom;
+}
+
+/* 获取camera中心点坐标 */
+function getCenterPosition() {
+    var result = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(viewer.canvas.clientWidth / 2, viewer.canvas
+        .clientHeight / 2));
+    var curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result);
+    var lon = curPosition.longitude * 180 / Math.PI;
+    var lat = curPosition.latitude * 180 / Math.PI;
+    var height = getHeight();
+    return {
+        lon: lon,
+        lat: lat,
+        height: height
+    };
+}
+
+/* 获取camera高度  */
+function getHeight() {
+    if (viewer) {
+        var scene = viewer.scene;
+        var ellipsoid = scene.globe.ellipsoid;
+        var height = ellipsoid.cartesianToCartographic(viewer.camera.position).height;
+        return height;
+    }
+}
+
+
+
 function getLineHoles() {
     var silhouetteGreen = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
     silhouetteGreen.uniforms.color = Cesium.Color.LIME;
@@ -184,39 +274,61 @@ function getLineHoles() {
             let holecolor = Cesium.Color.ALICEBLUE;
             $.each(data.response.lineDateMoldes, function (i, item) {
                 var attributes = Cesium.Color.DEEPPINK;
-                let holeUrl = '/js/cesiumhelp/model/11.glb';
+                let sholeUrl = '/js/cesiumhelp/model/ys.glb';
+                let eholeUrl = '/js/cesiumhelp/model/ys.glb';
+                let sscale = 6;
+                let escale = 6;
                 if (item.line_Class === "WS") {
                     attributes = Cesium.Color.DEEPPINK;
-                    holeUrl = '/js/cesiumhelp/model/11.glb';
+                    sholeUrl = '/js/cesiumhelp/model/ws.glb';
+                    eholeUrl = '/js/cesiumhelp/model/ws.glb';
                 } else {
                     attributes = Cesium.Color.DARKRED;
                 }
+
                 //添加psize标签
                 if (i < 1000) {
                     var SmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
                         Cesium.Cartesian3.fromDegrees(item.sCoorWgsX, item.sCoorWgsY, 0.0));
-                    //画S管点
-                    var WSmodel = scene.primitives.add(Cesium.Model.fromGltf({
-                        id: "pipe_hole_" + item.s_Point +"_$" + item.sholeID,
-                        url: holeUrl,
-                        modelMatrix: SmodelMatrix,
-                        scale: 6,
-                        primitivesType: "holeType",
-                        color: holecolor
-                    }));
-                    holePrimitive.push(WSmodel);
+
+                    if (!in_array(item.s_Point, ceHoleList)) {
+                        if (item.s_subsid === "雨篦") {
+                            sholeUrl = '/js/cesiumhelp/model/yb.glb';
+                            sscale = 3;
+                        }
+                        //画S管点
+                        var WSmodel = scene.primitives.add(Cesium.Model.fromGltf({
+                            id: "pipe_hole_" + item.s_Point + "_$" + item.sholeID,
+                            url: sholeUrl,
+                            modelMatrix: SmodelMatrix,
+                            scale: sscale,
+                            primitivesType: "holeType",
+                            color: holecolor
+                        }));
+                        holePrimitive.push(WSmodel);
+                        ceHoleList.push(item.s_Point);
+                    }
+
                     //画E管点
-                    var EmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-                        Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY , 0.0));
-                    var YSmodel = scene.primitives.add(Cesium.Model.fromGltf({
-                        id: "pipe_hole_" + item.e_Point +"_$" + item.eholeID,
-                        url: holeUrl,
-                        modelMatrix: EmodelMatrix,
-                        scale: 6,
-                        primitivesType: "holeType",
-                        color: holecolor
-                    }));
-                    holePrimitive.push(YSmodel);
+                    if (!in_array(item.e_Point, ceHoleList)) {
+                        if (item.e_subsid === "雨篦") {
+                            eholeUrl = '/js/cesiumhelp/model/yb.glb';
+                            escale = 3;
+                        }
+                        var EmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+                            Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY, 0.0));
+                        var YSmodel = scene.primitives.add(Cesium.Model.fromGltf({
+                            id: "pipe_hole_" + item.e_Point + "_$" + item.eholeID,
+                            url: eholeUrl,
+                            modelMatrix: EmodelMatrix,
+                            scale: escale,
+                            primitivesType: "holeType",
+                            color: holecolor
+                        }));
+                        holePrimitive.push(YSmodel);
+                        ceHoleList.push(item.e_Point);
+                    }
+
 
 
                     //管径
@@ -252,18 +364,22 @@ function getLineHoles() {
                     }));
 
                     //画管
+                    let shapePositions = computeCircle(0.3);
+                    if (item.pSize.indexOf('X') >= 0) {//画正方体或者长方体管
+                        shapePositions = computeRectangle(item.pSize);
+                    }
+
                     line_instances.push(new Cesium.GeometryInstance({
-                        id: "pipe_line_" + item.lno + "_"+ item.line_Class + "$" + item.lineID,
+                        id: "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.lineID,
                         geometry: new Cesium.PolylineVolumeGeometry({
-                            polylinePositions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsX, item.sCoorWgsY, 0.5, item.eCoorWgsX, item.eCoorWgsY , 0.5]),
+                            polylinePositions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsX, item.sCoorWgsY, 0.5, item.eCoorWgsX, item.eCoorWgsY, 0.5]),
                             vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
-                            shapePositions: computeCircle(0.3)
+                            shapePositions: shapePositions
                         }),
                         attributes: {
                             color: Cesium.ColorGeometryInstanceAttribute.fromColor(attributes)
                         }
                     }));
-
                 }
 
             });
@@ -302,8 +418,6 @@ function getLineHoles() {
     });
 }
 
-
-
 function getbuildList() {
     var palaceTileset = new Cesium.Cesium3DTileset({
         url: '/js/cesiumhelp/3dTile/gm/tileset.json'
@@ -318,6 +432,19 @@ function flyTo(lng, lat, height) {
         destination: Cesium.Cartesian3.fromDegrees(lng, lat,
             height)
     });
+}
+
+function computeRectangle(psize) {
+    var positions = [];
+    positions
+        .push(new Cesium.Cartesian2(0.25, 0.25));
+    positions
+        .push(new Cesium.Cartesian2(-0.25, 0.25));
+    positions
+        .push(new Cesium.Cartesian2(-0.25, -0.25));
+    positions
+        .push(new Cesium.Cartesian2(0.25, -0.25));
+    return positions;
 }
 
 function computeCircle(radius) {
@@ -385,12 +512,6 @@ function recoveryLineColor() {
         }
         lineCLICKID = "";
     }
-}
-function recoveryHoleColor() {
-    if (holeCLICKID != null) {
-        holeCLICKID.primitive.color = Cesium.Color.ALICEBLUE;
-    }
-    holeCLICKID = null;
 }
 function recoveryHoleColor() {
     if (holeCLICKID != null) {
@@ -498,6 +619,8 @@ function bindingHoleDate(data) {
     $("#InfoTab2").html(context);
 }
 function bindingLineDate(data) {
+    $("#cctvinfdiv").removeClass('layui-show');
+    $("#cctvInfo").html("");
     var context = "";
     //context += "<tr><td>项目名称：</td><td>" + data.response.model.prj_Name + "</td></tr>";
     context += "<tr><td>起始井号：</td><td>" + data.response.model.s_Point + "</td></tr>";
@@ -505,6 +628,7 @@ function bindingLineDate(data) {
     context += "<tr><td>起始井深度：</td><td>" + data.response.model.s_Deep + "</td></tr>";
     context += "<tr><td>终止井深度：</td><td>" + data.response.model.e_Deep + "</td></tr>";
     context += "<tr><td>材质：</td><td>" + data.response.model.material + "</td></tr>";
+    context += "<tr><td>管道类型：</td><td>" + data.response.model.line_Class + "</td></tr>";
     context += "<tr><td>code：</td><td>" + data.response.model.code + "</td></tr>";
     context += "<tr><td>ServiceLif：</td><td>" + data.response.model.serviceLif + "</td></tr>";
     context += "<tr><td>管径大小：</td><td>" + data.response.model.pSize + "</td></tr>";
@@ -525,13 +649,10 @@ function bindingLineDate(data) {
     context += "<tr><td>管道长度：</td><td>" + data.response.model.pipeLength + "</td></tr>";
     context += "<tr><td>操作人员：</td><td>" + data.response.model.operator + "</td></tr>";
     context += "<tr><td>记录：</td><td>" + data.response.model.note + "</td></tr>";
-    context += "<tr><td>startbotto：</td><td>" + data.response.model.startbotto + "</td></tr>";
-    context += "<tr><td>startcrow：</td><td>" + data.response.model.startcrow + "</td></tr>";
-    context += "<tr><td>endbotto：</td><td>" + data.response.model.endbotto + "</td></tr>";
-    context += "<tr><td>endcrow：</td><td>" + data.response.model.endcrow + "</td></tr>";
-    context += "<tr><td>Angel：</td><td>" + data.response.model.angel + "</td></tr>";
+    context += "<tr><td>溯源分析：</td><td><button type='button' class='layui-btn layui-btn-sm layui-btn-radius layui-btn-danger bntmargin' onclick='Traceability(&#34;" + data.response.model.parentIDs + "&#34;,&#34;" + data.response.model.lno + "&#34;)'>溯源分析</button></td></tr>";
+    context += "<tr><td>流向分析：</td><td><button type='button' class='layui-btn layui-btn-sm layui-btn-radius layui-btn-danger bntmargin' onclick='FlowTo(&#34;" + data.response.model.subclassIDs + "',&#34;" + data.response.model.lno + "&#34;)'>流向分析</button></td></tr>";
     //context += "<tr><td>SHAPE_Leng：</td><td>" + data.response.model.sHAPE_Leng + "</td></tr>";
-    context += "<tr><td>管道类型：</td><td>" + data.response.model.line_Class + "</td></tr>";
+
     $("#InfoTab1").html(context);
 
     $("#InfoTab1 tr td:even").addClass("title");
@@ -570,6 +691,15 @@ function bindingLineDate(data) {
     } else {
         $("#cctvInfoTab").hide();
     }
+}
+
+//溯源
+function Traceability(ids,lno) {
+
+}
+//流向
+function FlowTo(ids, lno) {
+
 }
 
 function bindingCCTVDate(pipe) {
@@ -743,7 +873,6 @@ function tab3_tr(obj) {
 
 function dbvideo(obj) {
     $("#file1").click();
-    console.log("");
 }
 function video(obj) {
     if ($(obj).attr("src") != undefined && $(obj).attr("src") != "")

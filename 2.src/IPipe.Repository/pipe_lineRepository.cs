@@ -27,13 +27,13 @@ namespace IPipe.Repository
             LineHoleDateModel lineHoleDateModel = new LineHoleDateModel();
             var WSholeDate = Db.Queryable<pipe_hole>()
                 .Where(t=>t.HType.Equals("WS"))
-                .Select(t => new HoleDateMolde() { hight = t.hight,szCoorX = t.szCoorX, szCoorY = t.szCoorY, hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
+                .Select(t => new HoleDateMolde() { hight = t.hight,szCoorX = t.szCoorX, szCoorY = t.szCoorY, hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep , subsid = t.Subsid })
                 .Take(1000)
                 .ToList();
             var YSholeDate = Db.Queryable<pipe_hole>()
                 .Where(t => t.HType.Equals("YS"))
                 .Take(1000)
-                .Select(t => new HoleDateMolde() { hight = t.hight, szCoorX = t.szCoorX , szCoorY = t.szCoorY,hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep })
+                .Select(t => new HoleDateMolde() { hight = t.hight, szCoorX = t.szCoorX , szCoorY = t.szCoorY,hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep, subsid = t.Subsid })
                 .ToList();
             WSholeDate.AddRange(YSholeDate);
             lineHoleDateModel.holeDateMoldes = WSholeDate;
@@ -62,6 +62,8 @@ namespace IPipe.Repository
                 item.eCoorWgsX = eCoorWgs[0];
                 item.eCoorWgsY = eCoorWgs[1];
                 item.sDeep = Ehole.Deep;
+                item.s_subsid = Shole.subsid;
+                item.e_subsid = Ehole.subsid;
                 item.cCoorWgsX = ((sCoorWgs[0] + eCoorWgs[0]) / 2).ObjToMoney();
                 item.cCoorWgsY = ((sCoorWgs[1] + eCoorWgs[1]) / 2).ObjToMoney();
                 if (!reholeDateMoldes.Any(t => t.holeID == Shole.holeID))

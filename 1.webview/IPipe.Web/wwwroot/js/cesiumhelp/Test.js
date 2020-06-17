@@ -61,13 +61,14 @@ function addLineOverlays() {
             layerMsg('msg', data.msg)
         } else {
             $.each(data.response.lineDateMoldes, function (i, item) {
-                if (i>800 && i < 1000) {
+                if (i < 1000) {
                     var polyline = new BMapGL.Polyline([
                         new BMapGL.Point(item.sCoorWgsX, item.sCoorWgsY),
                         new BMapGL.Point(item.eCoorWgsX, item.eCoorWgsY)
                     ], { strokeColor: "red", strokeWeight: 2, strokeOpacity: 0.5 });
 
                     map.addOverlay(polyline);
+
                     //管径
 
 

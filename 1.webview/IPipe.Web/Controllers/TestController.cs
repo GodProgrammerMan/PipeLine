@@ -47,8 +47,12 @@ namespace IPipe.Web.Controllers
 			//}
 			return View();
 		}
-        
-        public void Compute(TreeLineMolde  treeLineMolde, List<TreeLineMolde> treeList)
+		public IActionResult CesiumTest()
+		{
+			return View();
+		}
+
+		public void Compute(TreeLineMolde  treeLineMolde, List<TreeLineMolde> treeList)
         {
 			parentsIDS = "0,";
 		    ChildrsIDS = "0,";

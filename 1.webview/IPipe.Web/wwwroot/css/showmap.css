@@ -30,12 +30,7 @@
 	margin-top: 3px;
 	float:left;
 }
-#map {
-	width: 100%;
-	background-color: #dadada;
-	position: relative;
-	float: left;
-}
+
 #control {
 	top: 96px;
 	left: 52px;
@@ -110,7 +105,7 @@
 }
 
 #result {
-	top: 118px;
+	top: 123px;
 	left: 249px;
 	width: 328px;
 	height: 600px;
@@ -251,7 +246,7 @@
 	width: 300px;
 }
 #localtion {
-	left: 8px;
+	left: 130px;
 	bottom: 2px;
 	width: 600px;
 	height: 20px;
@@ -320,14 +315,15 @@ body.hc_list .hc_lnav .allbtn ul{display:block}
 #sole-searchbox-content .input-clear {right:39px;}
 .searchbox-content .searchbox-content-common {box-sizing:border-box;float:left;width:270px;height:38px;}
 #searchbox #search-button {pointer-events:auto;background:url(../img/searchbox_5c0d97d.png) no-repeat 0 -76px #3385ff;width:57px;height:38px;float:left;border:0;cursor:pointer;border-radius:0 2px 2px 0;box-shadow:1px 2px 1px rgba(0,0,0,.15);padding:0;}
-#left-panel {position:absolute;left:250px;top:20px;overflow:hidden;pointer-events:none;}
+#left-panel {position:absolute;left:250px;top:80px;overflow:hidden;pointer-events:none;}
 .searchbox-content:after {font-size:0;zoom:1;clear:both;display:block;height:0px;visibility:hidden;}
 #searchbox #searchbox-container {position:relative;z-index:2;pointer-events:auto;width:270px;float:left;box-sizing:border-box;box-shadow:1px 2px 1px rgba(0,0,0,.15);}
 #app-right-top {z-index:4;position:absolute;top:20px;right:10px;}
 .bottom-split {border-bottom:1px solid #e0e0e0;background:#fff;}
 .list {list-style:none;padding:0 12px;}
 .list>li {height:40px;line-height:42px;border-bottom:1px dashed #eee;position:relative;text-indent:28px;}
-.anchorBL {display:none!important;}
+.anchorBL img{display:none!important;}
+.BMap_cpyCtrl{display:none!important;}
 .on {background:#6b5f5f;color:#fff;}
 .lable {cursor:pointer;}
 .PathMenu {
@@ -603,7 +599,7 @@ body.hc_list .hc_lnav .allbtn ul{display:block}
 #control {
 	width: 40px;
 	height: 40px;
-	top: 45%;
+	top: 8%;
 	left: 30px;
 	position: absolute;
 	font-size: 30px;
@@ -627,17 +623,13 @@ body.hc_list .hc_lnav .allbtn ul{display:block}
 	background-color: #AAA;
 	border-radius: 40px;
 }
-
-	#control:hover, #contro2:hover {
-		cursor: pointer;
-		color: #ffff00;
-	}
-
-.tishi {
-	width: 100%;
-	height: 45px;
-	color: #040404;
-	font-size: 14px;
-	border: 1px solid #666;
-	background: #fff;
-}
+#control:hover, #contro2:hover {cursor: pointer;color: #ffff00;}
+.tishi {width: 100%;height: 45px;color: #040404;font-size: 14px;border: 1px solid #666;background: #fff;}
+.map23Toolbar {position: absolute;height: 16px;width: 153px;right: 30px;top: 70px;z-index:10;}
+.map23Toolbar_main {position: absolute; background: rgba(255, 255, 255, 0.19); width: 172px; height: 16px;}
+.map23Toolbar_main_23d {position: absolute; height: 16px;}
+.map23Toolbar_main_qh {position: absolute; height: 16px; left: 87px; width: 85px;}
+.map23Toolbar_span {font-size: 12px;color:#fc8a58}
+#bdmap {height: 100%;width: 100%;background-color: #dadada;position: relative;float: left;}
+#map {height: 100%;width:100%;background-color: #dadada;position: relative;float: left;display:none;}
+.bntmargin {margin: 5px;}
