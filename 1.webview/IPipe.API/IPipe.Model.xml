@@ -1114,6 +1114,16 @@
             隐患List
             </summary>
         </member>
+        <member name="P:IPipe.Model.ViewModels.LineInfoMolde.flowToMolde">
+            <summary>
+            流向分析
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.LineInfoMolde.traceabilityMolde">
+            <summary>
+            溯源分析
+            </summary>
+        </member>
         <member name="P:IPipe.Model.ViewModels.QueryLineHoleMolde.dataType">
             <summary>
             数据类型

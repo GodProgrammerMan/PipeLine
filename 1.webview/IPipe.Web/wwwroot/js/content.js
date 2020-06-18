@@ -77,7 +77,7 @@ $(function () {
                         //管点绑数据的开始
                         bindingHoleDate(data);
                     }
-                }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
+                }).error(function () { layer.close(loadindex); os('error', '服务器信息', '请求出错了，请刷新页面后重试！'); });
             } else {
                 recoveryHoleColor();
             }
@@ -103,7 +103,7 @@ $(function () {
                         //管段绑数据的开始
                         bindingLineDate(data);
                     }
-                }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
+                }).error(function () { layer.close(loadindex); os('error', '服务器信息', '请求出错了，请刷新页面后重试！'); });
 
             }
 
@@ -573,6 +573,14 @@ function addYHMolde(id, longitude, latitude, heght, yhtext) {
 }
 
 function bindingHoleDate(data) {
+    $("#cctvInfoTab").hide();
+    $("#cctvinfdiv").hide();
+
+    $("#syinfoTab").hide();
+    $("#flowTOinfoTab").hide();
+    $("#syinfoDIV").removeClass('layui-show');
+    $("#flowTOinfoDIV").removeClass('layui-show');
+
     var context = "";
     context += "<tr><td>项目名称：</td><td>" + data.response.model.prj_Name + "</td></tr>";
     context += "<tr><td>Exp_No：</td><td>" + data.response.model.exp_No + "</td></tr>";
@@ -621,6 +629,66 @@ function bindingHoleDate(data) {
 function bindingLineDate(data) {
     $("#cctvinfdiv").removeClass('layui-show');
     $("#cctvInfo").html("");
+
+    $("#syinfoTab").show();
+    $("#flowTOinfoTab").show();
+
+    $("#syLineckbox").prop("checked", false);
+    $("#ftLineckbox").prop("checked", false);
+    $("#ftLineckbox").attr("data-line", data.response.model.line_Class);
+    $("#syLineckbox").attr("data-line", data.response.model.line_Class);
+
+
+    //流向分析
+    var subclassIDsStr = "";
+    var fHtml = "";
+    var fsum = 0;
+    $.each(data.response.flowToMolde.seLineMoldes, function (index, item) {
+        var eStr = "否";
+        var classSrt = '';
+        if (item.e_holeID > 0) {
+            eStr = "是";
+            classSrt = 'style="background: #fff5d1;"';
+            fsum++;
+        }
+        subclassIDsStr += "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.id + ",";
+        fHtml += "<tr " + classSrt + "><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr+"</td></tr>";
+    });
+    if (fHtml === "") 
+        fHtml = "<tr><td colspan='3'>没有流向管数据</td></tr>";
+    $("#FlowToBody").html(fHtml);
+    //雨污
+    ywEchatInit(data.response.flowToMolde.wsLineSum, data.response.flowToMolde.ysLineSum, "流向经过管段","wyFechat");
+    //方与圆
+    frEchatInit(data.response.flowToMolde.fLineSum, data.response.flowToMolde.rLineSum, "流向经过管段", "frFechat");
+
+    //溯源分析
+    var parentIDsStr="";
+    var sHtml = "";
+    var sSum = 0; 
+    $.each(data.response.traceabilityMolde.seLineMoldes, function (index, item) {
+        var eStr = "否";
+        var classSrt = '';
+        if (item.s_holeID > 0) {
+            eStr = "是";
+            classSrt = 'style="background: #fff5d1;"';
+            sSum++;
+        }
+        parentIDsStr += "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.id + ",";
+        sHtml += "<tr " + classSrt + "><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr + "</td></tr>";
+    });
+    if (sHtml === "")
+        sHtml = "<tr><td colspan='3'>没有溯源管数据</td></tr>";
+    $("#syBody").html(sHtml);
+    //雨污
+    ywEchatInit(data.response.traceabilityMolde.wsLineSum, data.response.traceabilityMolde.ysLineSum, "来源经过管段", "wyTechat");
+    //方与圆
+    frEchatInit(data.response.traceabilityMolde.fLineSum, data.response.traceabilityMolde.rLineSum, "来源经过管段", "frTechat");
+
+    $("#syLineckbox").val(parentIDsStr);
+    $("#ftLineckbox").val(subclassIDsStr);
+
+    //基本信息绑定
     var context = "";
     //context += "<tr><td>项目名称：</td><td>" + data.response.model.prj_Name + "</td></tr>";
     context += "<tr><td>起始井号：</td><td>" + data.response.model.s_Point + "</td></tr>";
@@ -649,8 +717,6 @@ function bindingLineDate(data) {
     context += "<tr><td>管道长度：</td><td>" + data.response.model.pipeLength + "</td></tr>";
     context += "<tr><td>操作人员：</td><td>" + data.response.model.operator + "</td></tr>";
     context += "<tr><td>记录：</td><td>" + data.response.model.note + "</td></tr>";
-    context += "<tr><td>溯源分析：</td><td><button type='button' class='layui-btn layui-btn-sm layui-btn-radius layui-btn-danger bntmargin' onclick='Traceability(&#34;" + data.response.model.parentIDs + "&#34;,&#34;" + data.response.model.lno + "&#34;)'>溯源分析</button></td></tr>";
-    context += "<tr><td>流向分析：</td><td><button type='button' class='layui-btn layui-btn-sm layui-btn-radius layui-btn-danger bntmargin' onclick='FlowTo(&#34;" + data.response.model.subclassIDs + "',&#34;" + data.response.model.lno + "&#34;)'>流向分析</button></td></tr>";
     //context += "<tr><td>SHAPE_Leng：</td><td>" + data.response.model.sHAPE_Leng + "</td></tr>";
 
     $("#InfoTab1").html(context);
@@ -693,13 +759,142 @@ function bindingLineDate(data) {
     }
 }
 
-//溯源
-function Traceability(ids,lno) {
+//显示流向管段
+$("#ftLineckbox").change(function () {
+    var ftIDS = $("#ftLineckbox").val().split(',');
+    var linetype = $("#ftLineckbox").attr('data-line');
 
+    if (this.checked) {
+        for (var i = 0; i < ftIDS.length; i++) {
+            if (ftIDS[i] != "") {
+                var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREENYELLOW);
+            }
+        }
+    } else {
+        for (var i = 0; i < ftIDS.length; i++) {
+            if (ftIDS[i] != "") {
+                if (linetype === "WS") {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+
+                } else {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                }
+            }
+        }
+    }
+});
+//显示溯源管段
+$("#syLineckbox").change(function () {
+    var syIDS = $("#syLineckbox").val().split(',');
+    var linetype = $("#syLineckbox").attr('data-line');
+    console.log(linetype);
+    if (this.checked) {
+        for (var i = 0; i < syIDS.length; i++) {
+            if (syIDS[i] != "")
+            {
+                var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.LAWNGREEN);
+            }
+        }
+    } else {
+        for (var i = 0; i < syIDS.length; i++) {
+            if (syIDS[i] != "") {
+                if (linetype === "WS") {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+                } else {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                }
+            }
+        }
+    }
+});
+
+//雨水、污水
+function ywEchatInit(wsLineSum, ysLineSum, name,Eleid) {
+    var myChart = echarts.init(document.getElementById(Eleid));
+    option = {
+        title: {
+            text: name,
+            subtext: 'MSDI管段数据'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {
+            data: ['管段数量']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            boundaryGap: [0, 1]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['污水管段', '雨水管段']
+        },
+        series: [
+            {
+                name: '管段数量',
+                type: 'bar',
+                data: [wsLineSum, ysLineSum]
+            }
+        ]
+    };
+    myChart.setOption(option);
 }
-//流向
-function FlowTo(ids, lno) {
-
+//方形管与圆形管
+function frEchatInit(fLineSum, rLineSum, name, Eleid) {
+    var myChart = echarts.init(document.getElementById(Eleid));
+    option = {
+        title: {
+            text: name,
+            subtext: 'MSDI管段数据'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {
+            data: ['管段数量']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            boundaryGap: [0, 1]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['方形管', '圆管']
+        },
+        series: [
+            {
+                name: '管段数量',
+                type: 'bar',
+                data: [fLineSum, rLineSum]
+            }
+        ]
+    };
+    myChart.setOption(option);
 }
 
 function bindingCCTVDate(pipe) {

@@ -625,7 +625,7 @@ body.hc_list .hc_lnav .allbtn ul{display:block}
 }
 #control:hover, #contro2:hover {cursor: pointer;color: #ffff00;}
 .tishi {width: 100%;height: 45px;color: #040404;font-size: 14px;border: 1px solid #666;background: #fff;}
-.map23Toolbar {position: absolute;height: 16px;width: 153px;right: 30px;top: 70px;z-index:10;}
+.map23Toolbar {position: absolute;height: 16px;width: 153px;right: 60px;top: 70px;z-index:10;}
 .map23Toolbar_main {position: absolute; background: rgba(255, 255, 255, 0.19); width: 172px; height: 16px;}
 .map23Toolbar_main_23d {position: absolute; height: 16px;}
 .map23Toolbar_main_qh {position: absolute; height: 16px; left: 87px; width: 85px;}
@@ -633,3 +633,4 @@ body.hc_list .hc_lnav .allbtn ul{display:block}
 #bdmap {height: 100%;width: 100%;background-color: #dadada;position: relative;float: left;}
 #map {height: 100%;width:100%;background-color: #dadada;position: relative;float: left;display:none;}
 .bntmargin {margin: 5px;}
+.echatcss {width:400px;height:200px;}

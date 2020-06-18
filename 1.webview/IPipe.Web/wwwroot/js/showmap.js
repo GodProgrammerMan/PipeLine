@@ -98,7 +98,7 @@ $(document).ready(function () {
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMzg4YWMyOS1mNDk4LTQyMzItOGU3NC0zMGRiZjRiODBjZTQiLCJpZCI6Mjg2MTAsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTEyNjM0NzN9.JYLFdGUWYl4HcjPbdH74RHHb1qJbe193tmL_Ccv-tLo';
     viewer = new Cesium.Viewer("map", {
         animation: false, //是否显示动画控件
-        baseLayerPicker: false, //是否显示图层选择控件
+        baseLayerPicker: true, //是否显示图层选择控件
         geocoder: false, //是否显示地名查找控件
         timeline: false, //是否显示时间线控件
         sceneModePicker: false, //是否显示投影方式控件
@@ -106,7 +106,6 @@ $(document).ready(function () {
         infoBox: false, //是否显示点击要素之后显示的信息
         homeButton: false,
         scene3DOnly: true,
-        baseLayerPicker: false,
         //imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
         //    url: '//services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
         //}),

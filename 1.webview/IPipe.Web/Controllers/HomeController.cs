@@ -85,9 +85,9 @@ namespace IPipe.Web.Controllers
                     DataTable dt = OfficeHelper.ReadStreamToDataTable(file.OpenReadStream());
                     for (int i = 1; i < dt.Rows.Count; i++)//从第二行开始读取数据
                     {
-                        var szX = dt.Rows[i][6].ToString().Trim().ObjToMoney();
-                        var szY = dt.Rows[i][7].ToString().Trim().ObjToMoney();
-                        var szH = dt.Rows[i][8].ToString().Trim().ObjToMoney();
+                        var szX = dt.Rows[i][6].ToString().Trim().UtObjToMoney();
+                        var szY = dt.Rows[i][7].ToString().Trim().UtObjToMoney();
+                        var szH = dt.Rows[i][8].ToString().Trim().UtObjToMoney();
                         var coors = CoordinateCalculation.shenzhenTOWGS84(new double[] { szX, szY, szH });
 
                         pipe_hole model = new pipe_hole()
@@ -108,11 +108,11 @@ namespace IPipe.Web.Controllers
                             Subsid = dt.Rows[i][13].ToString(),
                             FeaMateria = dt.Rows[i][15].ToString(),
                             Spec = dt.Rows[i][16].ToString(),
-                            deep = dt.Rows[i][19].ToString().ObjToMoney(),
+                            deep = dt.Rows[i][19].ToString().UtObjToMoney(),
                             wellShape = dt.Rows[i][20].ToString(),
                             wellMater = dt.Rows[i][21].ToString(),
                             WellSize = dt.Rows[i][22].ToString(),
-                            WellPipes = dt.Rows[i][23].ToString().ObjToMoney(),
+                            WellPipes = dt.Rows[i][23].ToString().UtObjToMoney(),
                             Address = dt.Rows[i][24].ToString(),
                             Belong = dt.Rows[i][26].ToString(),
                             MDate = dt.Rows[i][27].ToString().ObjToDate(),
@@ -188,10 +188,10 @@ namespace IPipe.Web.Controllers
                         {
                             S_holeID = s_Point.id,
                             S_Point = s_Point.Exp_No,
-                            S_Deep = dt.Rows[i][4].ToString().ObjToMoney(),
+                            S_Deep = dt.Rows[i][4].ToString().UtObjToMoney(),
                             E_holeID = e_Point.id,
                             E_Point = e_Point.Exp_No,
-                            E_Deep = dt.Rows[i][6].ToString().ObjToMoney(),
+                            E_Deep = dt.Rows[i][6].ToString().UtObjToMoney(),
                             line_Class = dt.Rows[i][7].ToString(),
                             code = dt.Rows[i][9].ToString(),
                             Material = dt.Rows[i][10].ToString(),
@@ -213,15 +213,15 @@ namespace IPipe.Web.Controllers
                             LineType = dt.Rows[i][30].ToString().ObjToInt(),
                             PDS = dt.Rows[i][31].ToString().ObjToInt(),
                             status = dt.Rows[i][32].ToString().ObjToInt(),
-                            PipeLength = dt.Rows[i][33].ToString().ObjToMoney(),
+                            PipeLength = dt.Rows[i][33].ToString().UtObjToMoney(),
                             Operator = dt.Rows[i][34].ToString(),
                             Note = dt.Rows[i][36].ToString(),
-                            startbotto = dt.Rows[i][44].ToString().ObjToMoney(),
-                            startcrow = dt.Rows[i][45].ToString().ObjToMoney(),
-                            endbotto = dt.Rows[i][46].ToString().ObjToMoney(),
-                            endcrow = dt.Rows[i][47].ToString().ObjToMoney(),
-                            Angel = dt.Rows[i][49].ToString().ObjToMoney(),
-                            SHAPE_Leng = dt.Rows[i][50].ToString().ObjToMoney()
+                            startbotto = dt.Rows[i][44].ToString().UtObjToMoney(),
+                            startcrow = dt.Rows[i][45].ToString().UtObjToMoney(),
+                            endbotto = dt.Rows[i][46].ToString().UtObjToMoney(),
+                            endcrow = dt.Rows[i][47].ToString().UtObjToMoney(),
+                            Angel = dt.Rows[i][49].ToString().UtObjToMoney(),
+                            SHAPE_Leng = dt.Rows[i][50].ToString().UtObjToMoney()
                         };
 
                         lineList.Add(model);

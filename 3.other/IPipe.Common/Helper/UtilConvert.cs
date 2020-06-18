@@ -44,7 +44,7 @@ namespace IPipe.Common.Helper
         /// </summary>
         /// <param name="thisValue"></param>
         /// <returns></returns>
-        public static double ObjToMoney(this object thisValue)
+        public static double UtObjToMoney(this object thisValue)
         {
             double reval = 0;
             if (thisValue != null && thisValue != DBNull.Value && double.TryParse(thisValue.ToString(), out reval))

@@ -20,5 +20,29 @@ namespace IPipe.Model.ViewModels
         /// 隐患List
         /// </summary>
         public List<hidden_danger>  dangers { get; set; } = new List<hidden_danger>();
+        /// <summary>
+        /// 流向分析
+        /// </summary>
+        public FlowToAndTrMolde flowToMolde { get; set; } = new FlowToAndTrMolde();
+        /// <summary>
+        /// 溯源分析
+        /// </summary>
+        public FlowToAndTrMolde traceabilityMolde { get; set; } = new FlowToAndTrMolde();
+    }
+
+    public class FlowToAndTrMolde { 
+        public int wsLineSum { get; set; }
+        public int ysLineSum { get; set; }
+        public int fLineSum { get; set; }
+        public int rLineSum { get; set; }
+        public List<SeLineMolde> seLineMoldes { get; set; } = new List<SeLineMolde>();
+    }
+    public class SeLineMolde {
+        public int id{ get; set; }
+        public string pSize { get; set; }
+        public string lno { get; set; }
+        public string line_Class { get; set; }
+        public int e_holeID { get; set; }
+        public int s_holeID { get; set; }
     }
 }
