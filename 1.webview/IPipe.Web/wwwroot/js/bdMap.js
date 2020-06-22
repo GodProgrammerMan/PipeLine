@@ -59,6 +59,9 @@ function initMap() {
 
     //鼠标移动触发
     map.addEventListener("mousemove", function (e) {
+
+        //type.currentTarget.V.style.cursor = "default";
+
         if (!$("#qhckbox").is(":checked") && !$("#plckbox").is(":checked")) {
             var f_gcjo2 = bd09togcj02(e.latlng.lng, e.latlng.lat);
             var f_wgs84 = gcj02towgs84(f_gcjo2[0], f_gcjo2[1]);
@@ -115,12 +118,19 @@ function addLineOverlays() {
                     var polyline = new BMapGL.Polyline([
                         new BMapGL.Point(item.sCoorWgsX, item.sCoorWgsY),
                         new BMapGL.Point(item.eCoorWgsX, item.eCoorWgsY)
-                    ], { strokeColor: Scolor, strokeWeight: 2, strokeOpacity: 0.5 });
+                    ], { strokeColor: Scolor, strokeWeight: 2, strokeOpacity: 0.5, enableClicking: true });
+
+                    var flowToPolyline = new BMapGL.Polyline([
+                        new BMapGL.Point(item.sCoorWgsX, item.sCoorWgsY),
+                        new BMapGL.Point(item.cCoorWgsX, item.cCoorWgsY)
+                    ], { strokeColor: Scolor, strokeWeight: 0, strokeOpacity: 0 });
 
                     map.addOverlay(polyline);
 
                     bdPolylineID.push(item.lineID);
                     bdPolyline.push(polyline);
+
+                    addArrow(flowToPolyline, 10, Math.PI / 7);
 
                     //var opts = {
                     //    width: 200,     // 信息窗口宽度
@@ -128,10 +138,12 @@ function addLineOverlays() {
                     //    title: "管段："+ item.lno
                     //}
                     //var infoWindow = new BMapGL.InfoWindow('点击查看详情：<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="bdLineInfoClick(' + item.lineID + ',&#39' + item.lno + '&#39,&#39' + item.line_Class+'&#39);">详情</button>', opts);  // 创建信息窗口对象 
-                    //polyline.addEventListener("mousemove", function () {
-                    //    map.openInfoWindow(infoWindow, new BMapGL.Point(item.cCoorWgsX, item.cCoorWgsY)); //开启信息窗口
+                    //polyline.addEventListener("click", function () {
+                    //    if (IsBddiv) {
+                    //        map.openInfoWindow(infoWindow, new BMapGL.Point(item.cCoorWgsX, item.cCoorWgsY)); //开启信息窗口
+                    //    }
                     //}); 
-                    //polyline.addEventListener("mousemove", function () {
+                    //polyline.addEventListener("click", function () {
                     //    recoveryLineColor();
                     //    recoveryHoleColor();
                     //    //map.centerAndZoom((),21)
@@ -249,6 +261,12 @@ function layerMsg(skin, msg) {
     });
 }
 
+/**
+ * 在百度地图上给绘制的直线添加箭头
+ * @param polyline 直线 var line = new BMap.Polyline([faydPoint,daohdPoint], {strokeColor:"blue", strokeWeight:3, strokeOpacity:0.5});
+ * @param length 箭头线的长度 一般是10
+ * @param angleValue 箭头与直线之间的角度 一般是Math.PI/7
+ */
 function addArrow(polyline, length, angleValue) { //绘制箭头的函数
     var linePoint = polyline.getPath();//线的坐标串
     var arrowCount = linePoint.length;
@@ -299,13 +317,13 @@ function addArrow(polyline, length, angleValue) { //绘制箭头的函数
 
         var pointArrow = map.pixelToPoint(new BMapGL.Pixel(pixelX, pixelY));
         var pointArrow1 = map.pixelToPoint(new BMapGL.Pixel(pixelX1, pixelY1));
-        console.log(pointArrow);
         var Arrow = new BMapGL.Polyline([
             pointArrow,
             linePoint[i],
             pointArrow1
-        ], { strokeColor: "blue", strokeWeight: 3, strokeOpacity: 0.5 });
+        ], { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 0.5 });
         map.addOverlay(Arrow);
+        return Arrow;
     }
 }
 
