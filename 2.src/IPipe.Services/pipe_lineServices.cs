@@ -37,6 +37,11 @@ namespace IPipe.Services
             return _dal.GetQueryLineHolesDate(kw);
         }
 
+        public void UpdateFlowToData(pipe_line item)
+        {
+            _dal.UpdateFlowToData(item);
+        }
+
         public void UpdateParentsIDSChildrsIDS(string parentsIDS, string ChildrsIDS, int id)
         {
              _dal.UpdateParentsIDSChildrsIDS(parentsIDS, ChildrsIDS, id);

@@ -16,6 +16,7 @@ namespace IPipe.IRepository
         LineInfoMolde GetLineInfoByID(int id);
         List<TreeLineMolde> getLineListBytree();
         void UpdateParentsIDSChildrsIDS(string parentsIDS, string childrsIDS, int id);
+        void UpdateFlowToData(pipe_line item);
     }
 }
                                     

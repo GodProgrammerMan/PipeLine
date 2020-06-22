@@ -125,10 +125,9 @@ $(document).ready(function () {
     canvas = viewer.scene.canvas;
     ellipsoid = viewer.scene.globe.ellipsoid;
     labels = scene.primitives.add(new Cesium.LabelCollection({
-        scene: 2,
+        scene: scene,
         blendOption: Cesium.BlendOption.TRANSLUCENT
-    }
-    ));
+    }));
 });
 
 

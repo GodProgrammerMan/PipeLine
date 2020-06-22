@@ -184,14 +184,31 @@ namespace IPipe.Web.Controllers
                         var e_Point = holeList.Where(t => t.Exp_No == dt.Rows[i][5].ToString()).First();
                         var pSize = dt.Rows[i][14].ToString();
 
+                        double S_Deep = 0;
+                        double E_Deep = 0;
+                        double startbotto = 0;
+                        double startcrow = 0;
+                        double endbotto = 0;
+                        double endcrow = 0;
+                        if ("-".Equals(dt.Rows[i][20].ToString().Trim())) {
+                            s_Point = e_Point;
+                            e_Point = s_Point;
+                            S_Deep = dt.Rows[i][6].ToString().UtObjToMoney();
+                            E_Deep = dt.Rows[i][4].ToString().UtObjToMoney();
+                            startbotto = dt.Rows[i][46].ToString().UtObjToMoney();
+                            startcrow = dt.Rows[i][47].ToString().UtObjToMoney();
+                            endbotto = dt.Rows[i][44].ToString().UtObjToMoney();
+                            endcrow = dt.Rows[i][45].ToString().UtObjToMoney();
+                        }
+
                         pipe_line model = new pipe_line()
                         {
                             S_holeID = s_Point.id,
                             S_Point = s_Point.Exp_No,
-                            S_Deep = dt.Rows[i][4].ToString().UtObjToMoney(),
+                            S_Deep = S_Deep,
                             E_holeID = e_Point.id,
                             E_Point = e_Point.Exp_No,
-                            E_Deep = dt.Rows[i][6].ToString().UtObjToMoney(),
+                            E_Deep = E_Deep,
                             line_Class = dt.Rows[i][7].ToString(),
                             code = dt.Rows[i][9].ToString(),
                             Material = dt.Rows[i][10].ToString(),
@@ -216,12 +233,15 @@ namespace IPipe.Web.Controllers
                             PipeLength = dt.Rows[i][33].ToString().UtObjToMoney(),
                             Operator = dt.Rows[i][34].ToString(),
                             Note = dt.Rows[i][36].ToString(),
-                            startbotto = dt.Rows[i][44].ToString().UtObjToMoney(),
-                            startcrow = dt.Rows[i][45].ToString().UtObjToMoney(),
-                            endbotto = dt.Rows[i][46].ToString().UtObjToMoney(),
-                            endcrow = dt.Rows[i][47].ToString().UtObjToMoney(),
+                            startbotto = startbotto,
+                            startcrow = startcrow,
+                            endbotto = endbotto,
+                            endcrow = endcrow,
                             Angel = dt.Rows[i][49].ToString().UtObjToMoney(),
-                            SHAPE_Leng = dt.Rows[i][50].ToString().UtObjToMoney()
+                            SHAPE_Leng = dt.Rows[i][50].ToString().UtObjToMoney(),
+                            parentIDs = "",
+                            subclassIDs = ""
+
                         };
 
                         lineList.Add(model);

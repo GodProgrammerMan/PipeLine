@@ -54,57 +54,41 @@ $(function () {
                 os('info', "请选择存在隐患的管段或者井,双击则取消！", '');
             }
         }
-        recoveryLineColor();
-        recoveryHoleColor();
         if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined") && (pick.id.indexOf('pipe_') > -1)) {
             //管点、点击
             if (pick.id.indexOf('pipe_hole_') > -1) {
+                recoveryLineColor();
+                recoveryHoleColor();
                 $("#property").hide();
+                if (lineCLICKID != pick.id) 
+                    removeFTcolor();
+                
                 holeCLICKID = pick;
                 pick.primitive.color = Cesium.Color.CHOCOLATE;
                 //请求管点信息
                 var holeID = pick.id.split('$')[1];
-                var loadindex = layer.load(1, {
-                    shade: [0.1, '#000']
-                });
-                $.post("/home/getHoleInfoByID", { id: holeID }, function (data, status) {
-                    layer.close(loadindex);
-                    if (!data.success) {
-                        os('error', data.msg, '');
-                    } else {
-                        os('success', data.msg, '');
-                        $("#property").show();
-                        //管点绑数据的开始
-                        bindingHoleDate(data);
-                    }
-                }).error(function () { layer.close(loadindex); os('error', '服务器信息', '请求出错了，请刷新页面后重试！'); });
-            } else {
-                recoveryHoleColor();
+                //获取数据
+                getHoleInfoByID(holeID);
+
             }
 
             //管段点击
             if (pick.id.indexOf('pipe_line_') > -1) {
+                recoveryLineColor();
+                recoveryHoleColor();
                 $("#property").hide();
+                if(lineCLICKID != pick)
+                    removeFTcolor();
                 lineCLICKID = pick.id;
-                var attributes = linePrimitive.getGeometryInstanceAttributes(pick.id);
-                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.CYAN);
+                //添加当前颜色的管线信息
+                var attributes = linePrimitive.getGeometryInstanceAttributes(pick.id);//三维
+                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.CYAN);//三维
+
+
                 //请求管线信息
                 var LineID = lineCLICKID.split('$')[1];
-                var loadindex = layer.load(1, {
-                    shade: [0.1, '#000']
-                });
-                $.post("/home/getLineInfoByID", { id: LineID}, function (data, status) {
-                    layer.close(loadindex);
-                    if (!data.success) {
-                        os('error', data.msg, '');
-                    } else {
-                        // os('success', data.msg, '');
-                        $("#property").show();
-                        //管段绑数据的开始
-                        bindingLineDate(data);
-                    }
-                }).error(function () { layer.close(loadindex); os('error', '服务器信息', '请求出错了，请刷新页面后重试！'); });
-
+                addcolorForBD(LineID, "#01e5e6");//百度二维
+                getLineInfoByID(LineID);
             }
 
         } 
@@ -136,7 +120,7 @@ $(function () {
         height = centerPosition.height;
         var bd09 = wgs84tobd09(centerPosition.lon, centerPosition.lat);
         IsDBdiv();
-        if (!IsBddiv) {
+        if (!IsBddiv && $("#plckbox").is(":checked")) {
             var zoom = getBDMapZoom(height);
             map.panTo(new BMapGL.Point(bd09[0], bd09[1]));
             map.setZoom(zoom);
@@ -176,6 +160,44 @@ $(function () {
     })
 
 })
+
+
+
+//获取管段数据
+function getLineInfoByID(LineID) {
+    var loadindex = layer.load(1, {
+        shade: [0.1, '#000']
+    });
+    $.post("/home/getLineInfoByID", { id: LineID }, function (data, status) {
+        layer.close(loadindex);
+        if (!data.success) {
+            os('error', data.msg, '');
+        } else {
+            // os('success', data.msg, '');
+            $("#property").show();
+            //管段绑数据的开始
+            bindingLineDate(data);
+        }
+    }).error(function () { layer.close(loadindex); os('error', '服务器信息', '请求出错了，请刷新页面后重试！'); });
+}
+
+//获取管点数据
+function getHoleInfoByID(holeID) {
+    var loadindex = layer.load(1, {
+        shade: [0.1, '#000']
+    });
+    $.post("/home/getHoleInfoByID", { id: holeID }, function (data, status) {
+        layer.close(loadindex);
+        if (!data.success) {
+            os('error', data.msg, '');
+        } else {
+            os('success', data.msg, '');
+            $("#property").show();
+            //管点绑数据的开始
+            bindingHoleDate(data);
+        }
+    }).error(function () { layer.close(loadindex); os('error', '服务器信息', '请求出错了，请刷新页面后重试！'); })
+}
 
 /* 获取百度层级 */
 function getBDMapZoom(height) {
@@ -288,6 +310,7 @@ function getLineHoles() {
 
                 //添加psize标签
                 if (i < 1000) {
+
                     var SmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
                         Cesium.Cartesian3.fromDegrees(item.sCoorWgsX, item.sCoorWgsY, 0.0));
 
@@ -315,6 +338,7 @@ function getLineHoles() {
                             eholeUrl = '/js/cesiumhelp/model/yb.glb';
                             escale = 3;
                         }
+
                         var EmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
                             Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY, 0.0));
                         var YSmodel = scene.primitives.add(Cesium.Model.fromGltf({
@@ -357,7 +381,7 @@ function getLineHoles() {
                     flowto_instances.push(new Cesium.GeometryInstance({
                         id: "flowto_" + item.line_Class + "_" + item.lineID,
                         geometry: new Cesium.PolylineGeometry({
-                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([slx, sly, 5, elx, ely , 5]),
+                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([slx, sly, 1.5, elx, ely , 1.5]),
                             width: 20.0,
                             vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
                         })
@@ -510,6 +534,20 @@ function recoveryLineColor() {
             var attributes = linePrimitive.getGeometryInstanceAttributes(lineCLICKID);
             attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
         }
+        //移除二维颜色
+        var LineID = lineCLICKID.split('$')[1];
+        if ($("#plckbox").is(":checked")) {
+            for (var i = 0; i < bdPolylineID.length; i++) {
+                if (bdPolylineID[i] == LineID) {
+                    if (lineCLICKID.indexOf('WS') < 0) 
+                        bdPolyline[i].setStrokeColor("#881212");
+                     else 
+                        bdPolyline[i].setStrokeColor("#ff50ff");
+                    break;
+                }
+            }
+        }
+
         lineCLICKID = "";
     }
 }
@@ -685,6 +723,12 @@ function bindingLineDate(data) {
     //方与圆
     frEchatInit(data.response.traceabilityMolde.fLineSum, data.response.traceabilityMolde.rLineSum, "来源经过管段", "frTechat");
 
+    if (parentIDsStr != "" && parentIDsStr != null) 
+        parentIDsStr = parentIDsStr.substring(0, parentIDsStr.lastIndexOf(','));
+    if (subclassIDsStr != "" && subclassIDsStr != null) {
+        subclassIDsStr = subclassIDsStr.substring(0, subclassIDsStr.lastIndexOf(','));
+    }
+
     $("#syLineckbox").val(parentIDsStr);
     $("#ftLineckbox").val(subclassIDsStr);
 
@@ -759,59 +803,158 @@ function bindingLineDate(data) {
     }
 }
 
+
+//移除当前溯源与流向的颜色管
+function removeFTcolor() {
+    try {
+        var ftIDS = $("#ftLineckbox").val().split(',');
+        var linetype = $("#ftLineckbox").attr('data-line');
+
+        for (var i = 0; i < ftIDS.length; i++) {
+            if (ftIDS[i] != "") {
+                var LineID = ftIDS[i].split('$')[1];
+                if (linetype === "WS") {
+                    try {
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+                    } catch (e) {
+                        console.log("管线ID异常" + LineID);
+                    }
+
+                    addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
+                } else {
+                    try {
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                    } catch (e) {
+                        console.log("管线ID异常" + LineID);
+                    }
+
+                    addcolorForBD(LineID, '#881212')//并列百度变颜色
+                }
+            }
+        }
+
+        var syIDS = $("#syLineckbox").val().split(',');
+        var linetype = $("#syLineckbox").attr('data-line');
+        for (var i = 0; i < syIDS.length; i++) {
+            if (syIDS[i] != "") {
+                var LineID = syIDS[i].split('$')[1];
+                if (linetype === "WS") {
+                    try {
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+                    } catch (e) {
+                        console.log("管线ID异常" + LineID);
+                    }
+
+                    addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
+                } else {
+                    try {
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                    } catch (e) {
+                        console.log("管线ID异常" + LineID);
+                    }
+
+                    addcolorForBD(LineID, '#881212')//并列百度变颜色
+                }
+            }
+        }
+    } catch (e) {
+
+    }
+}
 //显示流向管段
 $("#ftLineckbox").change(function () {
     var ftIDS = $("#ftLineckbox").val().split(',');
     var linetype = $("#ftLineckbox").attr('data-line');
-
     if (this.checked) {
         for (var i = 0; i < ftIDS.length; i++) {
             if (ftIDS[i] != "") {
-                var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
-                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREENYELLOW);
+                try {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREENYELLOW);
+                } catch (e) {
+                    console.log("流向管线ID异常"+ftIDS[i]);
+                }
+                var LineID = ftIDS[i].split('$')[1];
+                addcolorForBD(LineID,'#c5e82b')//并列百度变颜色
             }
         }
     } else {
         for (var i = 0; i < ftIDS.length; i++) {
             if (ftIDS[i] != "") {
+                var LineID = ftIDS[i].split('$')[1];
                 if (linetype === "WS") {
-                    var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
-                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
-
+                    try {
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+                    } catch (e) {
+                        console.log("流向管线ID异常" + LineID);
+                    }
+                    addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
                 } else {
-                    var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
-                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                    try {
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                    } catch (e) {
+                        console.log("流向管线ID异常" + LineID);
+                    }
+
+                    addcolorForBD(LineID, '#881212')//并列百度变颜色
                 }
             }
         }
     }
+
 });
+
 //显示溯源管段
 $("#syLineckbox").change(function () {
     var syIDS = $("#syLineckbox").val().split(',');
     var linetype = $("#syLineckbox").attr('data-line');
-    console.log(linetype);
     if (this.checked) {
         for (var i = 0; i < syIDS.length; i++) {
             if (syIDS[i] != "")
             {
-                var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
-                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.LAWNGREEN);
+                try {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKORANGE);
+                } catch (e) {
+                    console.log("溯源管线ID异常" + LineID);
+                }
+                var LineID = syIDS[i].split('$')[1];
+                addcolorForBD(LineID, '#e7aa00')//并列百度变颜色
             }
         }
     } else {
         for (var i = 0; i < syIDS.length; i++) {
             if (syIDS[i] != "") {
+                var LineID = syIDS[i].split('$')[1];
                 if (linetype === "WS") {
-                    var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
-                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+                    try {
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+                    } catch (e) {
+                        console.log("溯源管线ID异常" + LineID);
+                    }
+
+                    addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
                 } else {
-                    var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
-                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                    try {
+
+                        var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
+                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                    } catch (e) {
+                        console.log("溯源管线ID异常" + LineID);
+                    }
+                    addcolorForBD(LineID, '#881212')//并列百度变颜色
                 }
             }
         }
     }
+
 });
 
 //雨水、污水

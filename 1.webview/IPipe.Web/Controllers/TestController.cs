@@ -26,16 +26,31 @@ namespace IPipe.Web.Controllers
 		string ChildrsIDS = "0,";
 
 		public IActionResult Index(){
+			#region 修改百度坐标
 			//List<HoleCoorXYMolde> holes = _ipipe_HoleServices.getHoleCoorXY();
 			//foreach (var item in holes)
 			//{
-			//	double[] bd = CoordinateCalculation.shenzhenToBd(item.CoorX,item.CoorY,item.hight);
+			//	double[] bd = CoordinateCalculation.shenzhenToBd(item.CoorX, item.CoorY, item.hight);
 
 			//	var wgs84 = CoordinateCalculation.BdTOwgs84(bd[0], bd[1]);
 
 			//	_ipipe_HoleServices.UpdateWgsXY(wgs84[0], wgs84[1], item.id);
 			//}
-			//处理
+			#endregion
+
+			#region 修改流向问题
+			//List<pipe_line> lineList = _ipipe_LineServices.Query().Result;
+			//foreach (var item in lineList)
+			//{
+			//	if ("-".Equals(item.FlowDir)) {
+			//		//修改
+			//		_ipipe_LineServices.UpdateFlowToData(item);
+			//	}
+			//}
+			#endregion
+
+			#region 处理流向和溯源问题
+
 			//List<TreeLineMolde> treeList = _ipipe_LineServices.getLineListBytree();
 			//foreach (var item in treeList)
 			//{
@@ -45,6 +60,8 @@ namespace IPipe.Web.Controllers
 			//	_ipipe_LineServices.UpdateParentsIDSChildrsIDS(parentsIDS.TrimEnd(','), ChildrsIDS.TrimEnd('.'), item.id);
 
 			//}
+			#endregion
+
 			return View();
 		}
 		public IActionResult CesiumTest()

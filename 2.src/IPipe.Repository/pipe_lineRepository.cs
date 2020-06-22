@@ -152,6 +152,14 @@ namespace IPipe.Repository
             return holeList;
         }
 
+        public void UpdateFlowToData(pipe_line item)
+        {
+            Db.Updateable<pipe_line>()
+            .SetColumns(it => new pipe_line() { S_holeID = item.E_holeID, S_Point = item.E_Point, S_Deep = item.E_Deep, startbotto= item.endbotto, startcrow = item.endcrow,  E_holeID = item.S_holeID, E_Point= item.S_Point, E_Deep= item.S_Deep, endbotto= item.startbotto, endcrow = item.startcrow })
+            .Where(t => t.id == item.id)
+            .ExecuteCommand();
+        }
+
         public void UpdateParentsIDSChildrsIDS(string parentsIDS, string childrsIDS, int id)
         {
             Db.Updateable<pipe_line>()

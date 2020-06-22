@@ -3,6 +3,7 @@ var Laledata = [];
 let showZoom = 19;
 let currZoom;
 let bdPolyline = [];
+let bdPolylineID = [];
 let bdholeList = [];
 let dbholeOverlays = [];
 let bdPSizeOverlays = [];
@@ -31,7 +32,6 @@ function initMap() {
     map.addEventListener("zoomend", function (e) {
         Cesiumlinkage();
         var thisZoom = map.getZoom();
-        console.log(thisZoom);
         if (thisZoom >= showZoom) {
             for (var i = 0; i < dbholeOverlays.length; i++) {
                 dbholeOverlays[i].show();
@@ -55,6 +55,8 @@ function initMap() {
     map.addEventListener("dragend", function (e) {
         Cesiumlinkage();
     });
+
+
     //鼠标移动触发
     map.addEventListener("mousemove", function (e) {
         if (!$("#qhckbox").is(":checked") && !$("#plckbox").is(":checked")) {
@@ -65,7 +67,6 @@ function initMap() {
             $("#lng").html(f_wgs84[0]);
             $("#lat").html(f_wgs84[1]);
         }
-        //console.log(e.latlng)
     });
 }
 
@@ -82,7 +83,7 @@ function Cesiumlinkage() {
     var ne_wgs84 = bd09towgs84(ne.lng, ne.lat);
 
     IsDBdiv();
-    if (IsBddiv) {
+    if (IsBddiv && $("#plckbox").is(":checked")) {
         viewer.camera.flyTo({
             destination: Cesium.Rectangle.fromDegrees(sw_wgs84[0], sw_wgs84[1], ne_wgs84[0], ne_wgs84[1])
         });
@@ -117,6 +118,29 @@ function addLineOverlays() {
                     ], { strokeColor: Scolor, strokeWeight: 2, strokeOpacity: 0.5 });
 
                     map.addOverlay(polyline);
+
+                    bdPolylineID.push(item.lineID);
+                    bdPolyline.push(polyline);
+
+                    //var opts = {
+                    //    width: 200,     // 信息窗口宽度
+                    //    height: 20,     // 信息窗口高度
+                    //    title: "管段："+ item.lno
+                    //}
+                    //var infoWindow = new BMapGL.InfoWindow('点击查看详情：<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="bdLineInfoClick(' + item.lineID + ',&#39' + item.lno + '&#39,&#39' + item.line_Class+'&#39);">详情</button>', opts);  // 创建信息窗口对象 
+                    //polyline.addEventListener("mousemove", function () {
+                    //    map.openInfoWindow(infoWindow, new BMapGL.Point(item.cCoorWgsX, item.cCoorWgsY)); //开启信息窗口
+                    //}); 
+                    //polyline.addEventListener("mousemove", function () {
+                    //    recoveryLineColor();
+                    //    recoveryHoleColor();
+                    //    //map.centerAndZoom((),21)
+                    //});
+
+                    //polyline.addEventListener("mouseout", function () {
+                    //    polyline.setStrokeColor(Scolor);
+                    //    polyline.setStrokeColor("#01e5e6");
+                    //});
 
                     //管井
                     if (!in_array(item.s_Point, bdholeList)) {//开始井
@@ -162,18 +186,51 @@ function addLineOverlays() {
                     map.addOverlay(label);
                     //label.hide();
                     bdPSizeOverlays.push(label);
-
                 }
             });
-
-
-            layerMsg('msg', data.msg)
+            layerMsg('msg', data.msg);
         }
     }).error(function () {
         layer.close(loadindex);
         layerTS('请求数据出错，请稍后再试！')
     });
 }
+
+function bdLineInfoClick(LineID, lno, line_Class) {
+
+    recoveryLineColor();//移除管井颜色
+    recoveryHoleColor();//移除管段颜色
+
+    $("#property").hide();
+
+    var pickid = "pipe_line_" + lno + "_" + line_Class + "$" + LineID;
+
+    if (lineCLICKID != pickid)
+        removeFTcolor();
+    lineCLICKID = pickid;
+    //添加当前颜色的管线信息
+    if ($("#plckbox").is(":checked")) {
+        var attributes = linePrimitive.getGeometryInstanceAttributes(pickid);//三维
+        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.CYAN);//三维
+    }
+
+
+    getLineInfoByID(LineID);
+}
+
+//添加颜色
+function addcolorForBD(LineID,Scolor) {
+    if ($("#plckbox").is(":checked")) {
+        for (var i = 0; i < bdPolylineID.length; i++) {
+            if (bdPolylineID[i] == LineID) {
+                bdPolyline[i].setStrokeColor(Scolor);
+                break;
+            }
+        }
+    }
+}
+
+
 
 function layerTS(msg, bntMgs) {
     bntMgs = (bntMgs === undefined || bntMgs === "" || bntMgs === null ? '我知道了' : bntMgs); // b默认值为2
