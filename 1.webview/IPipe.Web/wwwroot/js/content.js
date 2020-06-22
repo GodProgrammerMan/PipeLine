@@ -7,6 +7,7 @@ var lineCLICKID = "";
 var holeCLICKID = null;
 var yhPairList = [];
 let ceHoleList = [];
+let holdListData;
 $(function () {
     //建筑物
     getbuildList();
@@ -286,6 +287,7 @@ function getLineHoles() {
         shade: [0.1, '#000']
     });
     $.post("/home/getLineHolesDate", {}, function (data, status) {
+        holdListData = data;
         layer.close(loadindex);
         if (!data.response) {
             os('error', data.msg, '', 7000, '');
@@ -690,7 +692,7 @@ function bindingLineDate(data) {
             fsum++;
         }
         subclassIDsStr += "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.id + ",";
-        fHtml += "<tr " + classSrt + "><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr+"</td></tr>";
+        fHtml += "<tr " + classSrt + "  onclick='flytoByLineHole(" + item.id + ",1)'><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr+"</td></tr>";
     });
     if (fHtml === "") 
         fHtml = "<tr><td colspan='3'>没有流向管数据</td></tr>";
@@ -713,7 +715,7 @@ function bindingLineDate(data) {
             sSum++;
         }
         parentIDsStr += "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.id + ",";
-        sHtml += "<tr " + classSrt + "><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr + "</td></tr>";
+        sHtml += "<tr " + classSrt + " onclick='flytoByLineHole(" + item.id +",1)'><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr + "</td></tr>";
     });
     if (sHtml === "")
         sHtml = "<tr><td colspan='3'>没有溯源管数据</td></tr>";
@@ -803,6 +805,26 @@ function bindingLineDate(data) {
     }
 }
 
+function flytoByLineHole(lineID, type) {
+    if (type == 1) {
+        $.each(holdListData.response.lineDateMoldes, function (i, item) {
+            if (item.lineID == lineID) {
+                var alti_String = (viewer.camera.positionCartographic.height);
+                flyTo(item.cCoorWgsX, item.cCoorWgsY, alti_String);
+                return false;
+            }
+        })
+    } else {
+        $.each(holdListData.response.lineDateMoldes, function (i, item) {
+            if (item.e_holeID == lineID || item.s_holeID == lineID) {
+                var alti_String = (viewer.camera.positionCartographic.height);
+                flyTo(item.cCoorWgsX, item.cCoorWgsY, alti_String);
+                return false;
+            }
+        })
+    }
+
+}
 
 //移除当前溯源与流向的颜色管
 function removeFTcolor() {

@@ -140,7 +140,7 @@ namespace IPipe.Repository
                 .Where(t=>t.Exp_No.Contains(kw))
                 .Take(4)
                 .OrderBy(t=>t.id,SqlSugar.OrderByType.Desc)
-                .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 1, eNo = t.Exp_No, id = t.id }).ToList();
+                .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 2, eNo = t.Exp_No, id = t.id }).ToList();
 
             var lineList = Db.Queryable<pipe_line>()
                 .Where(t=>t.Lno.Contains(kw))

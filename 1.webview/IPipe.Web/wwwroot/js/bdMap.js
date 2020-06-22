@@ -36,9 +36,9 @@ function initMap() {
             for (var i = 0; i < dbholeOverlays.length; i++) {
                 dbholeOverlays[i].show();
             }
-            for (var i = 0; i < bdPSizeOverlays.length; i++) {
-                bdPSizeOverlays[i].show();
-            }
+            //for (var i = 0; i < bdPSizeOverlays.length; i++) {
+            //    bdPSizeOverlays[i].show();
+            //}
         } else {
             for (var i = 0; i < dbholeOverlays.length; i++) {
                 dbholeOverlays[i].hide();
@@ -143,7 +143,14 @@ function addLineOverlays() {
                     //        map.openInfoWindow(infoWindow, new BMapGL.Point(item.cCoorWgsX, item.cCoorWgsY)); //开启信息窗口
                     //    }
                     //}); 
+                    //polyline.addEventListener("rightclick", function () {
+                    //    console.log(1);
+                    //    recoveryLineColor();
+                    //    recoveryHoleColor();
+                    //    //map.centerAndZoom((),21)
+                    //});
                     //polyline.addEventListener("click", function () {
+                    //    console.log(1);
                     //    recoveryLineColor();
                     //    recoveryHoleColor();
                     //    //map.centerAndZoom((),21)
@@ -196,7 +203,7 @@ function addLineOverlays() {
                         border:'0px'
                     });
                     map.addOverlay(label);
-                    //label.hide();
+                    label.hide();
                     bdPSizeOverlays.push(label);
                 }
             });

@@ -20,11 +20,15 @@ function searchKW() {
             os('success', data.msg, '');
             $("#result").show();
             // 查询绑数据的开始
-            console.log(data.response);
             var context = "";
             for (var i = 0; i < data.response.length; i++) {
                 var item = data.response[i];
-                context += "<div id='" + item.id + "' data-type='" + item.dataType + "'>" + item.eNo + "</div>";
+                if (item.dataType == 1) {
+                    context += "<div id='" + item.id + "' data-type='" + item.dataType + "' onclick='flytoByLineHole(" + item.id + ",1)'>管段：" + item.eNo + "</div>";
+                } else {
+                    context += "<div id='" + item.id + "' data-type='" + item.dataType + "' onclick='flytoByLineHole(" + item.id + ",2)'>管点：" + item.eNo + "</div>";
+                }
+
             }
             $("#rValue").html(context);
         }

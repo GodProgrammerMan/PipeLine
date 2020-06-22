@@ -59,7 +59,21 @@ $(document).ready(function () {
             }
         });
         form.on('checkbox(psizeShow)', function (data) {
-            layer.msg("当前状态不支持该操作");
+            if (data.elem.checked) {
+                for (var i = 0; i < bdPSizeOverlays.length; i++) {
+                    bdPSizeOverlays[i].show();
+                }
+                for (var i = 0; i < labels.length; i++) {
+                    labels.get(i).show = true;
+                }
+            } else {
+                for (var i = 0; i < bdPSizeOverlays.length; i++) {
+                    bdPSizeOverlays[i].hide();
+                }
+                for (var i = 0; i < labels.length; i++) {
+                    labels.get(i).show = false;
+                }
+            }
         });
         form.on('checkbox(flowShow)', function (data) {
             if (data.elem.checked) {
