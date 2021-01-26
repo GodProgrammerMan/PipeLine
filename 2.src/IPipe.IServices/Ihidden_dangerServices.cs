@@ -11,7 +11,7 @@ namespace IPipe.IServices
     /// </summary>	
     public interface Ihidden_dangerServices : IBaseServices<hidden_danger>
     {
-        List<YhDataMolde> GetYhData();
+        List<YhDataMolde> GetYhData(int areid);
     }
 }
                     

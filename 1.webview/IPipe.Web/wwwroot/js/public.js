@@ -120,7 +120,22 @@ function showBox(titleStr, urlstr, area) {
 }
 
 function initCesium() {
-    flyTo(113.9190282019, 22.7821815641, 300);
+    var areacode = $.cookie('area');
+    if (areacode == "gd_sz_gm") {
+        flyTo(113.9190282019, 22.7821815641, 300);
+        try {
+            map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252, 21));
+        } catch (e) {
+
+        }
+    } else {
+        flyTo(113.07880230215, 22.9505263885339, 300);
+        try {
+            map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
+        } catch (e) {
+
+        }
+    }
 }
 
 

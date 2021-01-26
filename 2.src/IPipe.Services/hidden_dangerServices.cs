@@ -17,9 +17,9 @@ namespace IPipe.Services
             base.BaseDal = dal;
         }
 
-        public List<YhDataMolde> GetYhData()
+        public List<YhDataMolde> GetYhData(int areid)
         {
-            return _dal.GetYhData();
+            return _dal.GetYhData(areid);
         }
     }
 }

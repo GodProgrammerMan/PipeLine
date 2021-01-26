@@ -349,7 +349,8 @@ namespace IPipe.Model.Models
         
         public string SymbolName { get; set; }
 
-            
+        public double maxdeep { get; set; }
+        public int areid { get; set; }
     }
 }
                     

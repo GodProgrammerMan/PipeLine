@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using IPipe.Common.Helper;
+using Microsoft.AspNetCore.Builder;
 
 namespace IPipe.Web.Middlewares
 {
@@ -13,6 +14,7 @@ namespace IPipe.Web.Middlewares
         {
             return app.UseMiddleware<SignalRSendMildd>();
         }
+
 
         /// <summary>
         /// 异常处理中间件

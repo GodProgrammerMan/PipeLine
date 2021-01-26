@@ -29,6 +29,13 @@ namespace IPipe.Model.ViewModels
         public double cCoorWgsY { get; set; }
         public double cCoorWgsX { get; set; }
         public string Lno { get; set; }
+        public string s_Feature { get; set; }
+        public string e_Feature { get; set; }
+        public double shight { get; set; }
+        public double ehight { get; set; }
+        public double smaxdeep { get; set; }
+        public double emaxdeep { get; set; }
+        public double[] dbCoor { get; set; }
     }
 
     public class HoleDateMolde {
@@ -42,5 +49,7 @@ namespace IPipe.Model.ViewModels
         public string hType { get; set; }
         public double szCoorX { get; set; }
         public double szCoorY { get; set; }
+        public string Feature { get; set; }
+        public double maxdeep { get; set; }
     }
 }

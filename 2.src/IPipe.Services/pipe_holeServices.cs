@@ -27,6 +27,11 @@ namespace IPipe.Services
             return _dal.GetHoleInfoByID(id);
         }
 
+        public void UpdateMaxDeep(pipe_hole item)
+        {
+            _dal.UpdateMaxDeep(item);
+        }
+
         public void UpdateWgsXY(double X, double Y, int id)
         {
              _dal.UpdateWgsXY(X,Y,id);

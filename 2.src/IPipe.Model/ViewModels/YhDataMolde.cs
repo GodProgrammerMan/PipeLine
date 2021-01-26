@@ -17,5 +17,8 @@ namespace IPipe.Model.ViewModels
         public double CoorWgsY { get; set; }
         public double CoorWgsX { get; set; }
         public string tableType { get; set; }
+        public int objID { get; set; }
+        public double height { get; set; }
+        public double eheight { get; set; }
     }
 }

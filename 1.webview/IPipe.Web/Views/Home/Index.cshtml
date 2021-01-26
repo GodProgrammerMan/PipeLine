@@ -32,6 +32,13 @@
         @*layui-bg-blue*@
         <ul class="layui-nav layui-bg-blue">
             <li class="layui-nav-item">
+                <a href="javascript:void(0);">城市切换</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:void(0);" onclick="citySwitching('gd_fs');">佛山</a></dd>
+                    <dd><a href="javascript:void(0);" onclick="citySwitching('gd_sz_gm');">深圳</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
                 <a href="javascript:void(0);">控制台</a>
             </li>
             <li class="layui-nav-item">
@@ -109,7 +116,7 @@
                                                 <div class="layui-inline">
                                                     <label class="layui-form-label">CCTV按等级显示</label>
                                                     <div class="layui-input-block">
-                                                        <input type="checkbox" name="" title="显示" lay-skin="primary" lay-filter="CCTVShow">
+                                                        <input type="checkbox" name="CCTVShow" title="显示" lay-skin="primary"  lay-filter="CCTVShow">
                                                     </div>
                                                 </div>
                                                 <div class="layui-inline">
@@ -267,14 +274,24 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">隐患统计</label>
+                                                <label class="layui-form-label">手动新增</label>
                                                 <div class="layui-input-block">
-
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="showBox('隐患添加', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">增加</button>
                                                 </div>
-                                                <label class="layui-form-label">隐患任务</label>
-                                                <div class="layui-input-block">
-
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动编辑</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-sm" onclick="showBox('隐患编辑', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">编辑</button>
                                                 </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要编辑的管段隐患</div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动删除</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-radius layui-btn-disabled">删除</button>
+                                                </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要删除的管段隐患</div>
                                             </div>
                                         </form>
                                     </dd>
@@ -285,14 +302,24 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">隐患统计</label>
+                                                <label class="layui-form-label">手动新增</label>
                                                 <div class="layui-input-block">
-
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="showBox('隐患添加', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">增加</button>
                                                 </div>
-                                                <label class="layui-form-label">隐患任务</label>
-                                                <div class="layui-input-block">
-
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动编辑</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-sm" onclick="showBox('隐患编辑', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">编辑</button>
                                                 </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要编辑的管井隐患</div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">手动删除</label>
+                                                <div class="layui-input-inline">
+                                                    <button type="button" class="layui-btn layui-btn-radius layui-btn-disabled">删除</button>
+                                                </div>
+                                                <div class="layui-form-mid layui-word-aux">请先选中地图上要删除的管井隐患</div>
                                             </div>
                                         </form>
                                     </dd>
@@ -310,32 +337,42 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">隐患处理统计</label>
+                                                <label class="layui-form-label">隐患井统计</label>
                                                 <div class="layui-input-block">
-
+                                                    <input type="file" name="file" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="importHoles_bnt()">一键统计</button>
                                                 </div>
-                                                <label class="layui-form-label">隐患未处理统计</label>
-                                                <div class="layui-input-block">
-
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">隐患管段统计</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="file" name="file" id="fileUploadLine" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm  layui-btn-disabled" id="bnt_importLine" onclick="importLine_bnt()">一键统计</button>
                                                 </div>
+                                                <div class="layui-form-mid layui-word-aux">隐患统计时间较长，请耐心等待</div>
                                             </div>
                                         </form>
                                     </dd>
                                 </dl>
                             </dl>
                             <dl>
-                                <dt>管道数据</dt>
+                                <dt>管道数据统计</dt>
                                 <dd>
                                     <form class="layui-form" action="">
                                         <div class="layui-form-item">
-                                            <label class="layui-form-label">管段数据统计</label>
+                                            <label class="layui-form-label">管井统计</label>
                                             <div class="layui-input-block">
-
+                                                <input type="file" name="file" style="display: none" />
+                                                <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="importHoles_bnt()">一键统计</button>
                                             </div>
-                                            <label class="layui-form-label">管点数据统计</label>
-                                            <div class="layui-input-block">
-
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">管段统计</label>
+                                            <div class="layui-input-inline">
+                                                <input type="file" name="file" id="fileUploadLine" style="display: none" />
+                                                <button type="button" class="layui-btn layui-btn-sm  layui-btn-disabled" id="bnt_importLine" onclick="importLine_bnt()">一键统计</button>
                                             </div>
+                                            <div class="layui-form-mid layui-word-aux">数据统计时间较长，请耐心等待</div>
                                         </div>
                                     </form>
                                 </dd>
@@ -357,14 +394,19 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">接口类别</label>
+                                                <label class="layui-form-label">管井接口</label>
                                                 <div class="layui-input-block">
-
+                                                    <input type="file" name="file" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="importHoles_bnt()">一键开放</button>
                                                 </div>
-                                                <label class="layui-form-label">接口安全</label>
-                                                <div class="layui-input-block">
-
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">管段接口</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="file" name="file" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm  layui-btn-disabled" id="bnt_importLine" onclick="importLine_bnt()">一键开放</button>
                                                 </div>
+                                                <div class="layui-form-mid layui-word-aux">开放时间较长，请耐心等待</div>
                                             </div>
                                         </form>
                                     </dd>
@@ -374,14 +416,19 @@
                                     <dd>
                                         <form class="layui-form" action="">
                                             <div class="layui-form-item">
-                                                <label class="layui-form-label">数据导出</label>
+                                                <label class="layui-form-label">开放端口控制</label>
                                                 <div class="layui-input-block">
-
+                                                    <input type="file" name="file" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal" onclick="importHoles_bnt()">开放端口列表</button>
                                                 </div>
-                                                <label class="layui-form-label">数据存储</label>
-                                                <div class="layui-input-block">
-
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">数据库备份</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="file" name="file" style="display: none" />
+                                                    <button type="button" class="layui-btn layui-btn-sm  layui-btn-disabled" id="bnt_importLine" onclick="importLine_bnt()">备份</button>
                                                 </div>
+                                                <div class="layui-form-mid layui-word-aux">备份时间较长，请耐心等待</div>
                                             </div>
                                         </form>
                                     </dd>
@@ -499,7 +546,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="syBody">
-
                                     </tbody>
                                 </table>
                             </div>
@@ -540,7 +586,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="FlowToBody">
-       
                                     </tbody>
                                 </table>
                             </div>
@@ -611,6 +656,8 @@
 @section Scripts{
     <!-- 全局js -->
     <script src="~/js/jquery.min.js"></script>
+    <!-- cookiesjs -->
+    <script src="~/js/jquery.cookie.js"></script>
     <!-- Toastr script -->
     <script src="~/js/toastr/toastr.min.js"></script>
     <!-- layer -->
@@ -620,8 +667,8 @@
     <!-- showmap -->
     <script src="~/js/showmap.js"></script>
     <!---百度二维地图 -->
-    <script type="text/javascript" src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=bhb1z8SEID2CyM1HGyG2Pis9DQmY6G0H"></script>
-    <script src="~/js/getscript.js"></script>
+    <script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=bhb1z8SEID2CyM1HGyG2Pis9DQmY6G0H"></script>
+
     <!-- 异步加载 -->
     <script src="~/js/ajaxfileupload.js" async defer></script>
     <!-- public -->

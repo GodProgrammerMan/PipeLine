@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IPipe.Web.Controllers
 {
-    public class TestController : Controller
+    public class TestController : BaseController
     {
 		readonly Ipipe_holeServices _ipipe_HoleServices;
 		readonly Ipipe_lineServices _ipipe_LineServices;
@@ -51,7 +51,7 @@ namespace IPipe.Web.Controllers
 
 			#region 处理流向和溯源问题
 
-			//List<TreeLineMolde> treeList = _ipipe_LineServices.getLineListBytree();
+			//List<TreeLineMolde> treeList = _ipipe_LineServices.getLineListBytree(1);
 			//foreach (var item in treeList)
 			//{
 			//	//计算

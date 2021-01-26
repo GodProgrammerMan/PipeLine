@@ -14,6 +14,7 @@ namespace IPipe.IRepository
         HoleInfoMolde GetHoleInfoByID(int id);
         void UpdateWgsXY(double x, double y, int id);
         List<HoleCoorXYMolde> GetHoleCoor();
+        void UpdateMaxDeep(pipe_hole item);
     }
 }
                                     

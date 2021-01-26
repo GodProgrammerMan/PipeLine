@@ -70,7 +70,7 @@ namespace IPipe.Model.Models
         
         public string regRemarks { get; set; }
 
-            
+        public int areid { get; set; }
     }
 }
                     

@@ -22,10 +22,23 @@ $(function () {
     var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
     //单击
     handler.setInputAction(function (movement) {
+        //var cartesian1 = viewer.scene.pickPosition(movement.position);
+        //if (cartesian1) {
+        //    let cartographic1 = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian1);
+        //    let lat_String = Cesium.Math.toDegrees(cartographic1.latitude).toFixed(10),
+        //        log_String = Cesium.Math.toDegrees(cartographic1.longitude).toFixed(10),
+        //        alti_String = (viewer.camera.positionCartographic.height).toFixed(10);
+        //    console.log(cartographic1); 
+        //    flyTo(Number(113.1026514941), Number(22.9200832132), viewer.camera.positionCartographic.height);
+        //    var cartographic2 = Cesium.Cartographic.fromDegrees(cartographic1.longitude, cartographic1.latitude, viewer.camera.positionCartographic.height);
+        //    var cartesian3 = ellipsoid.cartographicToCartesian(cartographic2);
+        //    console.log(cartesian3);
+        //}
+
         var pick = viewer.scene.pick(movement.position);
 
         if ($('body').hasClass("cousline")) {
-            if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined" ) && (pick.id.indexOf('pipe_') > -1)) {
+            if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined") && (pick.id.indexOf('pipe_') > -1)) {
                 var cartesian = viewer.scene.pickPosition(movement.position);
                 let x = 0;
                 let y = 0;
@@ -61,10 +74,10 @@ $(function () {
                 recoveryLineColor();
                 recoveryHoleColor();
                 $("#property").hide();
-                if (lineCLICKID != pick.id) 
+                if (lineCLICKID != pick.id)
                     removeFTcolor();
-                
-                holeCLICKID = pick;
+
+                holeCLICKID = pick.id;
                 pick.primitive.color = Cesium.Color.CHOCOLATE;
                 //请求管点信息
                 var holeID = pick.id.split('$')[1];
@@ -78,7 +91,7 @@ $(function () {
                 recoveryLineColor();
                 recoveryHoleColor();
                 $("#property").hide();
-                if(lineCLICKID != pick)
+                if (lineCLICKID != pick.id)
                     removeFTcolor();
                 lineCLICKID = pick.id;
                 //添加当前颜色的管线信息
@@ -92,7 +105,7 @@ $(function () {
                 getLineInfoByID(LineID);
             }
 
-        } 
+        }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     //移动
     handler.setInputAction(function (movement) {
@@ -108,7 +121,7 @@ $(function () {
             $("#lat").html(lat_String);
         }
         var pick = viewer.scene.pick(movement.endPosition);
-        if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined" ) && (pick.id.indexOf('pipe_') > -1)) {
+        if (Cesium.defined(pick) && (pick.id != undefined && pick.id != "undefined") && (pick.id.indexOf('pipe_') > -1)) {
 
         }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -116,48 +129,56 @@ $(function () {
     //相机
     //缩放和缩放
     viewer.scene.camera.moveEnd.addEventListener(function () {
-        //获取当前相机中心点与高度
-        var centerPosition = getCenterPosition();
-        height = centerPosition.height;
-        var bd09 = wgs84tobd09(centerPosition.lon, centerPosition.lat);
-        IsDBdiv();
-        if (!IsBddiv && $("#plckbox").is(":checked")) {
-            var zoom = getBDMapZoom(height);
-            map.panTo(new BMapGL.Point(bd09[0], bd09[1]));
-            map.setZoom(zoom);
-        }
+
         //console.log(centerPosition);
         //console.log(bd09);
-        //流向缩放出现和隐藏
-        if (height <= 100 && flowtoShow == false) {
-            flowtoPrimitive.show = true;
-            flowtoShow = true;
-        } else if (height > 100 && flowtoShow == true) {
-            flowtoPrimitive.show = false;
-            flowtoShow = false;
+
+        try {
+            //获取当前相机中心点与高度 
+            var centerPosition = getCenterPosition();
+            height = centerPosition.height;
+            var bd09 = wgs84tobd09(centerPosition.lon, centerPosition.lat);
+            IsDBdiv();
+            if (!IsBddiv && $("#plckbox").is(":checked")) {
+                var zoom = getBDMapZoom(height);
+                map.panTo(new BMapGL.Point(bd09[0], bd09[1]));
+                map.setZoom(zoom);
+            }
+            //流向缩放出现和隐藏
+            if (height <= 100 && flowtoShow == false) {
+                flowtoPrimitive.show = true;
+                flowtoShow = true;
+            } else if (height > 100 && flowtoShow == true) {
+                flowtoPrimitive.show = false;
+                flowtoShow = false;
+            }
+
+            //flowtoPrimitive
+            //标签缩放出现和隐藏
+            if (height <= 77 && lablesShow == false) {
+                for (var i = 0; i < labels.length; i++) {
+                    labels.get(i).show = true;
+                }
+                lablesShow = true;
+
+                for (var i = 0; i < yhPairList.length; i++) {
+                    yhPairList[i].show = true;
+                }
+
+            } else if (height > 77 && lablesShow == true) {
+                for (var i = 0; i < labels.length; i++) {
+                    labels.get(i).show = false;
+                }
+                lablesShow = false;
+
+                for (var i = 0; i < yhPairList.length; i++) {
+                    yhPairList[i].show = false;
+                }
+            }
+        } catch (e) {
+
         }
-        //flowtoPrimitive
-        //标签缩放出现和隐藏
-        if (height <= 77 && lablesShow == false) {
-            for (var i = 0; i < labels.length; i++) {
-                labels.get(i).show = true;
-            }
-            lablesShow = true;
 
-            for (var i = 0; i < yhPairList.length; i++) {
-                yhPairList[i].show = true;
-            }
-
-        } else if (height > 77 && lablesShow == true) {
-            for (var i = 0; i < labels.length; i++) {
-                labels.get(i).show = false;
-            }
-            lablesShow = false;
-
-            for (var i = 0; i < yhPairList.length; i++) {
-                yhPairList[i].show = false; 
-            }
-        }
     })
 
 })
@@ -253,17 +274,22 @@ function getBDMapZoom(height) {
 
 /* 获取camera中心点坐标 */
 function getCenterPosition() {
-    var result = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(viewer.canvas.clientWidth / 2, viewer.canvas
-        .clientHeight / 2));
-    var curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result);
-    var lon = curPosition.longitude * 180 / Math.PI;
-    var lat = curPosition.latitude * 180 / Math.PI;
-    var height = getHeight();
-    return {
-        lon: lon,
-        lat: lat,
-        height: height
-    };
+    try {
+        var result = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(viewer.canvas.clientWidth / 2, viewer.canvas
+            .clientHeight / 2));
+        var curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result);
+        var lon = curPosition.longitude * 180 / Math.PI;
+        var lat = curPosition.latitude * 180 / Math.PI;
+        var height = getHeight();
+        return {
+            lon: lon,
+            lat: lat,
+            height: height
+        };
+    } catch (e) {
+
+    }
+
 }
 
 /* 获取camera高度  */
@@ -292,35 +318,64 @@ function getLineHoles() {
         if (!data.response) {
             os('error', data.msg, '', 7000, '');
         } else {
+            //flyTo(113.07880230215, 22.9505263885339, 80);
             //画管段
             let line_instances = [];
             var flowto_instances = [];
             let holecolor = Cesium.Color.ALICEBLUE;
             $.each(data.response.lineDateMoldes, function (i, item) {
-                var attributes = Cesium.Color.DEEPPINK;
-                let sholeUrl = '/js/cesiumhelp/model/ys.glb';
-                let eholeUrl = '/js/cesiumhelp/model/ys.glb';
+                let e_pipealtitude = Number(item.ehight - item.eDeep);
+                let s_pipealtitude = Number(item.shight - item.sDeep);
+
+                let attributes = Cesium.Color.DEEPPINK;
+                let sholeUrl = '/js/cesiumhelp/model/ys22.glb';
+                let eholeUrl = '/js/cesiumhelp/model/ys22.glb';
+                if (item.smaxdeep >= 3.15) {
+                    sholeUrl = '/js/cesiumhelp/model/ys1.glb';
+                }
+                if (item.emaxdeep >= 3.15) {
+                    eholeUrl = '/js/cesiumhelp/model/ys1.glb';
+                }
                 let sscale = 6;
                 let escale = 6;
+                let sheight = 0;
+                let eheight = 0;
+                let spipeheight = 0.5;
+                let epipeheight = 0.5;
                 if (item.line_Class === "WS") {
                     attributes = Cesium.Color.DEEPPINK;
-                    sholeUrl = '/js/cesiumhelp/model/ws.glb';
-                    eholeUrl = '/js/cesiumhelp/model/ws.glb';
+                    sholeUrl = '/js/cesiumhelp/model/ws22.glb';
+                    eholeUrl = '/js/cesiumhelp/model/ws22.glb';
+                    if (item.smaxdeep >= 3.15) {
+                        sholeUrl = '/js/cesiumhelp/model/ws1.glb';
+                    }
+                    if (item.emaxdeep >= 3.15) {
+                        eholeUrl = '/js/cesiumhelp/model/ws1.glb';
+                    }
                 } else {
                     attributes = Cesium.Color.DARKRED;
                 }
 
+                var flat = false;
+                if ($.cookie('area') == "gd_sz_gm") {
+                    flat = i < 20000;
+                } else {
+                    flat = i < 2000;
+                }
+
                 //添加psize标签
-                if (i < 1000) {
-
-                    var SmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-                        Cesium.Cartesian3.fromDegrees(item.sCoorWgsX, item.sCoorWgsY, 0.0));
-
+                if (flat) {
+       
                     if (!in_array(item.s_Point, ceHoleList)) {
-                        if (item.s_subsid === "雨篦") {
-                            sholeUrl = '/js/cesiumhelp/model/yb.glb';
+                        if (item.s_subsid == "雨水篦" || item.s_subsid == "污水篦") {
+                            sholeUrl = '/js/cesiumhelp/model/yb22.glb';
                             sscale = 3;
+                            sheight = 1.3;
+                            spipeheight = 1.3;
                         }
+
+                        var SmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+                            Cesium.Cartesian3.fromDegrees(item.sCoorWgsX, item.sCoorWgsY, item.shight));
                         //画S管点
                         var WSmodel = scene.primitives.add(Cesium.Model.fromGltf({
                             id: "pipe_hole_" + item.s_Point + "_$" + item.sholeID,
@@ -332,17 +387,22 @@ function getLineHoles() {
                         }));
                         holePrimitive.push(WSmodel);
                         ceHoleList.push(item.s_Point);
+                    } else {
+                        if (item.s_subsid == "雨水篦" || item.s_subsid == "污水篦")
+                            spipeheight = 1.3;
                     }
 
                     //画E管点
-                    if (!in_array(item.e_Point, ceHoleList)) {
-                        if (item.e_subsid === "雨篦") {
-                            eholeUrl = '/js/cesiumhelp/model/yb.glb';
+                    if (!in_array(item.e_Point, ceHoleList) && ((item.e_subsid == null || item.e_subsid == "") && item.e_Feature != "出水口")) {
+                        if (item.e_subsid == "雨水篦" || item.e_subsid == "污水篦") {
+                            eholeUrl = '/js/cesiumhelp/model/yb22.glb';
                             escale = 3;
+                            eheight = 1.3;
+                            epipeheight = 1.3;
                         }
 
                         var EmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-                            Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY, 0.0));
+                            Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY, item.ehight));
                         var YSmodel = scene.primitives.add(Cesium.Model.fromGltf({
                             id: "pipe_hole_" + item.e_Point + "_$" + item.eholeID,
                             url: eholeUrl,
@@ -353,6 +413,9 @@ function getLineHoles() {
                         }));
                         holePrimitive.push(YSmodel);
                         ceHoleList.push(item.e_Point);
+                    } else {
+                        if (item.e_subsid == "雨水篦" || item.e_subsid == "污水篦")
+                            epipeheight = 1.3;
                     }
 
 
@@ -360,7 +423,7 @@ function getLineHoles() {
                     //管径
                     labels.add({
                         id: "line_labels_" + item.lineID,
-                        position: Cesium.Cartesian3.fromDegrees(item.cCoorWgsX, item.cCoorWgsY, 1.2),
+                        position: Cesium.Cartesian3.fromDegrees(item.cCoorWgsX, item.cCoorWgsY, item.shight),
                         text: item.pSize,
                         font: '20px Helvetica',
                         fillColor: attributes,
@@ -380,10 +443,11 @@ function getLineHoles() {
                     let ely = (item.cCoorWgsY + item.eCoorWgsY) / 2;
                     ely = (ely + item.cCoorWgsY) / 2;
                     ely = (ely + item.cCoorWgsY) / 2;
+                    let ceshight = item.shight - item.ehight;
                     flowto_instances.push(new Cesium.GeometryInstance({
                         id: "flowto_" + item.line_Class + "_" + item.lineID,
                         geometry: new Cesium.PolylineGeometry({
-                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([slx, sly, 1.5, elx, ely , 1.5]),
+                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([slx, sly, (ceshight / 4) + item.ehight - (item.sDeep / 2), elx, ely, (ceshight / 4) + item.ehight - (item.sDeep / 2)]),
                             width: 20.0,
                             vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
                         })
@@ -391,14 +455,16 @@ function getLineHoles() {
 
                     //画管
                     let shapePositions = computeCircle(0.3);
-                    if (item.pSize.indexOf('X') >= 0) {//画正方体或者长方体管
+                    if (item.pSize.indexOf('X') >= 0) //画正方体或者长方体管
                         shapePositions = computeRectangle(item.pSize);
-                    }
+                    else
+                        shapePositions = computeCircle(item.pSize);
+
 
                     line_instances.push(new Cesium.GeometryInstance({
                         id: "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.lineID,
                         geometry: new Cesium.PolylineVolumeGeometry({
-                            polylinePositions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsX, item.sCoorWgsY, 0.5, item.eCoorWgsX, item.eCoorWgsY, 0.5]),
+                            polylinePositions: Cesium.Cartesian3.fromDegreesArrayHeights([item.sCoorWgsX, item.sCoorWgsY, s_pipealtitude, item.eCoorWgsX, item.eCoorWgsY, e_pipealtitude]),
                             vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
                             shapePositions: shapePositions
                         }),
@@ -406,6 +472,11 @@ function getLineHoles() {
                             color: Cesium.ColorGeometryInstanceAttribute.fromColor(attributes)
                         }
                     }));
+                    if (item.lineID == 386) {
+                        console.log(item);
+                        console.log("线的高程：起:" + s_pipealtitude + "终：" + e_pipealtitude);
+                        console.log("井的高程：起:" + item.shight + "终：" + item.ehight);
+                    }
                 }
 
             });
@@ -445,11 +516,14 @@ function getLineHoles() {
 }
 
 function getbuildList() {
+    let url = "http://134.175.52.40:8081/3dTile/fs/tileset.json"; 
+    if ($.cookie('area') == "gd_sz_gm")
+        url = "http://134.175.52.40:8081/3dTile/gm/tileset.json";
     var palaceTileset = new Cesium.Cesium3DTileset({
-        url: '/js/cesiumhelp/3dTile/gm/tileset.json'
+        url: url
         //或者url: 'http://ip:port/www/DAEPalace/tileset.json'
     })
-    viewer.scene.primitives.add(palaceTileset);  
+    viewer.scene.primitives.add(palaceTileset);
 }
 
 
@@ -461,19 +535,26 @@ function flyTo(lng, lat, height) {
 }
 
 function computeRectangle(psize) {
+    let psizeArr = psize.split('X');
+
+    let wide = Number(psizeArr[0]) / 2000;
+    let long = Number(psizeArr[1]) / 2000;
+    console.log(wide + "" + long);
     var positions = [];
     positions
-        .push(new Cesium.Cartesian2(0.25, 0.25));
+        .push(new Cesium.Cartesian2(wide, long));
     positions
-        .push(new Cesium.Cartesian2(-0.25, 0.25));
+        .push(new Cesium.Cartesian2(-wide, long));
     positions
-        .push(new Cesium.Cartesian2(-0.25, -0.25));
+        .push(new Cesium.Cartesian2(-wide, -long));
     positions
-        .push(new Cesium.Cartesian2(0.25, -0.25));
+        .push(new Cesium.Cartesian2(wide, -long));
     return positions;
 }
 
 function computeCircle(radius) {
+    radius = Number(radius) / 1000;//并转为米
+    radius = radius / 2;//半径
     var positions = [];
     for (var i = 0; i < 360; i++) {
         var radians = Cesium.Math.toRadians(i);
@@ -528,36 +609,45 @@ function validationNumber(e, num) {
 }
 
 function recoveryLineColor() {
-    if (lineCLICKID != "") {
-        if (lineCLICKID.indexOf('WS') < 0) {
-            var attributes = linePrimitive.getGeometryInstanceAttributes(lineCLICKID);
-            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
-        } else {
-            var attributes = linePrimitive.getGeometryInstanceAttributes(lineCLICKID);
-            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
-        }
-        //移除二维颜色
-        var LineID = lineCLICKID.split('$')[1];
-        if ($("#plckbox").is(":checked")) {
-            for (var i = 0; i < bdPolylineID.length; i++) {
-                if (bdPolylineID[i] == LineID) {
-                    if (lineCLICKID.indexOf('WS') < 0) 
-                        bdPolyline[i].setStrokeColor("#881212");
-                     else 
-                        bdPolyline[i].setStrokeColor("#ff50ff");
-                    break;
+    try {
+        if (lineCLICKID != "") {
+            //移除二维颜色
+            var LineID = lineCLICKID.split('$')[1];
+            if ($("#plckbox").is(":checked") || !$("#qhckbox").is(":checked")) {
+                for (var i = 0; i < bdPolylineID.length; i++) {
+                    if (bdPolylineID[i] == LineID) {
+                        if (lineCLICKID.indexOf('WS') < 0)
+                            bdPolyline[i].setStrokeColor("#881212");
+                        else
+                            bdPolyline[i].setStrokeColor("#ff50ff");
+                        break;
+                    }
                 }
             }
+            if (lineCLICKID.indexOf('WS') < 0) {
+                var attributes = linePrimitive.getGeometryInstanceAttributes(lineCLICKID);
+                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+            } else {
+                var attributes = linePrimitive.getGeometryInstanceAttributes(lineCLICKID);
+                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+            }
+            lineCLICKID = "";
         }
+    } catch (e) {
 
-        lineCLICKID = "";
     }
+
 }
 function recoveryHoleColor() {
-    if (holeCLICKID != null) {
-        holeCLICKID.primitive.color = Cesium.Color.ALICEBLUE;
+    try {
+        if (holeCLICKID != null) {
+            holeCLICKID.primitive.color = Cesium.Color.ALICEBLUE;
+        }
+        holeCLICKID = null;
+    } catch (e) {
+
     }
-    holeCLICKID = null;
+
 }
 
 //隐患点
@@ -566,11 +656,15 @@ function getYhData() {
         if (res.response != null) {
             $.each(res.response, function (i, item) {
                 var heg = 1.6;
-                if (item.tableType === "pipe_hole") 
-                    heg = 4;
+                if (item.tableType === "pipe_hole") {
+                    heg = item.height;
+                } else {
+                    heg = ((item.height + item.eheight) / 2) - 1;
+                }
+
                 addYHMolde(item.id, item.coorWgsX, item.coorWgsY, heg, item.testMsg);
             });
-        } 
+        }
     });
 }
 
@@ -578,7 +672,7 @@ function addYHMolde(id, longitude, latitude, heght, yhtext) {
     //隐患lables
     labels.add({
         id: "yh_labels_" + id,
-        position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 5),
+        position: Cesium.Cartesian3.fromDegrees(longitude, latitude, heght + 1),
         text: yhtext,
         font: '20px Helvetica',
         fillColor: Cesium.Color.RED,
@@ -590,7 +684,7 @@ function addYHMolde(id, longitude, latitude, heght, yhtext) {
         geometryInstances: new Cesium.GeometryInstance({
             id: "yh_" + id,
             geometry: new Cesium.PolylineGeometry({
-                positions: Cesium.Cartesian3.fromDegreesArrayHeights([longitude, latitude, 5, longitude, latitude, heght]),
+                positions: Cesium.Cartesian3.fromDegreesArrayHeights([longitude, latitude, heght + 1, longitude, latitude, heght + 0.5]),
                 width: 20.0,
                 vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
             })
@@ -692,20 +786,20 @@ function bindingLineDate(data) {
             fsum++;
         }
         subclassIDsStr += "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.id + ",";
-        fHtml += "<tr " + classSrt + "  onclick='flytoByLineHole(" + item.id + ",1)'><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr+"</td></tr>";
+        fHtml += "<tr " + classSrt + "  onclick='flytoByLineHole(" + item.id + ",1)'><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr + "</td></tr>";
     });
-    if (fHtml === "") 
+    if (fHtml === "")
         fHtml = "<tr><td colspan='3'>没有流向管数据</td></tr>";
     $("#FlowToBody").html(fHtml);
     //雨污
-    ywEchatInit(data.response.flowToMolde.wsLineSum, data.response.flowToMolde.ysLineSum, "流向经过管段","wyFechat");
+    ywEchatInit(data.response.flowToMolde.wsLineSum, data.response.flowToMolde.ysLineSum, "流向经过管段", "wyFechat");
     //方与圆
     frEchatInit(data.response.flowToMolde.fLineSum, data.response.flowToMolde.rLineSum, "流向经过管段", "frFechat");
 
     //溯源分析
-    var parentIDsStr="";
+    var parentIDsStr = "";
     var sHtml = "";
-    var sSum = 0; 
+    var sSum = 0;
     $.each(data.response.traceabilityMolde.seLineMoldes, function (index, item) {
         var eStr = "否";
         var classSrt = '';
@@ -715,7 +809,7 @@ function bindingLineDate(data) {
             sSum++;
         }
         parentIDsStr += "pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.id + ",";
-        sHtml += "<tr " + classSrt + " onclick='flytoByLineHole(" + item.id +",1)'><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr + "</td></tr>";
+        sHtml += "<tr " + classSrt + " onclick='flytoByLineHole(" + item.id + ",1)'><td>" + item.lno + "</td><td>" + item.pSize + "</td><td>" + eStr + "</td></tr>";
     });
     if (sHtml === "")
         sHtml = "<tr><td colspan='3'>没有溯源管数据</td></tr>";
@@ -725,7 +819,7 @@ function bindingLineDate(data) {
     //方与圆
     frEchatInit(data.response.traceabilityMolde.fLineSum, data.response.traceabilityMolde.rLineSum, "来源经过管段", "frTechat");
 
-    if (parentIDsStr != "" && parentIDsStr != null) 
+    if (parentIDsStr != "" && parentIDsStr != null)
         parentIDsStr = parentIDsStr.substring(0, parentIDsStr.lastIndexOf(','));
     if (subclassIDsStr != "" && subclassIDsStr != null) {
         subclassIDsStr = subclassIDsStr.substring(0, subclassIDsStr.lastIndexOf(','));
@@ -783,7 +877,7 @@ function bindingLineDate(data) {
 
     //cctv数据
     if (data.response.cctvID != 0) {
-        var load  = layer.msg('正在获取CCTV资料...', {
+        var load = layer.msg('正在获取CCTV资料...', {
             icon: 16
             , shade: 0.01
         });
@@ -811,6 +905,7 @@ function flytoByLineHole(lineID, type) {
             if (item.lineID == lineID) {
                 var alti_String = (viewer.camera.positionCartographic.height);
                 flyTo(item.cCoorWgsX, item.cCoorWgsY, alti_String);
+                map.centerAndZoom(new BMapGL.Point(item.dbCoor[0], item.dbCoor[1]), 21);
                 return false;
             }
         })
@@ -819,6 +914,7 @@ function flytoByLineHole(lineID, type) {
             if (item.e_holeID == lineID || item.s_holeID == lineID) {
                 var alti_String = (viewer.camera.positionCartographic.height);
                 flyTo(item.cCoorWgsX, item.cCoorWgsY, alti_String);
+                map.centerAndZoom(new BMapGL.Point(item.dbCoor[0], item.dbCoor[1]), 21);
                 return false;
             }
         })
@@ -898,10 +994,10 @@ $("#ftLineckbox").change(function () {
                     var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
                     attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREENYELLOW);
                 } catch (e) {
-                    console.log("流向管线ID异常"+ftIDS[i]);
+                    console.log("流向管线ID异常" + ftIDS[i]);
                 }
                 var LineID = ftIDS[i].split('$')[1];
-                addcolorForBD(LineID,'#c5e82b')//并列百度变颜色
+                addcolorForBD(LineID, '#c5e82b')//并列百度变颜色
             }
         }
     } else {
@@ -938,8 +1034,7 @@ $("#syLineckbox").change(function () {
     var linetype = $("#syLineckbox").attr('data-line');
     if (this.checked) {
         for (var i = 0; i < syIDS.length; i++) {
-            if (syIDS[i] != "")
-            {
+            if (syIDS[i] != "") {
                 try {
                     var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
                     attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKORANGE);
@@ -980,7 +1075,7 @@ $("#syLineckbox").change(function () {
 });
 
 //雨水、污水
-function ywEchatInit(wsLineSum, ysLineSum, name,Eleid) {
+function ywEchatInit(wsLineSum, ysLineSum, name, Eleid) {
     var myChart = echarts.init(document.getElementById(Eleid));
     option = {
         title: {

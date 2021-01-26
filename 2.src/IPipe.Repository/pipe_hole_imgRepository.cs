@@ -3,6 +3,7 @@ using IPipe.IRepository;
 using IPipe.IRepository.UnitOfWork;
 using IPipe.Model.Models;
 using IPipe.Repository.Base;
+using Microsoft.AspNetCore.Http;
 
 namespace IPipe.Repository
 {

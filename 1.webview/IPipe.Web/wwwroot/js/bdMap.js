@@ -20,7 +20,11 @@ function initMap() {
     map = new BMapGL.Map("bdmap");    // 创建Map实例
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
    // map.setTilt(73);
-    map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252), 21);  // 初始化地图,设置中心点坐标和地图级别
+
+    if ($.cookie('area') == "gd_sz_gm")
+        map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252), 21);
+    else 
+        map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
 
     var scaleCtrl = new BMapGL.ScaleControl();  // 添加比例尺控件
     map.addControl(scaleCtrl);
@@ -104,33 +108,67 @@ function addLineOverlays() {
             layerMsg('msg', data.msg)
         } else {
             $.each(data.response.lineDateMoldes, function (i, item) {
-                if ((i > 600 && i < 1000)|| i<100) {
-                    var smyIcon = new BMapGL.Icon("/img/1-2.png", new BMapGL.Size(69, 69));
-                    var emyIcon = new BMapGL.Icon("/img/1-2.png", new BMapGL.Size(69, 69));
+                var flat = false;
+                if ($.cookie('area') == "gd_sz_gm") {
+                    flat = i < 2000;
+                } else {
+                    flat = i < 2000;
+                }
+
+                if (flat) {
+                    var smyIcon = new BMapGL.Icon("/img/1-2.png", new BMapGL.Size(40, 40));
+                    var emyIcon = new BMapGL.Icon("/img/1-2.png", new BMapGL.Size(40, 40));
                     var Scolor = "#ff50ff";
                     if (item.line_Class === "YS") {
-                        smyIcon = new BMapGL.Icon("/img/2-1.png", new BMapGL.Size(69, 69));
-                        emyIcon = new BMapGL.Icon("/img/2-1.png", new BMapGL.Size(69, 69));
+                        smyIcon = new BMapGL.Icon("/img/2-1.png", new BMapGL.Size(40, 40));
+                        emyIcon = new BMapGL.Icon("/img/2-1.png", new BMapGL.Size(40, 40));
                         Scolor = "#881212";
+                        if (item.e_Feature == "出水口" && (item.e_subsid == null || item.e_subsid == ""))
+                            emyIcon = new BMapGL.Icon("/img/mapico/YS出水口.png", new BMapGL.Size(40, 40));
+                    } else {
+                        if (item.e_Feature == "出水口" && (item.e_subsid == null || item.e_subsid == ""))
+                            emyIcon = new BMapGL.Icon("/img/mapico/WS出水口.png", new BMapGL.Size(40, 40));
                     }
+
 
                     //管段
                     var polyline = new BMapGL.Polyline([
                         new BMapGL.Point(item.sCoorWgsX, item.sCoorWgsY),
                         new BMapGL.Point(item.eCoorWgsX, item.eCoorWgsY)
-                    ], { strokeColor: Scolor, strokeWeight: 2, strokeOpacity: 0.5, enableClicking: true });
+                    ], { strokeColor: Scolor, strokeWeight: 2, strokeOpacity: 0.5, enableClicking: true, lineID: item.lineID, line_Class: item.line_Class, lno: item.lno });
 
                     var flowToPolyline = new BMapGL.Polyline([
                         new BMapGL.Point(item.sCoorWgsX, item.sCoorWgsY),
                         new BMapGL.Point(item.cCoorWgsX, item.cCoorWgsY)
                     ], { strokeColor: Scolor, strokeWeight: 0, strokeOpacity: 0 });
 
+                    polyline.addEventListener('click', function (e) {
+                        let config =  e.currentTarget._config;
+                        recoveryLineColor();//移除上一选择的管段cesium
+                        recoveryHoleColor();
+                        let packid = "pipe_line_" + config.lno + "_" + config.line_Class + "$" + config.lineID; 
+                        $("#property").hide();
+                        if (lineCLICKID != packid)
+                            removeFTcolor();
+                        lineCLICKID = packid;
+                        addcolorForBD(config.lineID, "#01e5e6");//百度二维
+
+                        try {
+                            var attributes = linePrimitive.getGeometryInstanceAttributes(packid);//三维
+                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.CYAN);//三维
+                        } catch (e) {
+
+                        }
+                        getLineInfoByID(e.currentTarget._config.lineID);//请求lineID数据
+                        map.centerAndZoom(new BMapGL.Point(e.latLng.lng, e.latLng.lat), 21);  // 初始化地图,设置中心点坐标和地图级别
+                    });
+       
                     map.addOverlay(polyline);
 
                     bdPolylineID.push(item.lineID);
                     bdPolyline.push(polyline);
 
-                    addArrow(flowToPolyline, 10, Math.PI / 7);
+                    addArrow(flowToPolyline, 10, Math.PI / 7, Scolor);
 
                     //var opts = {
                     //    width: 200,     // 信息窗口宽度
@@ -163,24 +201,42 @@ function addLineOverlays() {
 
                     //管井
                     if (!in_array(item.s_Point, bdholeList)) {//开始井
-                        if (item.s_subsid === "雨篦") {
-                            smyIcon = new BMapGL.Icon("/img/3-1.png", new BMapGL.Size(69, 69));
+                        if (item.s_subsid === "雨水篦")
+                            smyIcon = new BMapGL.Icon("/img/3-1.png", new BMapGL.Size(40, 40));
+                        else if (item.s_subsid === "污水篦")
+                            emyIcon = new BMapGL.Icon("/img/mapico/3-2.png", new BMapGL.Size(40, 40));
+                        else if (item.s_subsid == "化粪池") {//污水化粪池.png
+                            emyIcon = new BMapGL.Icon("/img/mapico/污水化粪池.png", new BMapGL.Size(40, 40));
+                        } else if (item.s_subsid == "沉淀池") {
+                            emyIcon = new BMapGL.Icon("/img/mapico/WS沉淀池.png", new BMapGL.Size(40, 40));
                         }
                         var smarker = new BMapGL.Marker(new BMapGL.Point(item.sCoorWgsX, item.sCoorWgsY), {
                             icon: smyIcon
                         });  // 创建标注
+                        smarker.setZIndex(10);
+                        smarker.addEventListener('click', function (e) {
+                            layer.msg("管井正在开发中");
+                        });
+
                         map.addOverlay(smarker);              // 将标注添加到地图中
                         bdholeList.push(item.s_Point);
                         //smarker.hide();
                         dbholeOverlays.push(smarker);
                     }
                     if (!in_array(item.e_Point, bdholeList)) {
-                        if (item.e_subsid === "雨篦") {
-                            emyIcon = new BMapGL.Icon("/img/3-1.png", new BMapGL.Size(69, 69));
-                        }
+                        if (item.e_subsid === "雨水篦" ) 
+                            emyIcon = new BMapGL.Icon("/img/3-1.png", new BMapGL.Size(40, 40));
+                        else if (item.s_subsid === "污水篦") 
+                            emyIcon = new BMapGL.Icon("/img/mapico/3-2.png", new BMapGL.Size(40, 40));
+                        
                         var emarker = new BMapGL.Marker(new BMapGL.Point(item.eCoorWgsX, item.eCoorWgsY), {
                             icon: emyIcon
                         });  // 创建标注
+                        emarker.setZIndex(10);
+                        emarker.addEventListener('click', function (e) {
+                            layer.msg("管井正在开发中");
+                        });
+
                         map.addOverlay(emarker);              // 将标注添加到地图中
                         bdholeList.push(item.e_Point);
                         //emarker.hide();
@@ -228,7 +284,7 @@ function bdLineInfoClick(LineID, lno, line_Class) {
         removeFTcolor();
     lineCLICKID = pickid;
     //添加当前颜色的管线信息
-    if ($("#plckbox").is(":checked")) {
+    if ($("#plckbox").is(":checked") || $("#qhckbox").is(":checked")) {
         var attributes = linePrimitive.getGeometryInstanceAttributes(pickid);//三维
         attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.CYAN);//三维
     }
@@ -239,7 +295,7 @@ function bdLineInfoClick(LineID, lno, line_Class) {
 
 //添加颜色
 function addcolorForBD(LineID,Scolor) {
-    if ($("#plckbox").is(":checked")) {
+    if ($("#plckbox").is(":checked") || !$("#qhckbox").is(":checked")) {
         for (var i = 0; i < bdPolylineID.length; i++) {
             if (bdPolylineID[i] == LineID) {
                 bdPolyline[i].setStrokeColor(Scolor);
@@ -274,7 +330,7 @@ function layerMsg(skin, msg) {
  * @param length 箭头线的长度 一般是10
  * @param angleValue 箭头与直线之间的角度 一般是Math.PI/7
  */
-function addArrow(polyline, length, angleValue) { //绘制箭头的函数
+function addArrow(polyline, length, angleValue, Scolor) { //绘制箭头的函数
     var linePoint = polyline.getPath();//线的坐标串
     var arrowCount = linePoint.length;
     for (var i = 1; i < arrowCount; i++) { //在拐点处绘制箭头
@@ -328,7 +384,7 @@ function addArrow(polyline, length, angleValue) { //绘制箭头的函数
             pointArrow,
             linePoint[i],
             pointArrow1
-        ], { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 0.5 });
+        ], { strokeColor: Scolor, strokeWeight: 2, strokeOpacity: 0.5 });
         map.addOverlay(Arrow);
         return Arrow;
     }

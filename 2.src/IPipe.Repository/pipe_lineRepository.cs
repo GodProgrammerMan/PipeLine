@@ -5,6 +5,7 @@ using IPipe.IRepository.UnitOfWork;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
 using IPipe.Repository.Base;
+using Microsoft.AspNetCore.Http;
 using SqlSugar;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,24 +21,24 @@ namespace IPipe.Repository
         {
         }
 
-        public LineHoleDateModel GetLineHolesDate(int type)
+        public LineHoleDateModel GetLineHolesDate(int areid,int type)
         {
             bool isBd = type != 1;
             LineHoleDateModel lineHoleDateModel = new LineHoleDateModel();
             var WSholeDate = Db.Queryable<pipe_hole>()
-                .Where(t=>t.HType.Equals("WS"))
-                .Select(t => new HoleDateMolde() { hight = t.hight,szCoorX = t.szCoorX, szCoorY = t.szCoorY, hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep , subsid = t.Subsid })
-                .Take(1000)
+                .Where(t=>t.HType.Equals("WS")&& t.areid == areid)
+                .Select(t => new HoleDateMolde() { hight = t.hight,szCoorX = t.szCoorX, szCoorY = t.szCoorY, hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep , subsid = t.Subsid, Feature = t.Feature,maxdeep = t.maxdeep })
+                .Take(2000)
                 .ToList();
             var YSholeDate = Db.Queryable<pipe_hole>()
-                .Where(t => t.HType.Equals("YS"))
-                .Take(1000)
-                .Select(t => new HoleDateMolde() { hight = t.hight, szCoorX = t.szCoorX , szCoorY = t.szCoorY,hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep, subsid = t.Subsid })
+                .Where(t => t.HType.Equals("YS") && t.areid == areid)
+                .Take(2000)
+                .Select(t => new HoleDateMolde() { hight = t.hight, szCoorX = t.szCoorX , szCoorY = t.szCoorY,hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep, subsid = t.Subsid, Feature = t.Feature , maxdeep = t.maxdeep })
                 .ToList();
             WSholeDate.AddRange(YSholeDate);
             lineHoleDateModel.holeDateMoldes = WSholeDate;
             var LineDate = Db.Queryable<pipe_line>()
-                           .Select(t => new LineDateMolde() { Lno =  t.Lno,pSize = t.PSize ,line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID })
+                           .Select(t => new LineDateMolde() { Lno =  t.Lno,pSize = t.PSize ,line_Class =  t.line_Class, LineID = t.id,  sholeID = t.S_holeID,  eholeID = t.E_holeID,eDeep = t.E_Deep,sDeep = t.S_Deep })
                            .ToList();
             List<HoleDateMolde> reholeDateMoldes = new List<HoleDateMolde>();
             List<LineDateMolde> relineDateMoldes = new List<LineDateMolde>();
@@ -50,21 +51,33 @@ namespace IPipe.Repository
                 double [] sCoorWgs=new double[] { Shole.CoorWgsX, Shole.CoorWgsY };
                 double[] eCoorWgs = new double[] { Ehole.CoorWgsX, Ehole.CoorWgsY };
                 if (isBd) {
-                     sCoorWgs = CoordinateCalculation.shenzhenToBd(Shole.szCoorX, Shole.szCoorY, Shole.hight);
-                     eCoorWgs = CoordinateCalculation.shenzhenToBd(Ehole.szCoorX, Ehole.szCoorY, Shole.hight);
+                    if (areid == 1)
+                    {
+                        sCoorWgs = CoordinateCalculation.WGS84TOBD(sCoorWgs);
+                        eCoorWgs = CoordinateCalculation.WGS84TOBD(eCoorWgs);
+                    }
+                    else {
+                        sCoorWgs = CoordinateCalculation.shenzhenToBd(Shole.szCoorX, Shole.szCoorY, Shole.hight);
+                        eCoorWgs = CoordinateCalculation.shenzhenToBd(Ehole.szCoorX, Ehole.szCoorY, Shole.hight);
+                    }
                 }
                 item.S_Point = Shole.Exp_No;
                 item.E_Point = Ehole.Exp_No;
                 item.sCoorWgsX = sCoorWgs[0];
                 item.sCoorWgsY = sCoorWgs[1];
-                item.eDeep = Shole.Deep;
                 item.eCoorWgsX = eCoorWgs[0];
                 item.eCoorWgsY = eCoorWgs[1];
-                item.sDeep = Ehole.Deep;
+                item.smaxdeep = Shole.maxdeep;
+                item.emaxdeep = Ehole.maxdeep;
+                item.ehight = Ehole.hight;
+                item.shight = Shole.hight;
                 item.s_subsid = Shole.subsid;
+                item.s_Feature = Shole.Feature;
                 item.e_subsid = Ehole.subsid;
+                item.e_Feature = Ehole.Feature;
                 item.cCoorWgsX = ((sCoorWgs[0] + eCoorWgs[0]) / 2).UtObjToMoney();
                 item.cCoorWgsY = ((sCoorWgs[1] + eCoorWgs[1]) / 2).UtObjToMoney();
+                item.dbCoor = CoordinateCalculation.WGS84TOBD(new double[] { item.cCoorWgsX, item.cCoorWgsY });
                 if (!reholeDateMoldes.Any(t => t.holeID == Shole.holeID))
                     reholeDateMoldes.Add(Shole);
                 if (!reholeDateMoldes.Any(t => t.holeID == Ehole.holeID))
@@ -90,7 +103,7 @@ namespace IPipe.Repository
             //流向分析
             #region 流向分析
             var farr = model.subclassIDs.Split(',');
-            var flowLineList = Db.Queryable<pipe_line>().In(t=>t.id, farr).Select(t=>new SeLineMolde() { e_holeID = SqlFunc.Subqueryable<pipe_hole>().Where(s => s.id == t.E_holeID && s.Feature.Equals("起始点")).Select(s => s.id), id = t.id, line_Class = t.line_Class, lno = t.Lno, pSize = t.PSize }).ToList();
+            var flowLineList = Db.Queryable<pipe_line>().In(t=>t.id, farr).Select(t=>new SeLineMolde() { e_holeID = SqlFunc.Subqueryable<pipe_hole>().Where(s => s.id == t.E_holeID && s.Feature.Equals("出水口")).Select(s => s.id), id = t.id, line_Class = t.line_Class, lno = t.Lno, pSize = t.PSize }).ToList();
             //污水管与雨水管数量
             var wsFLineSum = flowLineList.Any(t => t.line_Class == "WS") ? flowLineList.Where(t => t.line_Class == "WS").Count() : 0;
             var ysFLineSum = flowLineList.Any(t => t.line_Class == "WS") ? flowLineList.Where(t => t.line_Class == "YS").Count() : 0;
@@ -110,7 +123,7 @@ namespace IPipe.Repository
             #region 溯源分析
             var tarr = model.parentIDs.Split(',');
 
-            var trLineList = Db.Queryable<pipe_line>().In(t=>t.id, tarr).Select(t => new SeLineMolde() { s_holeID = SqlFunc.Subqueryable<pipe_hole>().Where(s => s.id == t.S_holeID && s.Feature.Equals("起始点")).Select(s => s.id), id = t.id, line_Class = t.line_Class, lno = t.Lno, pSize = t.PSize }).ToList();
+            var trLineList = Db.Queryable<pipe_line>().In(t=>t.id, tarr).Select(t => new SeLineMolde() { s_holeID = SqlFunc.Subqueryable<pipe_hole>().Where(s => s.id == t.S_holeID && s.Feature.Equals("进水口")).Select(s => s.id), id = t.id, line_Class = t.line_Class, lno = t.Lno, pSize = t.PSize }).ToList();
             //污水管与雨水管数量
             var wsTLineSum = trLineList.Any(t => t.line_Class == "WS") ? trLineList.Where(t => t.line_Class == "WS").Count() : 0;
             var ysTLineSum = trLineList.Any(t => t.line_Class == "WS") ? trLineList.Where(t => t.line_Class == "YS").Count() : 0;
@@ -129,9 +142,9 @@ namespace IPipe.Repository
             return lineInfoMolde;
         }
 
-        public List<TreeLineMolde> getLineListBytree()
+        public List<TreeLineMolde> getLineListBytree(int areid)
         {
-            return Db.Queryable<pipe_line>().Select(t=> new TreeLineMolde() { eHoleID = t.E_holeID, id = t.id, sHoleID =t.S_holeID }).ToList();
+            return Db.Queryable<pipe_line>().Where(t=>t.areid == areid).Select(t=> new TreeLineMolde() { eHoleID = t.E_holeID, id = t.id, sHoleID =t.S_holeID }).ToList();
         }
 
         public List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw)
@@ -157,6 +170,14 @@ namespace IPipe.Repository
             Db.Updateable<pipe_line>()
             .SetColumns(it => new pipe_line() { S_holeID = item.E_holeID, S_Point = item.E_Point, S_Deep = item.E_Deep, startbotto= item.endbotto, startcrow = item.endcrow,  E_holeID = item.S_holeID, E_Point= item.S_Point, E_Deep= item.S_Deep, endbotto= item.startbotto, endcrow = item.startcrow })
             .Where(t => t.id == item.id)
+            .ExecuteCommand();
+        }
+
+        public void UpdateHoleIDByID(int sholeID, int eholeID, int lineid)
+        {
+            Db.Updateable<pipe_line>()
+            .SetColumns(it => new pipe_line() { S_holeID = sholeID, E_holeID = eholeID })
+            .Where(t => t.id == lineid)
             .ExecuteCommand();
         }
 

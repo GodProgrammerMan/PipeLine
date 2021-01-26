@@ -11,7 +11,7 @@ namespace IPipe.IRepository
     /// </summary>	
     public interface Ihidden_dangerRepository : IBaseRepository<hidden_danger>
     {
-        List<YhDataMolde> GetYhData();
+        List<YhDataMolde> GetYhData(int areid);
     }
 }
                                     

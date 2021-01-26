@@ -4,6 +4,7 @@ using IPipe.IRepository.UnitOfWork;
 using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
 using IPipe.Repository.Base;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
 namespace IPipe.Repository
@@ -29,10 +30,15 @@ namespace IPipe.Repository
             if (model == null || model.id == 0)
                 return null;
             holeInfoMolde.model = model;
-            //ͼƬ
+   
             holeInfoMolde.imgs = Db.Queryable<pipe_hole_img>().Where(t => t.holeID == id).ToList();
             holeInfoMolde.dangers = Db.Queryable<hidden_danger>().Where(t => t.objID == id && t.tableType == "pipe_hole").ToList();
             return holeInfoMolde;
+        }
+
+        public void UpdateMaxDeep(pipe_hole item)
+        {
+            var result = Db.Updateable(item).UpdateColumns(it => new { it.maxdeep }).ExecuteCommand();
         }
 
         public void UpdateWgsXY(double x, double y, int id)

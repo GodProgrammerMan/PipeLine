@@ -14,7 +14,7 @@ using NPOI.SS.Formula.Functions;
 
 namespace IPipe.Web.Controllers
 {
-    public class HiddenDangerController : Controller
+    public class HiddenDangerController : BaseController
     {
         readonly Ihidden_dangerServices  _ihidden_DangerServices;
         readonly Ipipe_lineServices _ipipe_LineServices;
@@ -97,7 +97,8 @@ namespace IPipe.Web.Controllers
                 handleTime = obj.handleTime,
                 CoorWgsX = obj.CoorWgsX,
                 CoorWgsY = obj.CoorWgsY,
-                hd_name = obj.hd_name
+                hd_name = obj.hd_name,
+                areid = areid
             };
 
             if ("add".Equals(obj.action))

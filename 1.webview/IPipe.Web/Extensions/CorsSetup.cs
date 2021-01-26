@@ -13,6 +13,8 @@ namespace IPipe.Web.Extensions
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
+
+
             services.AddCors(c =>
             {
                 //允许任意跨域请求，也要配置中间件

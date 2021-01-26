@@ -69,6 +69,53 @@
             返回数据集合
             </summary>
         </member>
+        <member name="T:IPipe.Model.Models.cctv">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.cctv.id">
+            <summary>
+            Desc:表ID
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.cctv.LineID">
+            <summary>
+            Desc:线ID
+            Default:
+            Nullable:True
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.cctv.cctvID">
+            <summary>
+            Desc:cctvID
+            Default:
+            Nullable:True
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.cctv.cctvJsonStr">
+            <summary>
+            Desc:cctv内容
+            Default:
+            Nullable:True
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.cctv.grade">
+            <summary>
+            Desc:等级
+            Default:
+            Nullable:True
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.Models.cctv.lno">
+            <summary>
+            Desc:管线名
+            Default:
+            Nullable:True
+            </summary>
+        </member>
         <member name="T:IPipe.Model.Models.hidden_danger">
             <summary>
             

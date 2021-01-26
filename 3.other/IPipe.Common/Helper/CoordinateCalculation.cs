@@ -21,8 +21,12 @@ namespace IPipe.Common.Helper
         {
             double[] gcj02 = WGS84ToGCJ02(wgsArr);
             double[] db = gcj02ToBd(gcj02[0], gcj02[1]);
-            db[0] = db[0] + 0.000325802700999134;
-            db[1] = db[1] - 0.000321856414799981;
+            //db[0] = db[0] + 0.000325802700999134;
+            //db[1] = db[1] - 0.000321856414799981;
+            //db[0] = db[0] + 0.00548067512527;
+            //db[1] = db[1] - 0.002558873036861;
+            db[0] = db[0] + 0.00549193449961;
+            db[1] = db[1] - 0.002656157015784;
             return db;
         }
 
@@ -107,6 +111,80 @@ namespace IPipe.Common.Helper
 
             double E = 2472721.34852661 + 0.999845189293312 * sx + 0.0170794528393774 * sy;
             double F = 391032.173570315 - 0.0170794528393774 * sx + 0.999845189293312 * sy;
+            double H = E / 1000000 - 3;
+            double I = F - 500000;
+
+            double J = 25 * Math.Floor(G) / 9 - 2 * Math.Floor(G) / 3 - 100 * Math.Floor(G) / 90;
+            double K = 27.11115372595 + 9.02468257083 * H - 0.00579740442 * Math.Pow(H, 2) - 0.00043532572 * Math.Pow(H, 3)
+                    + 0.00004857285 * Math.Pow(H, 4) + 0.00000215727 * Math.Pow(H, 5) - 0.00000019399 * Math.Pow(H, 6);
+            double L = Math.Tan(toRadians(K));
+
+            double M = 0.0067385254147 * Math.Pow(Math.Cos(toRadians(K)), 2);
+
+            double N = I * Math.Pow(1 + M, 0.5) / 6399698.90178271;
+
+            double O = K - (1 + M) * L
+                    * (90 * Math.Pow(N, 2) - 7.5 * (5 + 3 * Math.Pow(L, 2) + M - 9 * M * Math.Pow(L, 2)) * Math.Pow(N, 4)
+                            + 0.25 * (61 + 90 * Math.Pow(L, 2) + 45 * Math.Pow(L, 4)) * Math.Pow(N, 6))
+                    / toRadians(180);
+            double P = J + (180 * N - 30 * (1 + 2 * Math.Pow(L, 2) + M) * Math.Pow(N, 3)
+                    + 1.5 * (5 + 28 * Math.Pow(L, 2) + 24 * Math.Pow(L, 4)) * Math.Pow(N, 5)) / toRadians(180)
+                    / Math.Cos((toRadians(K)));
+
+            double Q = 9 * O / 25 + 2 * Math.Floor(O) / 5 + Math.Floor(60 * O) / 250;
+
+            double R = 9 * P / 25 + 2 * Math.Floor(P) / 5 + Math.Floor(60 * P) / 250;
+            double S = sz + 52;
+
+            double T = toRadians(25 * Q / 9 - 2 * Math.Floor(Q) / 3 - Math.Floor(100 * Q) / 90);
+            double U = toRadians(25 * R / 9 - 2 * Math.Floor(R) / 3 - Math.Floor(100 * R) / 90);
+
+            double V = bjLongAxis / Math.Sqrt(1 - bje * Math.Sin(T) * Math.Sin(T));
+            double W = (V + S) * Math.Cos(T) * Math.Cos(U) + 22;
+            double X = (V + S) * Math.Cos(T) * Math.Sin(U) - 118;
+            double Y = (V * (1 - bje) + S) * Math.Sin(T) - 30.5;
+            double Z = Math.Atan(Y / Math.Sqrt(Math.Pow(W, 2) + Math.Pow(X, 2)));
+            double AA = Math.Sqrt(Math.Pow(W, 2) + Math.Pow(X, 2) + Math.Pow(Y, 2));
+            double AB = Math.Sin(Z);
+            double AC = Math.Cos(Z);
+            double AD = wgsLongAxis / AA;
+            double AE = AD * Math.Tan(Z);
+
+            double AF = Math.Pow(AB, 2) + 2 * AD * AC * AC;
+            double AG = 3 * Math.Pow(AB, 4) + 16 * AD * AB * AB * AC * AC + 4 * AD * AD * AC * AC * (2 - 5 * AB * AB);
+            double AH = 5 * AB + 48 * AD * Math.Pow(AB, 4) * AC * AC + 20 * AD * AD * AB * AB * AC * AC * (4 - 7 * AB * AB)
+                    + 16 * Math.Pow(AD, 3) * AC * AC * (1 - 7 * AB * AB + 8 * Math.Pow(AB, 4));
+            double AJ = Math.Tan(Z) + AE * wgse * (1 + wgse / 2 * (AF + wgse / 4 * (AG + wgse / 2 * AH)));
+            double AK = Math.Atan(AJ);
+            double AI = Math.Sqrt(1 - wgse * Math.Sin(AK) * Math.Sin(AK));
+            double AL = Math.Atan(X / W) + Math.PI;
+            WGS84[0] = 9 * AK * 180 / Math.PI / 25 + 2 * Math.Floor(AK * 180 / Math.PI) / 5
+                    + Math.Floor(60 * AK * 180 / Math.PI) / 250;
+            WGS84[1] = 9 * AL * 180 / Math.PI / 25 + 2 * Math.Floor(AL * 180 / Math.PI) / 5
+                    + Math.Floor(60 * AL * 180 / Math.PI) / 250;
+            WGS84[2] = AA * AC / Math.Cos(AK) - wgsLongAxis / AI;
+
+            WGS84[0] = getToDegree(WGS84[0]);
+            WGS84[1] = getToDegree(WGS84[1]);
+
+            return WGS84;
+        }
+
+        public static double[] fsTOWGS84(double[] szArr) {
+            double[] WGS84 = new double[3];
+            // 常量
+            double bjLongAxis = 6378245;// bj长半轴
+            double bjShortAxis = 6356863.0188;// bj 短半轴
+            double bje = 0.006693421622966;// bj e的平方
+            double wgsLongAxis = 6378137;// wgs长半轴
+            double wgsShortAxis = 6356752.3142;// wgs短半轴
+            double wgse = 0.00669437999013;// wgs e平方
+            double G = 114.000;// 角度
+
+            double sz = szArr[2];
+
+            double E = szArr[0];
+            double F = szArr[1];
             double H = E / 1000000 - 3;
             double I = F - 500000;
 

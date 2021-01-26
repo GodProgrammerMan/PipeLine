@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using System.IO;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.Http;
 
 namespace IPipe.Web
 {
@@ -76,6 +77,13 @@ namespace IPipe.Web
             {
                 // 设置 Session 过期时间
                 options.IdleTimeout = TimeSpan.FromMinutes(60);
+            });
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => false;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
             services.Configure<KestrelServerOptions>(x => x.AllowSynchronousIO = true)
@@ -130,6 +138,7 @@ namespace IPipe.Web
                 builder.RegisterType<IPipeLogAOP>();
                 cacheType.Add(typeof(IPipeLogAOP));
             }
+            
 
             // 获取 Service.dll 程序集服务，并注册
             var assemblysServices = Assembly.LoadFrom(servicesDllFile);
@@ -159,7 +168,7 @@ namespace IPipe.Web
             #region 没有接口的单独类，启用class代理拦截
 
             ////只能注入该类中的虚方法，且必须是public
-            //builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(Love)))
+            //builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(HttpCookieHelper)))
             //    .EnableClassInterceptors()
             //    .InterceptedBy(cacheType.ToArray());
             #endregion
@@ -184,7 +193,6 @@ namespace IPipe.Web
         {
             // signalr 
             app.UseSignalRSendMildd();
-
             #region Environment
             if (env.IsDevelopment())
             {
@@ -216,6 +224,9 @@ namespace IPipe.Web
             app.UseStatusCodePages();//把错误码返回前台，比如是404
             // Routing
             app.UseRouting();
+            //sesion
+            //app.UseSession();
+            app.UseCookiePolicy();
 
             app.UseEndpoints(endpoints =>
             {

@@ -9,8 +9,11 @@ let flowtoPrimitive;
 let holePrimitive = [];
 let cctvDate;
 let IsBddiv = true;
+let isCesium = false;
 let x;//鼠标的x
 let y;//鼠标的y
+let cctvflat = false;
+let layerFrom;
 
 //全局获取鼠标位置
 $(document).mousemove(function (e) {
@@ -23,6 +26,7 @@ $(document).ready(function () {
     layui.use(['form', 'element'], function () {
         var element = layui.element;
         var form = layui.form;
+        layerFrom = form; 
         form.on('checkbox(lineShow)', function (data) {
             layer.msg("当前状态不支持该操作");
         });
@@ -30,33 +34,88 @@ $(document).ready(function () {
             layer.msg("当前状态不支持该操作");
         });
         form.on('checkbox(CCTVShow)', function (data) {
+            isCesium = $("#plckbox").is(":checked") || $("#qhckbox").is(":checked");
+            cctvflat = data.elem.checked;
             if (data.elem.checked) {//显示
                 initCesium();
+                var loadindex = layer.load(1, {
+                    shade: [0.1, '#000']
+                });
                 //并飞到该区域
                 $.get('/home/getCCTVGrade', null, function (res, status) {
+                    layer.close(loadindex);
                     cctvDate = res;
                     $.each(res, function (i, item) {
-                        if (item.grade === 1) {
-                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
-                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREEN);
-                        } else if (item.grade === 2) {
-                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
-                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.YELLOW);
-                        } else if (item.grade === 3) {
-                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
-                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.VIOLET);
-                        } else if (item.grade === 4) {
-                            var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
-                            attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.RED);
+                        try {
+                            if (item.grade === 1) {
+                                if (isCesium) {
+                                    var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREEN);
+                                }
+
+                                addcolorForBD(item.lineID, "#008000");//百度二维
+                            } else if (item.grade === 2) {
+                                if (isCesium) {
+                                    var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.YELLOW);
+                                }
+
+                                addcolorForBD(item.lineID, "#FFFF00");//百度二维
+                            } else if (item.grade === 3) {
+                                if (isCesium) {
+                                    var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.VIOLET);
+                                }
+
+                                addcolorForBD(item.lineID, "#EE82EE");//百度二维
+                            } else if (item.grade === 4) {
+                                if (isCesium) {
+                                    var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.RED);
+                                }
+
+                                addcolorForBD(item.lineID, "#FF0000");//百度二维
+                            }
+                        } catch (e) {
+                            try {
+                                if (item.grade === 1) {
+                                    if (isCesium) {
+                                        var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_YS$" + item.lineID);
+                                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREEN);
+                                    }
+
+                                    addcolorForBD(item.lineID, "#008000");//百度二维
+                                } else if (item.grade === 2) {
+                                    if (isCesium) {
+                                        var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_YS$" + item.lineID);
+                                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.YELLOW);
+                                    }
+
+                                    addcolorForBD(item.lineID, "#FFFF00");//百度二维
+                                } else if (item.grade === 3) {
+                                    if (isCesium) {
+                                        var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_YS$" + item.lineID);
+                                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.VIOLET);
+                                    }
+
+                                    addcolorForBD(item.lineID, "#EE82EE");//百度二维
+                                } else if (item.grade === 4) {
+                                    if (isCesium) {
+                                        var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_YS$" + item.lineID);
+                                        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.RED);
+                                    }
+
+                                    addcolorForBD(item.lineID, "#FF0000");//百度二维
+                                }
+                            } catch (e) {
+
+                            }
                         }
                     });
                 });
-            } else {
-                $.each(cctvDate, function (i, item) {
-                    var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
-                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
-                });
-            }
+            } else 
+                cctvRecolor();
+            
         });
         form.on('checkbox(psizeShow)', function (data) {
             if (data.elem.checked) {
@@ -145,13 +204,59 @@ $(document).ready(function () {
 });
 
 
+//城市切换
+function citySwitching(citycoed) {
+    //先执行去掉
+    $.cookie('area',null);
+    //在添加
+    $.cookie('area', citycoed);
+    //然后提示成功、跳转页面
+    os('info', "转换成功，正在跳转获取数据！", '');
+    window.setTimeout("window.location=''", 2000);
+}
+
+//颜色恢复
+function cctvRecolor() {
+    $.each(cctvDate, function (i, item) {
+        try {
+            if (isCesium) {
+                var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_WS$" + item.lineID);
+                attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
+            }
+
+            addcolorForBD(item.lineID, "#ff50ff");//百度二维
+        } catch (e) {
+            try {
+                if (isCesium) {
+                    var attributes = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_YS$" + item.lineID);
+                    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
+                }
+                addcolorForBD(item.lineID, "#881212");//百度二维
+            } catch (e) {
+
+            }
+        }
+    });
+}
+
 function reAddDange() {
     $('body').addClass("cousline");
+}
+
+function cctvBSclike() {
+    if (cctvflat) {
+        //颜色变回来
+        cctvRecolor();
+        //并取消打勾
+        $("input[name='CCTVShow']").prop("checked", false);
+        layerFrom.render();
+    }
 }
 
 function otherThing() {
     //二三维切换
     $("#qhckbox").change(function () {
+        cctvBSclike();
         //true时为三维
         //false时为二维
         if (!$("#plckbox").is(":checked")) {
@@ -170,6 +275,7 @@ function otherThing() {
     });
     //并列
     $("#plckbox").change(function () {
+        cctvBSclike();
         //true时并列
         //false时，判定$("#qhckbox")
         if (this.checked) {
