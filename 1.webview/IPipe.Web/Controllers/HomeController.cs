@@ -45,6 +45,18 @@ namespace IPipe.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        ///  新主页
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult HomeIndex() 
+        {
+            var areaname = areid == 2 ? "深圳市" : "佛山市";
+            ViewBag.areanme = areaname;
+            return View();
+        }
+
+
         #region 隐患转成照片
         public void SetHYToImg() {
             var hyList = _ihidden_DangerServices.QuerySql($" SELECT * FROM hidden_danger where areid =2 ").Result;
@@ -890,6 +902,21 @@ namespace IPipe.Web.Controllers
             return new JsonResult(result);
         }
         #endregion
+
+        #region 统计与报表
+        public IActionResult GetStatisticalAllDataData() {
+            var result = new MessageModel<StatisticalAllDataDataModel>() { msg = "参数错误", status = 404, response = null, success = true };
+            var statisticalDataModel = _ipipe_LineServices.GetStatisticalAllDataData(areid);
+            if (statisticalDataModel != null) 
+            {
+                result.status = 200; 
+                result.response = statisticalDataModel;
+                result.msg = "获取数据成功";
+            }
+            return new JsonResult(result);
+        }
+        #endregion
+
 
     }
 }

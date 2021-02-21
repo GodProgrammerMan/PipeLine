@@ -352,6 +352,7 @@ namespace IPipe.Model.Models
         public string parentIDs { get; set; }
         public string subclassIDs { get; set; }
         public int areid { get; set; }
+        public string areatwo { get; set; }
     }
 }
                     

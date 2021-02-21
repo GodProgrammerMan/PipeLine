@@ -71,6 +71,7 @@ namespace IPipe.Model.Models
         public string lno { get; set; }
 
        public int areid { get; set; }
+        public string areatwo { get; set; }
     }
 }
                     

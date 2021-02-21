@@ -108,6 +108,7 @@ namespace IPipe.Model.Models
         public double CoorWgsY { get; set; }
         public double CoorWgsX { get; set; }
         public int areid { get; set; }
+        public string areatwo { get; set; }
     }
 }
                     

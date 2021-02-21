@@ -6,6 +6,7 @@ using IPipe.Model.Models;
 using IPipe.Model.ViewModels;
 using IPipe.Repository.Base;
 using Microsoft.AspNetCore.Http;
+using NPOI.SS.Formula.Functions;
 using SqlSugar;
 using System.Collections.Generic;
 using System.Linq;
@@ -188,6 +189,204 @@ namespace IPipe.Repository
                 .Where(t => t.id == id)
                 .ExecuteCommand();
         }
+
+        public StatisticalAllDataDataModel GetStatisticalAllDataData(int areid)
+        {
+            StatisticalAllDataDataModel model = new StatisticalAllDataDataModel();
+            var cctvlist = Db.Queryable<cctv>().Where(t => t.areid == areid).Select(t => new cctv() { grade = t.grade, lno = t.lno, areatwo = t.areatwo }).ToList();
+            var yhlist = Db.Queryable<hidden_danger>().Where(t => t.areid == areid).Select(t => new hidden_danger() { hd_name = t.hd_name, handleState = t.handleState, handleTime = t.handleTime, tableType = t.tableType, areatwo = t.areatwo }).ToList();
+            var holelist = Db.Queryable<pipe_hole>().Where(t=>t.areid == areid).Select(t=>new pipe_hole() {HType=t.HType,  Subsid =t.Subsid, areatwo = t.areatwo }).ToList();
+            var linelist = Db.Queryable<pipe_line>().Where(t => t.areid == areid).Select(t => new pipe_line() { Material = t.Material,PSize = t.PSize,line_Class = t.line_Class, areatwo = t.areatwo }).ToList();
+
+            var holes =  holelist.Where(t => !string.IsNullOrWhiteSpace(t.Subsid)).ToList();
+            var wscctv = cctvlist.Where(t => t.lno.Contains("WS")).ToList();
+            var yscctv = cctvlist.Where(t => t.lno.Contains("YS")).ToList();
+            model.wscctvSum = wscctv.Count();
+            model.yscctvSum = yscctv.Count();
+            model.pipeholeSum = holes.Count();
+            model.pipelineSum = linelist.Count();
+            model.yhpipehole = yhlist.Where(t=>t.tableType.Equals("pipe_hole")).Count();
+            model.yhpipeline = yhlist.Where(t => t.tableType.Equals("pipe_line")).Count();
+
+            //井类型
+            model.holeTypeValues =  holes.GroupBy(t =>new { t.Subsid } ).Select(t => new CommonNameValueModel { name = t.Key.Subsid, value = t.Count() }).ToList();
+
+            //cctv 等级
+            List<string> cctvStartList = new List<string>() { "Ⅰ级", "Ⅱ级", "Ⅲ级", "Ⅳ级"};
+            List<string> pipeTypeList = new List<string>() { "污水", "雨水" };
+
+            var wscctv1 = wscctv.Where(t => t.grade == 1).Count();
+            var wscctv2 = wscctv.Where(t => t.grade == 2).Count();
+            var wscctv3 = wscctv.Where(t => t.grade == 3).Count();
+            var wscctv4 = wscctv.Where(t => t.grade == 4).Count();
+            var yscctv1 = yscctv.Where(t => t.grade == 1).Count();
+            var yscctv2 = yscctv.Where(t => t.grade == 2).Count();
+            var yscctv3 = yscctv.Where(t => t.grade == 3).Count();
+            var yscctv4 = yscctv.Where(t => t.grade == 4).Count();
+            model.cctvStartList = cctvStartList;
+            model.pipeTypeList = pipeTypeList;
+            CommonAllValueListModel cctvListModel = new CommonAllValueListModel
+            {
+                list1 = new List<int>() { wscctv1, yscctv1 },
+                list2 = new List<int>() { wscctv2, yscctv2 },
+                list3 = new List<int>() { wscctv3, yscctv3 },
+                list4 = new List<int>() { wscctv4, yscctv4 }
+            };
+            model.cctvStartmodel = cctvListModel;
+
+            //管线材料类型统计
+            var linemtypeList = linelist.GroupBy(t =>new { t.Material }).Select(t => new CommonNameValueModel { name = t.Key.Material, value = t.Count() }).ToList();
+            model.linemtypeNameList = linemtypeList.Select(t=>t.name).ToList();
+            model.linemtypevalueList = linemtypeList.Select(t => t.value).ToList();
+
+            //隐患状态统计
+            List<string> yhStartList = new List<string>() { "未处理", "已处理", "处理中" };
+            model.yhStateList = yhStartList;
+            var wsyhList = yhlist.Where(t => t.hd_name.Contains("WS")).ToList();
+            var ysyhList = yhlist.Where(t => t.hd_name.Contains("YS")).ToList();
+
+            var wsyh0 = wsyhList.Where(t => t.handleState == 0).Count();
+            var wsyh1 = wsyhList.Where(t => t.handleState == 1).Count();
+            var wsyh2 = wsyhList.Where(t => t.handleState == 2).Count();
+
+            var ysyh0 = ysyhList.Where(t => t.handleState == 0).Count();
+            var ysyh1 = ysyhList.Where(t => t.handleState == 1).Count();
+            var ysyh2 = ysyhList.Where(t => t.handleState == 2).Count();
+
+            CommonAllValueListModel yhListModel = new CommonAllValueListModel
+            {
+                list1 = new List<int>() { wsyh0, ysyh0 },
+                list2 = new List<int>() { wsyh1, ysyh1 },
+                list3 = new List<int>() { wsyh2, ysyh2 }
+            };
+            model.yhStartmodel = yhListModel;
+
+            //区域统计，污水管，雨水管，隐患数
+            List<CommonAreaModel> areaname = new List<CommonAreaModel>();
+            var wsline = linelist.Where(t => t.line_Class.Equals("WS"));
+            var ysline = linelist.Where(t => t.line_Class.Equals("YS"));
+            if (areid == 1)
+            {
+                CommonAreaModel commonAreaModel = new CommonAreaModel() {
+                    name = "高明区",
+                    wsvalue = wsline.Where(t=>t.areatwo.Equals("高明区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("高明区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("高明区")).Count()
+                };
+                CommonAreaModel commonAreaModel1 = new CommonAreaModel()
+                {
+                    name = "三水区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("三水区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("三水区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("三水区")).Count()
+                };
+                CommonAreaModel commonAreaModel2 = new CommonAreaModel()
+                {
+                    name = "南海区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("南海区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("南海区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("南海区")).Count()
+                };
+                CommonAreaModel commonAreaModel3 = new CommonAreaModel()
+                {
+                    name = "禅城区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("禅城区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("禅城区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("禅城区")).Count()
+                };
+                CommonAreaModel commonAreaModel4 = new CommonAreaModel()
+                {
+                    name = "顺德区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("顺德区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("顺德区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("顺德区")).Count()
+                };
+                areaname.Add(commonAreaModel);
+                areaname.Add(commonAreaModel1);
+                areaname.Add(commonAreaModel2);
+                areaname.Add(commonAreaModel3);
+                areaname.Add(commonAreaModel4);
+            }
+            else {
+                CommonAreaModel commonAreaModel = new CommonAreaModel()
+                {
+                    name = "宝安区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("宝安区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("宝安区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("宝安区")).Count()
+                };
+                CommonAreaModel commonAreaModel1 = new CommonAreaModel()
+                {
+                    name = "光明区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("光明区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("光明区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("光明区")).Count()
+                };
+                CommonAreaModel commonAreaModel2 = new CommonAreaModel()
+                {
+                    name = "龙华区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("龙华区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("龙华区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("龙华区")).Count()
+                };
+                CommonAreaModel commonAreaModel3 = new CommonAreaModel()
+                {
+                    name = "南山区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("南山区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("南山区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("南山区")).Count()
+                };
+
+                CommonAreaModel commonAreaModel4 = new CommonAreaModel()
+                {
+                    name = "龙岗区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("龙岗区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("龙岗区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("龙岗区")).Count()
+                };
+                CommonAreaModel commonAreaModel5 = new CommonAreaModel()
+                {
+                    name = "福田区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("福田区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("福田区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("福田区")).Count()
+                };
+                CommonAreaModel commonAreaModel6 = new CommonAreaModel()
+                {
+                    name = "罗湖区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("罗湖区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("罗湖区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("罗湖区")).Count()
+                };
+                CommonAreaModel commonAreaModel7 = new CommonAreaModel()
+                {
+                    name = "盐田区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("盐田区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("盐田区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("盐田区")).Count()
+                };
+                CommonAreaModel commonAreaModel8 = new CommonAreaModel()
+                {
+                    name = "坪山区",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("坪山区")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("坪山区")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("坪山区")).Count()
+                };
+                areaname.Add(commonAreaModel);
+                areaname.Add(commonAreaModel1);
+                areaname.Add(commonAreaModel2);
+                areaname.Add(commonAreaModel3);
+                areaname.Add(commonAreaModel4);
+                areaname.Add(commonAreaModel5);
+                areaname.Add(commonAreaModel6);
+                areaname.Add(commonAreaModel7);
+                areaname.Add(commonAreaModel8);
+            }
+            model.areamaxvalue = areaname.Max(t => t.value);
+            model.areaList = areaname;
+            return model;
+        }
+
     }
 }
                     

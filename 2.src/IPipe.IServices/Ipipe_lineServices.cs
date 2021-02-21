@@ -18,6 +18,8 @@ namespace IPipe.IServices
         void UpdateParentsIDSChildrsIDS(string parentsIDS, string ChildrsIDS,int id);
         void UpdateFlowToData(pipe_line item);
         void UpdateHoleIDByID(int id1, int id2, int id3);
+
+        StatisticalAllDataDataModel GetStatisticalAllDataData(int areid);
     }
 }
                     

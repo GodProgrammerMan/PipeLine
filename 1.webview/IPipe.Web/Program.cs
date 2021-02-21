@@ -1,10 +1,7 @@
-using System;
 using System.IO;
 using System.Reflection;
 using System.Xml;
 using Autofac.Extensions.DependencyInjection;
-using IPipe.Common.Helper;
-using IPipe.Model.Models;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

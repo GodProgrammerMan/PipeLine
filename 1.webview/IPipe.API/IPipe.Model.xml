@@ -1176,6 +1176,76 @@
             数据类型
             </summary>
         </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.wscctvSum">
+            <summary>
+            污水cctv个数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.yscctvSum">
+            <summary>
+            雨水cctv个数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.pipeholeSum">
+            <summary>
+            井盖个数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.pipelineSum">
+            <summary>
+            管线个数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.yhpipehole">
+            <summary>
+            井隐患个数
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.yhpipeline">
+            <summary>
+            隐患管段
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.holeTypeValues">
+            <summary>
+            井类型饼状图
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.cctvStartList">
+            <summary>
+            cctv等级List
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.pipeTypeList">
+            <summary>
+            类型List
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.cctvStartmodel">
+            <summary>
+            cctv数据
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.linemtypeNameList">
+            <summary>
+            管线材料类型统计name
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.linemtypevalueList">
+            <summary>
+            管线材料类型统计valueo
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.yhStateList">
+            <summary>
+            隐患状态list
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.yhStartmodel">
+            <summary>
+            隐患数据
+            </summary>
+        </member>
         <member name="P:IPipe.Model.ViewModels.TreeLineMolde.sHoleID">
             <summary>
             开始井

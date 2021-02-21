@@ -22,7 +22,9 @@ $(document).mousemove(function (e) {
 });
 
 
+
 $(document).ready(function () {
+
     layui.use(['form', 'element'], function () {
         var element = layui.element;
         var form = layui.form;

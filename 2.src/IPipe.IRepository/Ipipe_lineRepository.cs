@@ -18,6 +18,7 @@ namespace IPipe.IRepository
         void UpdateParentsIDSChildrsIDS(string parentsIDS, string childrsIDS, int id);
         void UpdateFlowToData(pipe_line item);
         void UpdateHoleIDByID(int sholeID, int eholeID, int lineid);
+        StatisticalAllDataDataModel GetStatisticalAllDataData(int areid);
     }
 }
                                     

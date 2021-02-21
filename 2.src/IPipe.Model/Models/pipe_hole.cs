@@ -351,6 +351,7 @@ namespace IPipe.Model.Models
 
         public double maxdeep { get; set; }
         public int areid { get; set; }
+        public string areatwo { get; set; }
     }
 }
                     

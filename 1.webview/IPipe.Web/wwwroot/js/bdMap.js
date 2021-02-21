@@ -22,7 +22,7 @@ function initMap() {
    // map.setTilt(73);
 
     if ($.cookie('area') == "gd_sz_gm")
-        map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252), 21);
+        map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252), 21);//深圳
     else 
         map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
 
