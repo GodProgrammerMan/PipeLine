@@ -2,8 +2,8 @@ var areacode = $.cookie('area');
 $(function () {
     //删除加载动画
     $('#load').fadeOut(1000000);
-
-    $.post("/home/getStatisticalAllDataData", null, function (data, status) {
+    CookieChoohtml();
+    $.get("/home/getStatisticalAllDataData", { areacode: areacode}, function (data, status) {
         $('#load').remove();
         if (data.status == 200) {
             var res = data.response;
@@ -22,7 +22,46 @@ $(function () {
         }
     });
 
+    document.onclick = function (e) {
+        $(".msdi-sys-menu-ul").hide();
+    }
+
+    $("#sys-muen").on("click", function (e) {
+        if ($(".msdi-sys-menu-ul").css("display") == "none") {
+            $(".msdi-sys-menu-ul").show();
+        } else {
+            $(".msdi-sys-menu-ul").hide();
+        }
+        e = e || event;
+        stopFunc(e);
+    });
+
 });
+
+function stopFunc(e) {
+    e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true;
+}
+function showBox(titleStr, urlstr, area) {
+    titleStr = titleStr || "信息";
+    parent.layer.open({
+        title: titleStr,
+        type: 2,
+        area: area || ['90%', '90%'],
+        fix: false, //不固定
+        maxmin: true,
+        content: urlstr
+    });
+}
+//城市切换
+function switchcity(citycoed) {
+    //先执行去掉
+    $.cookie('area', null);
+    //在添加
+    $.cookie('area', citycoed);
+    //然后提示成功、跳转页面
+    layer.msg("却换成功，正在跳转页面");
+    window.setTimeout("window.location=''", 2000);
+}
 
 function init_myChart1(data) {
     var myChart = echarts.init($("#char1")[0]);
@@ -333,6 +372,7 @@ function init_Chartarea(areaList,maxvalue) {
                 trigger: 'item',
                 formatter: function (data) {
                     let res = data.data;
+                    console.log(data);
                     return res.name + '<br/>隐患 ' + res.value + '(个) <br/>污水管 ' + res.wsvalue + '(个)<br/>雨水管 ' + res.ysvalue +'(个)';
                 }
             },
@@ -392,8 +432,8 @@ function init_Chartarea(areaList,maxvalue) {
 //根据cookie修改页面
 function CookieChoohtml() {
     if (areacode == "gd_sz_gm") {
-
+        $("#cityall").html("佛山数据");
     } else {
-
+        $("#cityall").html("深圳数据"); 
     }
 }

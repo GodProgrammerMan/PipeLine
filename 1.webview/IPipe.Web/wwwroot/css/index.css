@@ -1176,3 +1176,17 @@ a:hover{
     border-bottom: 3px solid #4b8df8 !important;
     box-sizing: border-box;
 }
+.msdi-sys-menu-ul {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    overflow: hidden;
+    color: #fff;
+    z-index: 9;
+    background: #081832;
+    width: 120px;
+    box-shadow: -10px 0px 15px #034c6a inset, /*å·¦è¾¹é˜´å½±*/ 0px -10px 15px #034c6a inset, /*ä¸Šè¾¹é˜´å½±*/ 10px 0px 15px #034c6a inset, /*å³è¾¹é˜´å½±*/ 0px 10px 15px #034c6a inset;
+}
+.msdi-menu-notifications-title {
+   color:#fff;
+}

@@ -18,18 +18,23 @@ namespace IPipe.Web.Controllers
         public int areid = 1;
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            SetAreaVlue();
+            base.OnActionExecuting(filterContext);
+        }
+
+        public void SetAreaVlue() {
             var areaname = GetValue("area");
             if (string.IsNullOrWhiteSpace(areaname))
             {
                 areid = 1;
             }
-            else {
-                if (areaname.Equals("gd_sz_gm")) 
+            else
+            {
+                if (areaname.Equals("gd_sz_gm"))
                     areid = 2;
-                 else 
+                else
                     areid = 1;
             }
-            base.OnActionExecuting(filterContext);
         }
 
         /// <summary>

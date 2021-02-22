@@ -904,9 +904,21 @@ namespace IPipe.Web.Controllers
         #endregion
 
         #region 统计与报表
-        public IActionResult GetStatisticalAllDataData() {
+        public IActionResult GetStatisticalAllDataData(string areacode) {
             var result = new MessageModel<StatisticalAllDataDataModel>() { msg = "参数错误", status = 404, response = null, success = true };
-            var statisticalDataModel = _ipipe_LineServices.GetStatisticalAllDataData(areid);
+            int areidman;
+            if (string.IsNullOrWhiteSpace(areacode))
+            {
+                areidman = 1;
+            }
+            else
+            {
+                if (areacode.Equals("gd_sz_gm"))
+                    areidman = 2;
+                else
+                    areidman = 1;
+            }
+            var statisticalDataModel = _ipipe_LineServices.GetStatisticalAllDataData(areidman);
             if (statisticalDataModel != null) 
             {
                 result.status = 200; 
