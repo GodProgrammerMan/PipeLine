@@ -1,13 +1,4 @@
-﻿var jsentities;
-var buildingNumber;
-var buildIndex = 0;
-var lablesShow = false;
-var flowtoShow = false;
-var lineCLICKID = "";
-var holeCLICKID = null;
-var yhPairList = [];
-let ceHoleList = [];
-let holdListData;
+﻿
 $(function () {
     //建筑物
     getbuildList();

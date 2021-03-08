@@ -55,7 +55,11 @@ namespace IPipe.Web.Controllers
             ViewBag.areanme = areaname;
             return View();
         }
-
+        public IActionResult Map() {
+            var areaname = areid == 2 ? "深圳市" : "佛山市";
+            ViewBag.areanme = areaname;
+            return View();
+        }
 
         #region 隐患转成照片
         public void SetHYToImg() {

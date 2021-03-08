@@ -1,19 +1,22 @@
-let viewer;
-let scene;
-let globe;
-let canvas;
-let ellipsoid;
-let labels;
-let linePrimitive;
-let flowtoPrimitive;
-let holePrimitive = [];
-let cctvDate;
-let IsBddiv = true;
-let isCesium = false;
+var viewer,scene,globe,canvas,ellipsoid,labels,linePrimitive,flowtoPrimitive,holePrimitive = [],cctvDate,IsBddiv = true,isCesium = false;
 let x;//鼠标的x
 let y;//鼠标的y
-let cctvflat = false;
-let layerFrom;
+var cctvflat = false;
+var layerFrom;
+var olMap;
+var geoserverURLIP = "https://192.168.0.20:8022/geoserver/MSDI/wms";
+var areacode = $.cookie('area');
+var areid = 2;
+var jsentities;
+var buildingNumber;
+var buildIndex = 0;
+var lablesShow = false;
+var flowtoShow = false;
+var lineCLICKID = "";
+var holeCLICKID = null;
+var yhPairList = [];
+var ceHoleList = [];
+var holdListData;
 
 //全局获取鼠标位置
 $(document).mousemove(function (e) {
@@ -24,6 +27,8 @@ $(document).mousemove(function (e) {
 
 
 $(document).ready(function () {
+    //ol地图加载二维
+    //initOL();
 
     layui.use(['form', 'element'], function () {
         var element = layui.element;
@@ -167,13 +172,15 @@ $(document).ready(function () {
             layer.msg("当前状态不支持该操作");
         });
     });
+
+
     otherThing();
     // Cesium
     //Cesium token
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMzg4YWMyOS1mNDk4LTQyMzItOGU3NC0zMGRiZjRiODBjZTQiLCJpZCI6Mjg2MTAsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTEyNjM0NzN9.JYLFdGUWYl4HcjPbdH74RHHb1qJbe193tmL_Ccv-tLo';
     viewer = new Cesium.Viewer("map", {
         animation: false, //是否显示动画控件
-        baseLayerPicker: true, //是否显示图层选择控件
+        baseLayerPicker: false, //是否显示图层选择控件
         geocoder: false, //是否显示地名查找控件
         timeline: false, //是否显示时间线控件
         sceneModePicker: false, //是否显示投影方式控件
@@ -205,6 +212,90 @@ $(document).ready(function () {
     }));
 });
 
+//初始化
+function initOL() {
+    var bounds = [793510.5441972963, 798901.882329949,
+        870889.9856708245, 848793.2521547235];
+
+    var mousePositionControl = new ol.control.MousePosition({
+        className: 'custom-mouse-position',
+        target: document.getElementById('location'),
+        coordinateFormat: ol.coordinate.createStringXY(5),
+        undefinedHTML: '&nbsp;'
+    });
+
+    // 创建一个比例尺控件
+    var scaleLineControl = new ol.control.ScaleLine({
+        units: 'metric'             // 比例尺默认的单位
+    });
+
+
+
+    // 管线图层组
+    var pipeAllLayer = new ol.layer.Image({//图层组
+        source: new ol.source.ImageWMS({
+            ratio: 1,
+            url: geoserverURLIP,
+            params: {
+                'FORMAT': format,
+                'VERSION': '1.1.1',
+                "LAYERS": 'MSDI:all_pipe',
+                "exceptions": 'application/vnd.ogc.se_inimage',
+            }
+        }),
+        className: "pipelineLayer",
+        visible: false,
+        zIndex: 8
+    });
+    oLpipeAllLayer = pipeAllLayer;
+    oLLayerArr.push(oLpipeAllLayer);
+    //项目图层
+    var proAllLayer = new ol.layer.Image({//图层组
+        source: new ol.source.ImageWMS({
+            ratio: 1,
+            url: geoserverURLIP,
+            params: {
+                'FORMAT': format,
+                'VERSION': '1.1.1',
+                "LAYERS": 'MSDI:all_pro',
+                "exceptions": 'application/vnd.ogc.se_inimage',
+            }
+        }),
+        className: "proLayer",
+        visible: true,
+        zIndex: 8
+    });
+    oLProAllLayer = proAllLayer;
+    oLLayerArr.push(proAllLayer);
+
+
+
+    getOLbaseMapInit();
+
+    //创建ol地图
+    olMap = new ol.Map({
+        controls: ol.control.defaults({
+            attribution: false
+        }).extend([mousePositionControl, scaleLineControl]),
+        target: 'geoservermap',
+        layers: oLLayerArr,//图层组 
+        view: new ol.View({
+            projection: projection
+        })
+    });
+
+
+    olMap.getView().fit(bounds, olMap.getSize());//边界问题
+
+    olMouseEvents();
+
+
+    //放大缩小的控件
+    $(".ol-zoom").css("top", "auto");
+    $(".ol-zoom").css("bottom", "17.5em");
+    $(".custom-mouse-position").hide();
+    IDMSclear();
+}
 
 //城市切换
 function citySwitching(citycoed) {

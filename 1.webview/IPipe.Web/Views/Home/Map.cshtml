@@ -1,0 +1,401 @@
+﻿@{
+    ViewData["Title"] = ViewBag.areanme + "排水管线管理及隐患调查GIS服务平台";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/css/toastr/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/js/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="~/css/index.css" />
+    <link href="~/js/cesium/Widgets/widgets.css" rel="stylesheet">
+    <!-- 全局js -->
+    <script src="~/js/jquery.min.js"></script>
+}
+
+<!-- 加载 -->
+<div id="load">
+    <div class="load_img">
+        <img class="jzxz1" src="~/img/loading1.png">
+        <img class="jzxz2" src="~/img/loading2.png">
+    </div>
+</div>
+<!--顶部-->
+<header class="header left">
+    <div class="left nav">
+        <ul>
+            <li><i class="nav_1"></i><a href="/home/homeIndex">数据概览</a> </li>
+            <li class="nav_active"><i class="nav_3"></i><a href="/home/map">地图界面</a> </li>
+            <li><i class="nav_2"></i><a href="carContrl.html">CCTV视频监控</a> </li>
+        </ul>
+    </div>
+    <div class="header_center left">
+        <h2><strong>@(ViewBag.areanme)排水管线管理及隐患调查GIS服务平台</strong></h2>
+        <p class="color_font"><small>Drainage pipeline management and hidden danger investigation GIS service platform</small></p>
+    </div>
+    <div class="right nav text_right">
+        <ul>
+            <li><i class="nav_9"></i><a href="javascript:void(0);" onclick="showBox('任务安排', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">任务安排</a> </li>
+            <li><i class="nav_4"></i><a href="javascript:void(0);" onclick="showBox('信息录入', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">信息录入</a> </li>
+            <li>
+                <i class="nav_8"></i><a href="javascript:void(0);" id="sys-muen">系统设置</a>
+                <ul class="msdi-sys-menu-ul" style="display:none;z-index:158;">
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;">
+                            <div class="msdi-menu-notifications-title">
+                                <span>修改信息</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;">
+                            <div class="msdi-menu-notifications-title">
+                                <span>安全管理</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;" onclick="switchcity('@(ViewBag.areanme=="佛山市"?"gd_sz_gm":"gd_fs")')">
+                            <div class="msdi-menu-notifications-title">
+                                <span id="cityall">深圳数据</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;">
+                            <div class="msdi-menu-notifications-title">
+                                <span>退出</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>
+<!-- 地图 -->
+<div class="map_main" id="map_main">
+    <!-- 顶部菜单 -->
+    <div class="map_top">
+        <ul class="map_box_tool">
+            <li class="active" layermst="layerSelect"><i class="layui-icon layui-icon-template-1"></i><a href="javascript:void (0)" class="active">图层选择</a> </li>
+            <li layermst=""><i class="layui-icon layui-icon-subtraction"></i><a href="javascript:void (0)">缩小</a> </li>
+            <li layermst=""><i class="layui-icon layui-icon-addition"></i><a href="javascript:void (0)">放大</a> </li>
+            <li layermst=""><i class="layui-icon layui-icon-transfer"></i><a href="javascript:void (0)">对比</a> </li>
+            <li layermst="layerSearch"><i class="layui-icon layui-icon-search"></i><a href="javascript:void (0)">搜索</a> </li>
+            <li layermst="layerTool"><i class="layui-icon layui-icon-util"></i><a href="javascript:void (0)">工具</a> </li>
+            <li layermst="fullScreen"><i class="layui-icon layui-icon-screen-full"></i><a href="javascript:void (0)">全屏</a> </li>
+        </ul>
+    </div>
+    <!-- 二维 -->
+    <div id="geoservermap">
+
+    </div>
+    <!-- 三维 -->
+    <div id="map">
+
+    </div>
+    <!-- 百度二维 -->
+    <div id="bdmap">
+
+    </div>
+    <!-- 左侧菜单 -->
+    <div class="msdi-model-box" id="leftMenuid" layermst="layerSelect">
+        <i class="bar"></i>
+        <div class="msdi-model-header">
+            基本图层管理
+            <span class="msdi-model-arrow"></span>
+            <span class="msdi-model-close"></span>
+        </div>
+        <div class="msdi-model-content">
+            <div class="msdi-model-content-box">
+                <div class="leftMenuid_select">
+                    <div class="leftMenuid_select_top">
+                        <i class="layui-icon layui-icon-triangle-d"></i>
+                        <span>管线图层</span>
+                    </div>
+                    <div class="select-chcke layui-form">
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_ys.png" /><span>雨水层</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_ws.png" /><span>污水层</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_dl.png" /><span>电力层</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_js.png" /><span>给水层</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_rq.png" /><span>燃气层</span></p>
+                    </div>
+                </div>
+                <div class="leftMenuid_select">
+                    <div class="leftMenuid_select_top">
+                        <i class="layui-icon layui-icon-triangle-d"></i>
+                        <span>功能图层显示</span>
+                    </div>
+                    <div class="select-chcke layui-form">
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_yh1.png" /><span>隐患</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_cctv1.png" /><span>CCTV等级显示</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_gj.png" /><span>管径</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_lx.png" /><span>流向</span></p>
+                    </div>
+                </div>
+                <div class="leftMenuid_select">
+                    <div class="leftMenuid_select_top">
+                        <i class="layui-icon layui-icon-triangle-d"></i>
+                        <span>二维背景</span>
+                    </div>
+                    <div class="select-chcke layui-form">
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_wxyx.png" /><span>卫星影像</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_dtpj.png" /><span>地图背景</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_dtbj.png" /><span>地图标注</span></p>
+                    </div>
+                </div>
+                <div class="leftMenuid_select">
+                    <div class="leftMenuid_select_top">
+                        <i class="layui-icon layui-icon-triangle-d"></i>
+                        <span>三维背景</span>
+                    </div>
+                    <div class="select-chcke layui-form">
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_wxyx.png" /><span>卫星影像</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_dtpj.png" /><span>地图背景</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_dtbj.png" /><span>地图标注</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_jz.png" /><span>建筑白膜</span></p>
+                        <p><input type="checkbox" lay-skin="primary" /><img class="select-img" src="~/img/ioc_dq.png" /><span>地球</span></p>
+                    </div>
+                </div>
+                <div class="msdi-model-content-box-ds"></div>
+            </div>
+        </div>
+    </div>
+    <div class="msdi-model-box" id="layerTool" layermst="layerTool" style="position: absolute;width: 450px;height: 100px;top: 122px;left: 75%;display:none;">
+        <i class="bar"></i>
+        <div class="msdi-model-header">
+            分屏工具
+            <span class="msdi-model-arrow"></span>
+            <span class="msdi-model-close"></span>
+        </div>
+        <div class="msdi-model-content">
+            <div class="msdi-model-content-box">
+                <form class="layui-form msdi-box-form" id="mapshowform">
+                    <input type="radio" name="maptype" value="2d" title="二维" lay-skin="primary" lay-filter="mapShow" checked>
+                    <input type="radio" name="maptype" value="3d" title="三维" lay-skin="primary" lay-filter="mapShow">
+                    <input type="radio" name="maptype" value="23d" title="二三维并屏" lay-skin="primary" lay-filter="mapShow">
+                    <input type="radio" name="maptype" value="bd" title="百度" lay-skin="primary" lay-filter="mapShow">
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- 搜索框 -->
+    <div id="left-panel" style="display:none;">
+        <div id="searchbox" class="clearfix">
+            <div id="searchbox-container">
+                <div id="sole-searchbox-content" class="searchbox-content">
+                    <input id="sole-input" class="searchbox-content-common" type="text" name="word" autocomplete="on" maxlength="256" placeholder="请输入井点编号\管段编号" value="">
+                    <div class="input-clear" title="清空" style="display: block;" onclick="kwColse()"></div>
+                </div>
+            </div>
+            <button id="search-button" data-title="搜索" data-tooltip="1" onclick="searchKW()"></button>
+        </div>
+    </div>
+    <!-- 结果list -->
+    <div class="msdi-model-box" id="searchresbox" style="position: absolute;top: 175px; left: 35%;width: 328px;max-height: 600px;display:none;">
+        <i class="bar"></i>
+        <div class="msdi-model-header">
+            搜索结果
+            <span class="msdi-model-arrow"></span>
+            <span class="msdi-model-close"></span>
+        </div>
+        <div class="msdi-model-content">
+            <div class="msdi-model-content-box">
+                <ul class="search-res-ul">
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgj.png" />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgd.png" />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgj.png" />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgd.png" />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgj.png" />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgd.png" />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgj.png" />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="search-div search-res-l">
+                            <img src="~/img/定位.png" />
+                        </div>
+                        <div class="search-div search-res-c">
+                            <div class="search-res-c-top"><span>ws456asd56asd6a5s6dasd5as6</span></div>
+                            <div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div>
+                            <div class="search-res-c-f"><span>位置：光明大道</span></div>
+                        </div>
+                        <div class="search-div search-res-r">
+                            <img src="~/img/ioc_sgd.png" />
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- 底部信息栏 -->
+    <div id="localtion">
+        当前坐标：经度：<span id="lng"></span>，纬度：<span id="lat"></span>，高度：<span id="heght"></span>
+    </div>
+
+    <!-- 比例尺 -->
+    <div id="distanceLegendDiv"><div class="distance-legend" style="right: 18px; bottom: 40px;"><div class="distance-legend-label" id="scaleTxt">2 km</div><div class="distance-legend-scale-bar" style="width: 70px; left: 29px;"></div></div></div>
+
+    <!-- 属性面板  -->
+    <div class="msdi-model-box" style="position: absolute;top: 230px; left: 70%;width: 500px;max-height: 600px;display:none;">
+        <i class="bar"></i>
+        <div class="msdi-model-header">
+            属性面板
+            <span class="msdi-model-arrow"></span>
+            <span class="msdi-model-close"></span>
+        </div>
+        <div class="msdi-model-content">
+            <div class="msdi-model-content-box">
+                <div class="layui-tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">基本信息</li>
+                        <li>隐患信息</li>
+                        <li>溯源分析</li>
+                        <li>流向分析</li>
+                        <li>CCTV信息</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">内容1</div>
+                        <div class="layui-tab-item"></div>
+                        <div class="layui-tab-item"></div>
+                        <div class="layui-tab-item"></div>
+                        <div class="layui-tab-item"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 作图菜单 -->
+    <div class="PathInner" id="PathMenu">
+        <div class="PathMain">
+            <div class="Tmain" onclick="PathRun();">
+                <div class="rotate"><span class="cover"></span></div>
+            </div>
+        </div>
+        <div class="PathItem">
+            <a class="link" href="javascript:layer.tips('当前状态下不可测面', '当前状态下不可测面', {tips: [1, '#3595CC'],time: 4000});" title="测量面积">
+                <span class="item" style="background-image:url(/img/ms_area.png);"></span>
+            </a>
+        </div>
+        <div class="PathItem">
+            <a class="link" href="javascript:void(0);" title="上报隐患,双击取消" onclick="reAddDange()">
+                <span class="item" style="background-image:url(/img/selveos.png);"></span>
+            </a>
+        </div>
+        <div class="PathItem">
+            <a class="link" href="javascript:void(0);" title="复位" onclick="initCesium()">
+                <span class="item" style="background-image: url(/img/moment_icn_address.png);"></span>
+            </a>
+        </div>
+        <div class="PathItem">
+            <a class="link" href="javascript:layer.tips('当前状态下不可测距', '当前状态下不可测距', {tips: [1, '#3595CC'],time: 4000});" title="测距">
+                <span class="item" style="background-image: url(/img/ms_dis.png);"></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <!-- cookiesjs -->
+    <script src="~/js/jquery.cookie.js"></script>
+    <!-- layer -->
+    <script src="~/js/layui/layui.all.js"></script>
+    <!-- Toastr script -->
+    <script src="~/js/toastr/toastr.min.js"></script>
+    <!-- cesuum -->
+    <script src="~/js/cesium/Cesium.js?v=1"></script>
+    <!-- showmap -->
+    <script src="~/js/showmap.js"></script>
+    <!---百度二维地图 -->
+    <script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=bhb1z8SEID2CyM1HGyG2Pis9DQmY6G0H"></script>
+
+    <script src="~/js/public.js"></script>
+    <!-- 异步加载 -->
+    <script src="~/js/content.js" async defer></script>
+    <!-- 异步加载 -->
+    <script src="~/js/bdMap.js" async defer></script>
+    <!-- 异步加载 -->
+    <script src="~/js/lanrenzhijia.js" async defer></script>
+}
+
