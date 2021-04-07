@@ -1,8 +1,8 @@
 
 $(function () {
+
     //删除加载动画
     $('#load').fadeOut(2);
-    CookieChoohtml();
     document.onclick = function (e) {
         $(".msdi-sys-menu-ul").hide();
     }
@@ -84,16 +84,16 @@ $(function () {
                 }
                 break;
             case 'layerTool'://分屏工具
-                if (_this.hasClass('active')) {
-                    _this.removeClass('active');
-                    _this.find("a").removeClass('active');
-                    $("#layerTool").hide();
-                } else {
-                    _this.addClass('active');
-                    _this.find("a").addClass('active');
-                    $("#layerTool").show();
-                    $("#layerTool").css("z-index", "10")
-                }
+                //if (_this.hasClass('active')) {
+                //    _this.removeClass('active');
+                //    _this.find("a").removeClass('active');
+                //    $("#layerTool").hide();
+                //} else {
+                //    _this.addClass('active');
+                //    _this.find("a").addClass('active');
+                //    $("#layerTool").show();
+                //    $("#layerTool").css("z-index", "10")
+                //}
                 break;
             case 'layerSearch'://搜索工具
                 if (_this.hasClass('active')) {
@@ -201,7 +201,6 @@ $(function () {
 function stopFunc(e) {
     e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true;
 }
-
 //城市切换
 function switchcity(citycoed) {
     //先执行去掉
@@ -212,8 +211,6 @@ function switchcity(citycoed) {
     layer.msg("却换成功，正在跳转页面");
     window.setTimeout("window.location=''", 2000);
 }
-
-
 function kwColse() {
     $("#sole-input").val("")
 }
@@ -234,19 +231,27 @@ function searchKW() {
             os('error', data.msg, '');
         } else {
             os('success', data.msg, '');
-            $("#result").show();
+            $("#searchresbox").show();
             // 查询绑数据的开始
             var context = "";
             for (var i = 0; i < data.response.length; i++) {
                 var item = data.response[i];
                 if (item.dataType == 1) {
-                    context += "<div id='" + item.id + "' data-type='" + item.dataType + "' onclick='flytoByLineHole(" + item.id + ",1)'>管段：" + item.eNo + "</div>";
+                    context += '<li onclick="flytoByLineHole(' + item.id + ',1)"><div class="search-div search-res-l"><img src="/img/定位.png" /></div><div class="search-div search-res-c"><div class="search-res-c-top"><span>' + item.eNo + '</span></div><div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div<div class="search-res-c-f"><span>位置：' + item.addreess + '</span></div></div>' +
+                                    '<div class="search-div search-res-r">'+
+                                        '<img src="/img/ioc_sgd.png" />'+
+                                    '</div>'+
+                                '</li>';
                 } else {
-                    context += "<div id='" + item.id + "' data-type='" + item.dataType + "' onclick='flytoByLineHole(" + item.id + ",2)'>管点：" + item.eNo + "</div>";
+                    context += '<li onclick="flytoByLineHole(' + item.id + ',2)"><div class="search-div search-res-l"><img src="/img/定位.png" /></div><div class="search-div search-res-c"><div class="search-res-c-top"><span>'+item.eNo+'</span></div><div class="search-res-c-c"><span>隐患状态：暂无隐患</span></div<div class="search-res-c-f"><span>位置：' + item.addreess +'</span></div></div>'+
+                                   '<div class="search-div search-res-r">'+
+                                        '<img src="/img/ioc_sgj.png" />'+
+                                   '</div>'+
+                              '</li>';
                 }
 
             }
-            $("#rValue").html(context);
+            $("#search-res-ul").html(context);
         }
     }).error(function () { layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
 }
@@ -335,17 +340,17 @@ function showBox(titleStr, urlstr, area) {
     });
 }
 
-function initCesium() {
+function initlocation() {
     var areacode = $.cookie('area');
     if (areacode == "gd_sz_gm") {
-        flyTo(113.9190282019, 22.7821815641, 300);
+        flyTo(113.94314303246384, 22.746454084801524, 730.0222897488);
         try {
             map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252, 21));
         } catch (e) {
 
         }
     } else {
-        flyTo(113.07880230215, 22.9505263885339, 300);
+        flyTo(113.08343495207401, 22.949133135126246, 730.0222897488);
         try {
             map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
         } catch (e) {
@@ -356,15 +361,13 @@ function initCesium() {
 //根据cookie修改页面
 function CookieChoohtml() {
     if (areacode == "gd_sz_gm") {
-        areid = 1;
+        areid = 2;
         $("#cityall").html("佛山数据");
     } else {
-        areid = 2;
+        areid = 1;
         $("#cityall").html("深圳数据");
     }
 }
-
-
 function enterFullscreen() {
     var docElm = document.documentElement;
     //W3C
@@ -401,4 +404,116 @@ function exitFullscreen() {
     else if (document.msExitFullscreen) {
         document.msExitFullscreen();
     }
+}
+
+//播放cctv视频
+function PlayCCTV(srcurl) {
+    $("#layercctv").show();
+    $("#videoContainer").html("");
+    /* 以下将定义视频插件常用的几个控件 */
+    // 实例化一个“下一个”按钮控件
+    var nextControl = new Super.NextControl()
+    // 实例化一个倍速控件
+    var Dbspeen = new Super.DbspeenControl()
+    // 实例化一个弹幕输入框控件
+    var BarrageControl = new Super.BarrageControl()
+    // 实例化一个全屏按钮控件
+    var fullScreenControl = new Super.FullScreenControl()
+    // 实例化视频播放资源
+    var source = new Super.VideoSource({
+        // type: 视频类型 mp4:可播放浏览器支持的常见格式的视频文件(mp4/ogg/webm) m3u8: 可播放Hls形式推流直播视频(***.m3u8) flv: 可播放flv视频
+        // src: 视频路径，可以是本地路径亦可是网络路径
+        type: 'mp4',
+        src: 'https://image.imlzx.cn/cctv/' + srcurl+'.mp4'
+    })
+
+    /* 插件的常用配置参数 */
+    var config = {
+        // 是否自动播放（该功能受限于浏览器安全策略，可能会失效，解决思路为初始化时设置为静音，加载完毕后取消静音）
+        autoplay: true,
+        currentTime: 0, // 设置视频初始播放时间，单位为秒
+        loop: false, // 是否循环播放
+        muted: false, // 是否默认静音
+        playbackRate: 1, // 视频默认播放速度
+        poster: '', // 视频首帧图片路径
+        volume: 0.5, // 视频默认音量 0-1
+        showPictureInPicture: false, // 是否启用画中画模式按钮（>=Chrome10有效）
+        source: source, // 为视频插件设置资源
+        leftControls: [nextControl], // 在底部控件栏左侧插入 “下一个”按钮控件
+        rightControls: [Dbspeen, fullScreenControl], // 在底部控件栏左侧插入 “倍速” 控件和 “全屏” 控件
+        centerControls: [BarrageControl] // 在底部控件栏中间插入 “弹幕输入控件”
+    }
+
+    //初始化插件superVideo('videoContainer')请对应好html中的插件容器id.
+    var video = new Super.Svideo('videoContainer', config)
+
+    /* 以下是控件类常用的监听事件 */
+
+    // 监听“下一个”按钮控件点击事件
+    nextControl.addEventListener('click', function (event) {
+        alert('click next menu !!!')
+    })
+    // 监听进入全屏模式后触发（点击进入全屏按钮）
+    fullScreenControl.addEventListener('fullscreen', function (event) {
+        console.log('is fullscreen !!!')
+    })
+    // 监听退出全屏模式后触发（点击退出全屏按钮）
+    fullScreenControl.addEventListener('cancelfullscreen', function (event) {
+        console.log('cancel fullscreen !!!')
+    })
+    // 监听发送弹幕输入框输入并发送弹幕后触发
+    BarrageControl.addEventListener('send', function (event) {
+        var value = event.target.option.value
+        console.log('send ' + value)
+    })
+
+    /* 以下是video类常用的监听事件 */
+    // 视频准备就绪
+    video.addEventListener('ready', function () {
+        console.log('is ready!')
+    })
+    // 开始播放
+    video.addEventListener('play', function () {
+        console.log('is play!')
+    })
+    // 暂停播放
+    video.addEventListener('pause', function () {
+        console.log('is pause!')
+    })
+    // 监听进入全屏模式后触发
+    video.addEventListener('fullscreen', function (event) {
+        console.log('is fullscreen !!!')
+    })
+    // 监听退出全屏模式后触发
+    video.addEventListener('cancelfullscreen', function (event) {
+        console.log('cancel fullscreen !!!')
+    })
+
+    /* 下面将演示弹幕类的用法 */
+
+    // 初始化一个弹幕实例
+    var barrage1 = new Super.Barrage('我是一条红色的超大号字体弹幕', {
+        color: 'red',
+        fontSize: 30
+    })
+    // 将该弹幕加入播放器插件
+    //video.addBarrage(barrage1)
+
+    // 还可以在弹幕中插入一些dom节点
+    var vipDom = document.createElement('span')
+    vipDom.innerHTML = 'V'
+    vipDom.style.color = 'green'
+    vipDom.style.fontSize = '20px'
+    vipDom.style.fontWeight = '600'
+    vipDom.style.marginRight = '4px'
+    var barrage2 = new Super.Barrage('我是超级会员VIP', {
+        color: 'orange',
+        fontSize: 15,
+        leftDom: vipDom // 将DOM插入弹幕左侧
+    })
+    //video.addBarrage(barrage2);
+
+    // 当然也可以这样简单的使用
+    //video.addBarrage('冲鸭~~~~~~');
+    //video.addBarrage('奥里给！！！！！！');
 }
