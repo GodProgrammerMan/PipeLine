@@ -12,7 +12,6 @@
     <!-- 全局js -->
     <script src="~/js/jquery.min.js"></script>
 }
-
 <!-- 加载 -->
 <div id="load">
     <div class="load_img">
@@ -39,36 +38,50 @@
             <li><i class="nav_4"></i><a href="javascript:void(0);" onclick="showBox('信息录入', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">信息录入</a> </li>
             <li>
                 <i class="nav_8"></i><a href="javascript:void(0);" id="sys-muen">系统设置</a>
-                <ul class="msdi-sys-menu-ul" style="display:none;z-index:158;">
-                    <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;">
-                            <div class="msdi-menu-notifications-title">
-                                <span>修改信息</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;">
-                            <div class="msdi-menu-notifications-title">
-                                <span>安全管理</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;" onclick="switchcity('@(ViewBag.areanme=="佛山市"?"gd_sz_gm":"gd_fs")')">
-                            <div class="msdi-menu-notifications-title">
-                                <span id="cityall">深圳数据</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;">
-                            <div class="msdi-menu-notifications-title">
-                                <span>退出</span>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+                                     <ul class="msdi-sys-menu-ul" style="display:none;z-index:158;">
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>修改信息</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>安全管理</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;" onclick="switchcity('gd_sz_gm')">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>深圳数据</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;" onclick="switchcity('gd_fs')">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>佛山数据</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;" onclick="switchcity('gd_sz_sm')">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>深圳市民中心数据</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>退出</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                     </ul>
             </li>
         </ul>
     </div>
@@ -95,19 +108,13 @@
             </ul>
         </div>
         <!-- 二维 -->
-        <div id="map_geom">
-
-        </div>
+        <div id="map_geom"></div>
         @*<div id="divid-line" class="divid-line">
         </div>*@
         <!-- 三维 -->
-        <div id="map">
-
-        </div>
+        <div id="map"></div>
         <!-- 百度二维 -->
-        <div id="bdmap">
-
-        </div>
+        <div id="bdmap"></div>
         <!-- 左侧菜单 -->
         <div class="msdi-model-box" id="leftMenuid" layermst="layerSelect">
             <i class="bar"></i>
@@ -163,32 +170,33 @@
                             <p><input type="checkbox" checked lay-skin="primary" id="wxlayer3d" lay-filter="layercheckShow" /><label class="lables_scale"><img class="select-img" src="~/img/ioc_wxyx.png" />卫星影像</label></p>
                             <p><input type="checkbox" checked lay-skin="primary" id="dtlayer3d" lay-filter="layercheckShow" /><label class="lables_scale"><img class="select-img" src="~/img/ioc_dtpj.png" />地图背景</label></p>
                             <p><input type="checkbox" checked lay-skin="primary" id="bzlayer3d" lay-filter="layercheckShow" /><label class="lables_scale"><img class="select-img" src="~/img/ioc_dtbj.png" />地图标注</label></p>
-                            <p><input type="checkbox" checked lay-skin="primary" id="bmlayer3d" lay-filter="layercheckShow" /><label class="lables_scale"><img class="select-img" src="~/img/ioc_jz.png" />建筑白膜</label></p>
+                            <p><input type="checkbox" checked lay-skin="primary" id="bmlayer3d" lay-filter="layercheckShow" /><label class="lables_scale"><img class="select-img" src="~/img/ioc_jz.png" />建筑</label></p>
+                            <p><input type="checkbox" lay-skin="primary" id="dxslayer3d" lay-filter="layercheckShow" /><label class="lables_scale"><img class="select-img" src="~/img/ioc_dxms.png" />地下模式</label></p>
                             <p><input type="checkbox" checked lay-skin="primary" id="dqlayer3d" lay-filter="layercheckShow" /><label class="lables_scale"><img class="select-img" src="~/img/ioc_dq.png" />地球</label></p>
                         </div>
                     </div>
                     <div class="msdi-model-content-box-ds"></div>
                 </div>
             </div>
-        </div>
-        @*<div class="msdi-model-box" id="layerTool" layermst="layerTool" style="position: absolute;width: 450px;height: 100px;top: 80%;left: 50%;display:none;">
+        </div> 
+        <div class="msdi-model-box" id="layerTool" layermst="layerTool" style="position: absolute;width: 514px;height: 150px;top: 15%;left: 30%;">
             <i class="bar"></i>
             <div class="msdi-model-header">
-                分屏工具
+                挖地与管线上移工具
                 <span class="msdi-model-arrow"></span>
                 <span class="msdi-model-close"></span>
             </div>
             <div class="msdi-model-content">
                 <div class="msdi-model-content-box">
-                    <form class="layui-form msdi-box-form" id="mapshowform">
-                        <input type="radio" name="maptype" value="2d" title="二维" lay-skin="primary" lay-filter="mapShow" checked>
-                        <input type="radio" name="maptype" value="3d" title="三维" lay-skin="primary" lay-filter="mapShow">
-                        <input type="radio" name="maptype" value="23d" title="二三维并屏" lay-skin="primary" lay-filter="mapShow">
-                        <input type="radio" name="maptype" value="bd" title="百度" lay-skin="primary" lay-filter="mapShow">
-                    </form>
+                    <div class="msdi-input-number-input-wrap"><input value="10" type="number"  class="msdi-input-number-input"><span>m</span></div>
+                    <button type="button" class="bnt-cjro" id="bnt_upheigt">上升</button>
+                    <button type="button" class="bnt-cjro bsclear" id="bnt_clearup">恢复默认</button>
+                    <button type="button" class="bnt-cjro" id="bnt_wd">模型挖地</button>
+                    <button type="button" class="bnt-cjro bsclear" id="bnt_bsclear">清除</button>
+                    <div class="bs-text">点击模型挖地，在所要挖地的位置单击选择绘制多边形，鼠标右击结束绘制</div>
                 </div>
             </div>
-        </div>*@
+        </div>
         <div class="msdi-model-box" id="layercctv" layermst="layercctv" style="position: absolute; width: 542px; height: 370px; top: 243.188px; left: 289px;display:none;">
             <i class="bar"></i>
             <div class="msdi-model-header">
@@ -199,7 +207,6 @@
             <div class="msdi-model-content">
                 <div class="msdi-model-content-box">
                     <div id="videoContainer">
-
                     </div>
                 </div>
             </div>
@@ -232,13 +239,9 @@
             </div>
         </div>
         <!-- 底部信息栏 -->
-        <div id="localtion">
-            当前坐标：经度：<span id="lng"></span>，纬度：<span id="lat"></span>，高度：<span id="heght"></span>
-        </div>
-
+        <div id="localtion">当前坐标：经度：<span id="lng"></span>，纬度：<span id="lat"></span>，高度：<span id="heght"></span></div>
         <!-- 比例尺 -->
         <div id="distanceLegendDiv"><div class="distance-legend" style="right: 18px; bottom: 40px;"><div class="distance-legend-label" id="scaleTxt">2 km</div><div class="distance-legend-scale-bar" style="width: 70px; left: 29px;"></div></div></div>
-
         <!-- 属性面板  -->
         <div class="msdi-model-box" id="property" style="position: absolute;top: 120px; left: 70%;width: 550px;height: 700px;display:none;">
             <i class="bar"></i>
@@ -260,39 +263,6 @@
                         <div class="layui-tab-content">
                             <div class="layui-tab-item layui-show" id="infoDIV">
                                 <table id="InfoTab1">
-                                    <tr>
-                                        <td class="title" width="20%"></td>
-                                        <td class="value" width="80%"></td>
-                                    </tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
-                                    <tr><td class="title"></td><td class="value"></td></tr>
                                 </table>
                             </div>
                             <div class="layui-tab-item" id="yhinfoDIV">
@@ -303,16 +273,12 @@
                                     <div class="layui-card-header">统计分析</div>
                                     <div class="layui-card-body">
                                         <div id="wyTechat" class="echatcss">
-
                                         </div>
                                         <div id="wyTechat_msg">
-
                                         </div>
                                         <div id="frTechat" class="echatcss">
-
                                         </div>
                                         <div id="wyTechat_msg">
-
                                         </div>
                                     </div>
                                 </div>

@@ -28,12 +28,14 @@ namespace IPipe.Repository
             LineHoleDateModel lineHoleDateModel = new LineHoleDateModel();
             var WSholeDate = Db.Queryable<pipe_hole>()
                 .WhereIF(areid==2,t=> t.CoorWgsY > 22.7248853944 && t.CoorWgsY < 22.7666380348 && t.CoorWgsX > 113.9145808386 && t.CoorWgsX < 113.9606547741)
+                .WhereIF(areid == 0, t => t.CoorWgsY > 22.5355792246 && t.CoorWgsY < 22.5455121833 && t.CoorWgsX > 114.0426322427 && t.CoorWgsX < 114.0592555776)
                 .Where(t=>t.HType.Equals("WS")&& t.areid == areid)
                 .Select(t => new HoleDateMolde() { hight = t.hight,szCoorX = t.szCoorX, szCoorY = t.szCoorY, hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep , subsid = t.Subsid, Feature = t.Feature,maxdeep = t.maxdeep })
                 .ToList();
 
             var YSholeDate = Db.Queryable<pipe_hole>()
                 .WhereIF(areid == 2, t => t.CoorWgsY > 22.7248853944 && t.CoorWgsY < 22.7666380348 && t.CoorWgsX > 113.9145808386 && t.CoorWgsX < 113.9606547741)
+                .WhereIF(areid == 0, t => t.CoorWgsY > 22.5355792246 && t.CoorWgsY < 22.5455121833 && t.CoorWgsX > 114.0426322427 && t.CoorWgsX < 114.0592555776)
                 .Where(t => t.HType.Equals("YS") && t.areid == areid)
                 .Select(t => new HoleDateMolde() { hight = t.hight, szCoorX = t.szCoorX , szCoorY = t.szCoorY,hType = t.HType, holeID=t.id, Exp_No = t.Exp_No, CoorWgsX = t.CoorWgsX, CoorWgsY=t.CoorWgsY, Deep = t.deep, subsid = t.Subsid, Feature = t.Feature , maxdeep = t.maxdeep })
                 .ToList();

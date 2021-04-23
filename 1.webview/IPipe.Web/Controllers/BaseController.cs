@@ -30,10 +30,20 @@ namespace IPipe.Web.Controllers
             }
             else
             {
-                if (areaname.Equals("gd_sz_gm"))
-                    areid = 2;
-                else
-                    areid = 1;
+                switch (areaname)
+                {
+                    case "gd_sz_sm":
+                        areid = 0;
+                        break;
+                    case "gd_fs":
+                        areid = 1;
+                        break;
+                    case "gd_sz_gm":
+                        areid = 2;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

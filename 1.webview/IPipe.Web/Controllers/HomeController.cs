@@ -23,8 +23,8 @@ namespace IPipe.Web.Controllers
         readonly Ipipe_lineServices _ipipe_LineServices;
         readonly Ihidden_dangerServices _ihidden_DangerServices;
         readonly IcctvServices _icctvServices;
-        readonly Ipipe_hole_imgServices  _ipipe_Hole_ImgServices;
-        readonly Ipipe_line_imgServices  _ipipe_Line_ImgServices;
+        readonly Ipipe_hole_imgServices _ipipe_Hole_ImgServices;
+        readonly Ipipe_line_imgServices _ipipe_Line_ImgServices;
 
 
         public HomeController(Ipipe_line_imgServices ipipe_Line_ImgServices, Ipipe_hole_imgServices ipipe_Hole_ImgServices, IcctvServices icctvServices, Ihidden_dangerServices ihidden_DangerServices, Ipipe_holeServices ipipe_HoleServices, Ipipe_lineServices ipipe_LineServices)
@@ -49,28 +49,50 @@ namespace IPipe.Web.Controllers
         ///  新主页
         /// </summary>
         /// <returns></returns>
-        public IActionResult HomeIndex() 
+        public IActionResult HomeIndex()
         {
-            var areaname = areid == 2 ? "深圳市" : "佛山市";
-            ViewBag.areanme = areaname;
+            ViewBag.areanme = GetAreName();
             return View();
         }
-        public IActionResult Map() {
-            var areaname = areid == 2 ? "深圳市" : "佛山市";
-            ViewBag.areanme = areaname;
+        public IActionResult Map()
+        {
+            ViewBag.areanme = GetAreName();
             return View();
         }
 
+        public string GetAreName()
+        {
+
+            string areaname = "佛山市";
+            switch (areid)
+            {
+                case 0:
+                    areaname = "深圳市市民中心";
+                    break;
+                case 1:
+                    areaname = "佛山市";
+                    break;
+                case 2:
+                    areaname = "深圳市";
+                    break;
+                default:
+                    break;
+            }
+            return areaname;
+        }
+
         #region 隐患转成照片
-        public void SetHYToImg() {
-            var hyList = _ihidden_DangerServices.QuerySql($" SELECT * FROM hidden_danger where areid =2 ").Result;
+        public void SetHYToImg()
+        {
+            var hyList = _ihidden_DangerServices.QuerySql($" SELECT * FROM hidden_danger where areid =0").Result;
             List<pipe_hole_img> holeList = new List<pipe_hole_img>();
             List<pipe_line_img> lineList = new List<pipe_line_img>();
             foreach (var item in hyList)
             {
                 if (item.tableType.Equals("pipe_hole"))
                 {
-                    var hole = new pipe_hole_img() {
+                    var hole = new pipe_hole_img()
+                    {
                         areid = item.areid,
                         creatTime = item.hd_time,
                         holeID = item.objID,
@@ -80,7 +102,8 @@ namespace IPipe.Web.Controllers
                     };
                     holeList.Add(hole);
                 }
-                else {
+                else
+                {
                     var line = new pipe_line_img()
                     {
                         areid = item.areid,
@@ -101,8 +124,8 @@ namespace IPipe.Web.Controllers
         #region 更新Cookies切换
         public IActionResult SetChangeSession(string area)
         {
-            var result = new MessageModel<LineInfoMolde>() { msg = "参数错误", status = 204,  response = null, success = true };
-            if (string.IsNullOrWhiteSpace(area) || (!area.Equals("gd_fs") && !area.Equals("gd_sz_gm")))
+            var result = new MessageModel<LineInfoMolde>() { msg = "参数错误", status = 204, response = null, success = true };
+            if (string.IsNullOrWhiteSpace(area))
                 return new JsonResult(result);
             HttpContext.Response.Cookies.Delete("area");
 
@@ -119,23 +142,25 @@ namespace IPipe.Web.Controllers
         #region 找最深的点
         public void SetHoleMaxDeep()
         {
-            var holeList=  _ipipe_HoleServices.QuerySql(" SELECT * FROM pipe_hole where areid= 2 ").Result;
+            var holeList = _ipipe_HoleServices.QuerySql(" SELECT * FROM pipe_hole where areid= 0 ").Result;
             List<pipe_hole> pipe_Holes = new List<pipe_hole>();
             foreach (var item in holeList)
             {
-                pipe_hole model = new pipe_hole() { 
+                pipe_hole model = new pipe_hole()
+                {
                     id = item.id,
                     maxdeep = item.maxdeep
                 };
                 pipe_Holes.Add(model);
             }
-            var pipeList = _ipipe_LineServices.QuerySql(" SELECT * FROM pipe_line where areid= 2 ").Result;
+            var pipeList = _ipipe_LineServices.QuerySql(" SELECT * FROM pipe_line where areid= 0 ").Result;
             foreach (var item in pipeList)
             {
                 //起点
-                if (pipe_Holes.Any(t=>t.id == item.S_holeID)) {
-                   var shole = pipe_Holes.Where(t => t.id == item.S_holeID).First();
-                   if(item.S_Deep > shole.maxdeep)
+                if (pipe_Holes.Any(t => t.id == item.S_holeID))
+                {
+                    var shole = pipe_Holes.Where(t => t.id == item.S_holeID).First();
+                    if (item.S_Deep > shole.maxdeep)
                     {
                         pipe_Holes.Remove(shole);
                         pipe_hole newmodel = new pipe_hole()
@@ -162,7 +187,7 @@ namespace IPipe.Web.Controllers
                     }
                 }
             }
-            var s = pipe_Holes.Where(t => t.id == 14242).ToList();
+
             foreach (var item in pipe_Holes)
             {
                 _ipipe_HoleServices.UpdateMaxDeep(item);
@@ -180,23 +205,24 @@ namespace IPipe.Web.Controllers
                 var s_point = holeList.Where(t => t.Exp_No == item.S_Point).First();
                 var e_point = holeList.Where(t => t.Exp_No == item.E_Point).First();
 
-                _ipipe_LineServices.UpdateHoleIDByID(s_point.id, e_point.id,item.id);
+                _ipipe_LineServices.UpdateHoleIDByID(s_point.id, e_point.id, item.id);
             }
         }
         #endregion
 
         #region 自定义隐患数据
-        public void SetMarkYHData() {
-            var holeList = _ipipe_HoleServices.QuerySql($" SELECT * FROM pipe_hole where areid =1 ").Result;
-            var pipeList = _ipipe_LineServices.QuerySql($" SELECT * FROM pipe_line where areid =1 ").Result;
+        public void SetMarkYHData()
+        {
+            var holeList = _ipipe_HoleServices.QuerySql($" SELECT * FROM pipe_hole where areid =0 ").Result;
+            var pipeList = _ipipe_LineServices.QuerySql($" SELECT * FROM pipe_line where areid =0 ").Result;
 
-            List<pipe_hole> holezk =new List<pipe_hole>();
+            List<pipe_hole> holezk = new List<pipe_hole>();
             holezk.Add(new pipe_hole() { Exp_No = "井盖破损", Belong = "井盖以及出现破损情况，应及时处理", Address = "https://image.imlzx.cn/ipipe/hole10.jpg" });
-            holezk.Add(new pipe_hole() { Exp_No = "井盖丢失", Belong= "井盖以及出现破损情况，应及时处理", Address = "https://image.imlzx.cn/ipipe/hole12.jpg" });
-            holezk.Add(new pipe_hole() { Exp_No = "井盖松动",  Belong = "井盖以及出现破损情况，应及时处理", Address = "https://image.imlzx.cn/ipipe/hole11.jpg" });
+            holezk.Add(new pipe_hole() { Exp_No = "井盖丢失", Belong = "井盖以及出现破损情况，应及时处理", Address = "https://image.imlzx.cn/ipipe/hole12.jpg" });
+            holezk.Add(new pipe_hole() { Exp_No = "井盖松动", Belong = "井盖以及出现破损情况，应及时处理", Address = "https://image.imlzx.cn/ipipe/hole11.jpg" });
             List<pipe_line> pipezk = new List<pipe_line>();
-            pipezk.Add(new pipe_line() { EmBed= "发生破裂", Address = "管段发生破裂情况，并有泥土入管现象，破裂等级V", Belong = "https://image.imlzx.cn/ipipe/lda.png" });
-            pipezk.Add(new pipe_line() { EmBed = "发生破裂",Address = "管段发生破裂情况，并有泥土入管现象，破裂等级Ⅱ", Belong = "https://image.imlzx.cn/ipipe/lda.png" });
+            pipezk.Add(new pipe_line() { EmBed = "发生破裂", Address = "管段发生破裂情况，并有泥土入管现象，破裂等级V", Belong = "https://image.imlzx.cn/ipipe/lda.png" });
+            pipezk.Add(new pipe_line() { EmBed = "发生破裂", Address = "管段发生破裂情况，并有泥土入管现象，破裂等级Ⅱ", Belong = "https://image.imlzx.cn/ipipe/lda.png" });
             pipezk.Add(new pipe_line() { EmBed = "发生变形破裂", Address = "管段发生变形破裂情况，并有泥土入管现象，破裂等级Ⅱ", Belong = "https://image.imlzx.cn/ipipe/lda.png" });
             pipezk.Add(new pipe_line() { EmBed = "发生穿插", Address = "管段发生穿插破裂情况，并有泥土入管现象，破裂等级Ⅱ", Belong = "https://image.imlzx.cn/ipipe/lda.png" });
             pipezk.Add(new pipe_line() { EmBed = "发生脱节", Address = "发生脱节，并有泥土入管现象，破裂等级Ⅱ", Belong = "https://image.imlzx.cn/ipipe/lda.png" });
@@ -204,7 +230,8 @@ namespace IPipe.Web.Controllers
             List<hidden_danger> insertList = new List<hidden_danger>();
             foreach (var item in holeList)
             {
-                if (item.id % 20 == 0) {
+                if (item.id % 20 == 0)
+                {
                     var yh = holezk[r.Next(0, 2)];
                     hidden_danger holeyh = new hidden_danger()
                     {
@@ -225,7 +252,7 @@ namespace IPipe.Web.Controllers
                 }
 
             }
-            
+
             foreach (var item in pipeList)
             {
                 if (item.id % 20 == 0)
@@ -264,9 +291,147 @@ namespace IPipe.Web.Controllers
         #region 读取mdb文件
         public void ReadMdbforYS()
         {
-            var mdbdataPoint = ReadMdbHelper.UseOleDbConnection(@"C:\Users\msda002\Desktop\梁泽祥工作文件夹\演示系统需求\乐从总合并.mdb", "select * from YSPOINT");
+            var gxdPoint = ReadMdbHelper.UseOleDbConnection(@"D:\梁泽祥工作文件夹\演示系统需求\市中心区管线.mdb", "select CG_WTBH,CG_MS,CG_LJDH from GXD where CG_GXZL in('YL','WL') ");
+            var gxddata = DatatableHelper.ToDataList<GxdModel>(gxdPoint);
+            var mdbdataPoint = ReadMdbHelper.UseOleDbConnection(@"D:\梁泽祥工作文件夹\演示系统需求\市中心区管线.mdb", "select * from Line where ZType = 'PS'");
+            var linedata = DatatableHelper.ToDataList<LineSmCetenModel>(mdbdataPoint);
+            var mdbdataline = ReadMdbHelper.UseOleDbConnection(@"D:\梁泽祥工作文件夹\演示系统需求\市中心区管线.mdb", "select * from Point where ZType = 'PS'");
+            var holedata = DatatableHelper.ToDataList<HoleSmCetenModel>(mdbdataline);
+            //List<pipe_hole> holesList = new List<pipe_hole>();
+            //foreach (var item in holedata)
+            //{
+            //    var coor = CoordinateCalculation.shenzhenTOWGS84(new double[] { item.X, item.Y, item.High });
+            //    pipe_hole model = new pipe_hole()
+            //    {
+            //        prj_No = "市民中心普查",
+            //        prj_Name = "市民中心普查",
+            //        Exp_No = item.DH,
+            //        HType = item.Type.ToUpper(),
+            //        ZType = "PS",
+            //        szCoorX = item.X,
+            //        szCoorY = item.Y,
+            //        hight = item.High,
+            //        CoorWgsX = coor[1],
+            //        CoorWgsY = coor[0],
+            //        rotation = 0,
+            //        Code = "",
+            //        Feature = item.Feature,
+            //        Subsid = item.Subsid,
+            //        FeaMateria = item.FeaMaterial,
+            //        Spec = "",
+            //        deep = 0,
+            //        wellShape = "",
+            //        wellMater = "",
+            //        WellSize = "",
+            //        WellPipes = 0,
+            //        Address = "市民中心路段",
+            //        Belong = item.Belong,
+            //        MDate = item.MDate,
+            //        MapCode = "",
+            //        SUnit = item.DataSource,
+            //        SDate = DateTime.Now,
+            //        updateTime = DateTime.Now,
+            //        Visibility = "",
+            //        status = 1,
+            //        pointPosit = 1,
+            //        Operator = "",
+            //        Note = item.Note==null?"" : item.Note,
+            //        ljm = "",
+            //        Angel = "",
+            //        SymbolName = ""
+            //    }
+            //  ;
+
+            //    holesList.Add(model);
+            //}
+            //if (holesList.Count > 0)
+            //{
+            //    var sum = _ipipe_HoleServices.Add(holesList).Result;
+            //}
+            List<pipe_line> lineList = new List<pipe_line>();
+            var holeList = _ipipe_HoleServices.Query(t=>t.areid==0).Result;
+            foreach (var item in linedata)
+            {
+                if (!holeList.Any(t => t.Exp_No == item.qdh) || !holeList.Any(t => t.Exp_No == item.zdh) || !gxddata.Any(t => t.CG_WTBH.Equals(item.zdh) && t.CG_LJDH.Equals(item.qdh)))
+                    continue;
+                var s_Point = new pipe_hole();
+                var e_Point = new pipe_hole();
+                double sdeep = 0;
+                double edeep = 0;
+                var zdhList = gxddata.Where(t => t.CG_WTBH.Equals(item.zdh) && t.CG_LJDH.Equals(item.qdh)).First();
+                if (item.FlowDir.Equals("-"))
+                {
+                    s_Point = holeList.Where(t => t.Exp_No == item.zdh).First();
+                    e_Point = holeList.Where(t => t.Exp_No == item.qdh).First();
+                    edeep = item.S_Deep;
+                    sdeep = zdhList.CG_MS;
+                }
+                else
+                {
+                    s_Point = holeList.Where(t => t.Exp_No == item.qdh).First();
+                    e_Point = holeList.Where(t => t.Exp_No == item.zdh).First();
+                    sdeep = item.S_Deep;
+                    edeep= zdhList.CG_MS;
+                }
+
+                pipe_line model = new pipe_line()
+                {
+                    S_holeID = s_Point.id,
+                    S_Point = s_Point.Exp_No,
+                    S_Deep = sdeep,
+                    E_holeID = e_Point.id,
+                    E_Point = e_Point.Exp_No,
+                    E_Deep = edeep,
+                    line_Class = item.Type,
+                    code = "",
+                    Material = item.Material,
+                    ServiceLif = 30,
+                    PSize = item.PSize,
+                    CabNum = 0,
+                    TotalHole = 0,
+                    UsedHole = 0,
+                    FlowDir = "+",
+                    Address = "市民中心路段",
+                    Roadcode = "",
+                    EmBed = item.EmBed,
+                    MDate = item.MDate,
+                    Belong = item.Belong,
+                    SUnit = "",
+                    SDate = DateTime.Now,
+                    UpdateTime = DateTime.Now,
+                    Lno = item.Gxbh,
+                    LineType = 0,
+                    PDS = 0,
+                    status = 0,
+                    PipeLength = item.PipeLength,
+                    Operator = "",
+                    Note = "",
+                    startbotto = 0,
+                    startcrow = 0,
+                    endbotto = 0,
+                    endcrow = 0,
+                    Angel = 0,
+                    SHAPE_Leng = 0,
+                    parentIDs = "",
+                    subclassIDs = "",
+                    areatwo = "市民中心",
+                    areid = 0
+                };
+
+                lineList.Add(model);
+            }
+            if (lineList.Count > 0)
+            {
+                var sum = _ipipe_LineServices.Add(lineList).Result;
+            }
+
+        }
+
+        public void ReadMdbforWS()
+        {
+            var mdbdataPoint = ReadMdbHelper.UseOleDbConnection(@"C:\Users\msda002\Desktop\梁泽祥工作文件夹\演示系统需求\乐从总合并.mdb", "select * from WSPOINT");
             var holedata = DatatableHelper.ToDataList<HoleFSModel>(mdbdataPoint);
-            var mdbdataline = ReadMdbHelper.UseOleDbConnection(@"C:\Users\msda002\Desktop\梁泽祥工作文件夹\演示系统需求\乐从总合并.mdb", "select * from YSLINE");
+            var mdbdataline = ReadMdbHelper.UseOleDbConnection(@"C:\Users\msda002\Desktop\梁泽祥工作文件夹\演示系统需求\乐从总合并.mdb", "select * from WSLINE");
             var linedata = DatatableHelper.ToDataList<LineFsModel>(mdbdataline);
             List<pipe_hole> holesList = new List<pipe_hole>();
             foreach (var item in holedata)
@@ -277,7 +442,7 @@ namespace IPipe.Web.Controllers
                     prj_No = item.Exp_No,
                     prj_Name = item.Map_No,
                     Exp_No = item.Exp_No.Trim(),
-                    HType = "YS",
+                    HType = "WS",
                     ZType = "PS",
                     szCoorX = item.X,
                     szCoorY = item.Y,
@@ -336,7 +501,7 @@ namespace IPipe.Web.Controllers
                     E_holeID = e_Point.id,
                     E_Point = e_Point.Exp_No,
                     E_Deep = item.E_Deep,
-                    line_Class = "YS",
+                    line_Class = "WS",
                     code = "",
                     Material = item.Material,
                     ServiceLif = 30,
@@ -345,123 +510,6 @@ namespace IPipe.Web.Controllers
                     TotalHole = 0,
                     UsedHole = 0,
                     FlowDir = item.FlowDirect == 0 ? "+" : "-",
-                    Address = item.Road,
-                    Roadcode = "",
-                    EmBed = item.EmBed,
-                    MDate = item.MDate,
-                    Belong = item.B_Code,
-                    SUnit = "",
-                    SDate = DateTime.Now,
-                    UpdateTime = DateTime.Now,
-                    Lno = s_Point.Exp_No + e_Point.Exp_No,
-                    LineType = 0,
-                    PDS = 0,
-                    status = 0,
-                    PipeLength = 1,
-                    Operator = "",
-                    Note = "",
-                    startbotto = 0,
-                    startcrow = 0,
-                    endbotto = 0,
-                    endcrow = 0,
-                    Angel = 0,
-                    SHAPE_Leng = 0,
-                    parentIDs = "",
-                    subclassIDs = ""
-                };
-
-                lineList.Add(model);
-            }
-            if (lineList.Count > 0)
-            {
-                var sum = _ipipe_LineServices.Add(lineList).Result;
-            }
-
-        }
-
-        public void ReadMdbforWS()
-        {
-            var mdbdataPoint = ReadMdbHelper.UseOleDbConnection(@"C:\Users\msda002\Desktop\梁泽祥工作文件夹\演示系统需求\乐从总合并.mdb", "select * from WSPOINT");
-            var holedata = DatatableHelper.ToDataList<HoleFSModel>(mdbdataPoint);
-            var mdbdataline = ReadMdbHelper.UseOleDbConnection(@"C:\Users\msda002\Desktop\梁泽祥工作文件夹\演示系统需求\乐从总合并.mdb", "select * from WSLINE");
-            var linedata = DatatableHelper.ToDataList<LineFsModel>(mdbdataline);
-            List<pipe_hole> holesList = new List<pipe_hole>();
-            foreach (var item in holedata)
-            {
-                var coor = CoordinateCalculation.fsTOWGS84(new double[] { item.X, item.Y,item.Surf_H });
-                pipe_hole model = new pipe_hole()
-                {
-                    prj_No = item.Exp_No,
-                    prj_Name = item.Map_No,
-                    Exp_No = item.Exp_No.Trim(),
-                    HType = "WS",
-                    ZType = "PS",
-                    szCoorX = item.X,
-                    szCoorY = item.Y,
-                    hight = item.Surf_H,
-                    CoorWgsX = coor[1],
-                    CoorWgsY = coor[0],
-                    rotation = 0,
-                    Code = item.Exp_NoOld,
-                    Feature = item.Feature,
-                    Subsid = item.Subsid,
-                    FeaMateria = "",
-                    Spec = "",
-                    deep = item.B_DEEP,
-                    wellShape = "",
-                    wellMater = "",
-                    WellSize = "",
-                    WellPipes = 0,
-                    Address = item.Road,
-                    Belong = "",
-                    MDate = DateTime.Now,
-                    MapCode = item.Map_No,
-                    SUnit = "",
-                    SDate = DateTime.Now,
-                    updateTime = DateTime.Now,
-                    Visibility = "",
-                    status = 1,
-                    pointPosit = 1,
-                    Operator = "",
-                    Note = "",
-                    ljm = "",
-                    Angel = "",
-                    SymbolName = ""
-                }
-              ;
-
-                holesList.Add(model);
-            }
-            if (holesList.Count > 0)
-            {
-                var sum = _ipipe_HoleServices.Add(holesList).Result;
-            }
-            List<pipe_line> lineList = new List<pipe_line>();
-            var holeList = _ipipe_HoleServices.Query().Result;
-            foreach (var item in linedata)
-            {
-                if (!holeList.Any(t => t.Exp_No ==item.E_Point) || !holeList.Any(t => t.Exp_No == item.S_Point))
-                    continue;
-                var s_Point = holeList.Where(t => t.Exp_No == item.S_Point).First();
-                var e_Point = holeList.Where(t => t.Exp_No == item.E_Point).First();
-     
-                pipe_line model = new pipe_line()
-                {
-                    S_holeID = s_Point.id,
-                    S_Point = s_Point.Exp_No,
-                    S_Deep = item.S_Deep,
-                    E_holeID = e_Point.id,
-                    E_Point = e_Point.Exp_No,
-                    E_Deep = item.E_Deep,
-                    line_Class = "WS",
-                    code = "",
-                    Material = item.Material,
-                    ServiceLif = 30,
-                    PSize = item.D_S,
-                    CabNum = 0,
-                    TotalHole = 0,
-                    UsedHole =0,
-                    FlowDir = item.FlowDirect==0?"+":"-",
                     Address = item.Road,
                     Roadcode = "",
                     EmBed = item.EmBed,
@@ -510,7 +558,8 @@ namespace IPipe.Web.Controllers
             return new JsonResult(cctvsList);
         }
 
-        private List<cctv> GetCctvIDsModels() {
+        private List<cctv> GetCctvIDsModels()
+        {
             List<cctv> cctvIDList = new List<cctv>() {
                 new cctv { cctvID = 95, grade = 1, LineID = 949,lno ="WS187WS200", cctvJsonStr="{\"msg\":{\"id\":95,\"no\":1,\"video\":\"深圳市_BWB83~BWB85_181115112206\",\"smanhole\":\"BWB83\",\"fmanhole\":\"BWB85\",\"method\":\"CCTV\",\"laidyear\":\"2010\",\"sdepth\":\"2.55\",\"fdepth\":\"2.63\",\"pipetype\":\"污水\",\"material\":\"砼\",\"diameter\":\"400\",\"direction\":\"逆流\",\"pipelength\":\"26.38\",\"testlength\":\"24.91\",\"site\":\"发达路\",\"date\":\"2018-11-15\",\"remarks\":\"检测管段编号：BWB83~BWB85\",\"project\":{\"id\":19,\"no\":null,\"name\":null,\"site\":null,\"client\":null,\"person\":null,\"writer\":null,\"checker\":null,\"approver\":null,\"infoA\":0,\"infoB\":0,\"infoC\":0,\"date\":null,\"user\":null,\"company\":null,\"localSrc\":null},\"items\":[{\"id\":169,\"no\":1,\"dist\":\"0\",\"code\":\"\",\"grade\":\"0\",\"location\":\"\",\"picture\":\"照片1\",\"remarks\":\"无异常\",\"path\":\"D02F7498-F762-43C4-A2B3-A7D8516EF00E\",\"pipe\":{\"id\":95,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false}],\"value\":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],\"sEvaluate\":{\"Ⅰ\":\"无或有轻微缺陷，结构状况基本不受影响，但具有潜在变坏的可能\"},\"yEvaluate\":{\"Ⅰ\":\"无或有轻微影响，管道运行基本不受影响\"},\"sMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"yMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"rIEvaluate\":{\"Ⅰ\":\"结构条件基本完好，不修复\"},\"mIEvaluate\":{\"Ⅰ\":\"没有明显需要处理的缺陷\"},\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"code\":\"200\"}"},
                 new cctv {cctvID = 96,grade = 2, LineID = 950 ,lno ="WS200WS205",cctvJsonStr="{\"msg\":{\"id\":96,\"no\":6,\"video\":\"深圳市_BYB19~EWB1428_181115103221\",\"smanhole\":\"BYB19\",\"fmanhole\":\"EWB1428\",\"method\":\"CCTV\",\"laidyear\":\"2010\",\"sdepth\":\"2.55\",\"fdepth\":\"2.55\",\"pipetype\":\"雨水\",\"material\":\"砼\",\"diameter\":\"600\",\"direction\":\"逆流\",\"pipelength\":\"39.52\",\"testlength\":\"25.15\",\"site\":\"发达路\",\"date\":\"2018-11-15\",\"remarks\":\"检测管段编号：BYB19~EWB1428\",\"project\":{\"id\":19,\"no\":null,\"name\":null,\"site\":null,\"client\":null,\"person\":null,\"writer\":null,\"checker\":null,\"approver\":null,\"infoA\":0,\"infoB\":0,\"infoC\":0,\"date\":null,\"user\":null,\"company\":null,\"localSrc\":null},\"items\":[{\"id\":170,\"no\":1,\"dist\":\"0.01\",\"code\":\"FS\",\"grade\":\"1\",\"location\":\"408\",\"picture\":\"照片1\",\"remarks\":\"轻度腐蚀—表面轻微剥落，管壁出现凹凸面。\",\"path\":\"5540D4F4-186C-455B-A77C-30652875A7C0\",\"pipe\":{\"id\":96,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false},{\"id\":171,\"no\":2,\"dist\":\"2.2\",\"code\":\"CK\",\"grade\":\"2\",\"location\":\"804\",\"picture\":\"照片2\",\"remarks\":\"中度错口—相接的两个管口偏差为管壁厚度的1/2~1之间。\",\"path\":\"7B6952C0-17E2-4A91-8478-CC9469543BC8\",\"pipe\":{\"id\":96,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false},{\"id\":172,\"no\":3,\"dist\":\"4.1\",\"code\":\"CK\",\"grade\":\"2\",\"location\":\"804\",\"picture\":\"照片3\",\"remarks\":\"中度错口—相接的两个管口偏差为管壁厚度的1/2~1之间。\",\"path\":\"F7A432C9-B003-4372-A38E-00F3640055E2\",\"pipe\":{\"id\":96,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false},{\"id\":173,\"no\":4,\"dist\":\"6.5\",\"code\":\"CK\",\"grade\":\"2\",\"location\":\"804\",\"picture\":\"照片4\",\"remarks\":\"中度错口—相接的两个管口偏差为管壁厚度的1/2~1之间。\",\"path\":\"E20A7EA0-563F-40E1-BC45-16F5D0C06327\",\"pipe\":{\"id\":96,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false}],\"value\":[2.0,1.7875,0.0,2.0,0.09046052631578948,0.0,0.0,0.0,0.0,0.0,6.5,0.0],\"sEvaluate\":{\"Ⅱ\":\"管道缺陷明显超过一级，具有变坏的趋势\"},\"yEvaluate\":{\"Ⅰ\":\"无或有轻微影响，管道运行基本不受影响\"},\"sMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"yMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"rIEvaluate\":{\"Ⅱ\":\"结构在短期内不会发生破坏现象，但应做修复计划\"},\"mIEvaluate\":{\"Ⅰ\":\"没有明显需要处理的缺陷\"},\"pipeGeom\":null,\"reverse\":false,\"ri\":1.4,\"mi\":0.0},\"code\":\"200\"}"},
@@ -529,22 +578,24 @@ namespace IPipe.Web.Controllers
                 new cctv { cctvID = 109,grade = 1, LineID = 963,lno ="WS226WS225",cctvJsonStr="{\"msg\":{\"id\":109,\"no\":7,\"video\":\"深圳市_BWB82~BWB81_181115105333\",\"smanhole\":\"BWB82\",\"fmanhole\":\"BWB81\",\"method\":\"CCTV\",\"laidyear\":\"2010\",\"sdepth\":\"2.63\",\"fdepth\":\"2.68\",\"pipetype\":\"污水\",\"material\":\"砼\",\"diameter\":\"400\",\"direction\":\"顺流\",\"pipelength\":\"44.67\",\"testlength\":\"43.2\",\"site\":\"发达路\",\"date\":\"2018-11-15\",\"remarks\":\"检测管段编号：BWB82~BWB81\",\"project\":{\"id\":19,\"no\":null,\"name\":null,\"site\":null,\"client\":null,\"person\":null,\"writer\":null,\"checker\":null,\"approver\":null,\"infoA\":0,\"infoB\":0,\"infoC\":0,\"date\":null,\"user\":null,\"company\":null,\"localSrc\":null},\"items\":[{\"id\":203,\"no\":1,\"dist\":\"1.95\",\"code\":\"SG\",\"grade\":\"1\",\"location\":\"408\",\"picture\":\"照片1\",\"remarks\":\"过水断面损失不大于15% 。\",\"path\":\"E7C3F9C6-4669-400D-8653-5CEA653501C0\",\"pipe\":{\"id\":109,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false},{\"id\":204,\"no\":2,\"dist\":\"0.01\",\"code\":\"FS\",\"grade\":\"1\",\"location\":\"804\",\"picture\":\"照片2\",\"remarks\":\"轻度腐蚀—表面轻微剥落，管壁出现凹凸面。\",\"path\":\"0B494B86-0C99-4234-AF26-7889B60CCCD0\",\"pipe\":{\"id\":109,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false},{\"id\":205,\"no\":3,\"dist\":\"0.01\",\"code\":\"BX\",\"grade\":\"1\",\"location\":\"804\",\"picture\":\"照片3\",\"remarks\":\"变形不大于管道直径的5%。\",\"path\":\"07E2F830-5C51-4629-8B2F-BFDD29B5E163\",\"pipe\":{\"id\":109,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false}],\"value\":[1.0,0.8250000000000001,0.0,1.0,0.036937541974479515,0.5,0.0,0.0,0.5,0.0,1.5,0.0],\"sEvaluate\":{\"Ⅰ\":\"无或有轻微缺陷，结构状况基本不受影响，但具有潜在变坏的可能\"},\"yEvaluate\":{\"Ⅰ\":\"无或有轻微影响，管道运行基本不受影响\"},\"sMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"yMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"rIEvaluate\":{\"Ⅰ\":\"结构条件基本完好，不修复\"},\"mIEvaluate\":{\"Ⅰ\":\"没有明显需要处理的缺陷\"},\"pipeGeom\":null,\"reverse\":false,\"ri\":0.7,\"mi\":0.4},\"code\":\"200\"}"},
                 new cctv { cctvID = 110,grade = 1, LineID = 964,lno ="WS225WS230",cctvJsonStr="{\"msg\":{\"id\":110,\"no\":8,\"video\":\"深圳市_BWB81~BWB79_181115110258\",\"smanhole\":\"BWB81\",\"fmanhole\":\"BWB79\",\"method\":\"CCTV\",\"laidyear\":\"2010\",\"sdepth\":\"2.68\",\"fdepth\":\"2.89\",\"pipetype\":\"污水\",\"material\":\"砼\",\"diameter\":\"400\",\"direction\":\"顺流\",\"pipelength\":\"42.48\",\"testlength\":\"41.82\",\"site\":\"发达路\",\"date\":\"2018-11-15\",\"remarks\":\"检测管段编号：BWB81~BWB79\",\"project\":{\"id\":19,\"no\":null,\"name\":null,\"site\":null,\"client\":null,\"person\":null,\"writer\":null,\"checker\":null,\"approver\":null,\"infoA\":0,\"infoB\":0,\"infoC\":0,\"date\":null,\"user\":null,\"company\":null,\"localSrc\":null},\"items\":[{\"id\":206,\"no\":1,\"dist\":\"4.28\",\"code\":\"ZW\",\"grade\":\"2\",\"location\":\"507\",\"picture\":\"照片1\",\"remarks\":\"过水断面损失在15%~25%之间。\",\"path\":\"EBB8B2A0-0C51-48CB-9FE5-98FB5A9F7922\",\"pipe\":{\"id\":110,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false},{\"id\":207,\"no\":2,\"dist\":\"0.01\",\"code\":\"FS\",\"grade\":\"1\",\"location\":\"804\",\"picture\":\"照片2\",\"remarks\":\"轻度腐蚀—表面轻微剥落，管壁出现凹凸面。\",\"path\":\"0B494B86-0C99-4234-AF26-7889B60CCCD0\",\"pipe\":{\"id\":110,\"no\":0,\"video\":null,\"smanhole\":null,\"fmanhole\":null,\"method\":null,\"laidyear\":null,\"sdepth\":null,\"fdepth\":null,\"pipetype\":null,\"material\":null,\"diameter\":null,\"direction\":null,\"pipelength\":null,\"testlength\":null,\"site\":null,\"date\":null,\"remarks\":null,\"project\":null,\"items\":null,\"value\":null,\"sEvaluate\":null,\"yEvaluate\":null,\"sMEvaluate\":null,\"yMEvaluate\":null,\"rIEvaluate\":null,\"mIEvaluate\":null,\"pipeGeom\":null,\"reverse\":false,\"ri\":0.0,\"mi\":0.0},\"score\":null,\"reverse\":false}],\"value\":[0.5,0.55,0.0,0.55,0.02354048964218456,2.0,0.0,0.0,2.0,0.0,0.5,0.0],\"sEvaluate\":{\"Ⅰ\":\"无或有轻微缺陷，结构状况基本不受影响，但具有潜在变坏的可能\"},\"yEvaluate\":{\"Ⅱ\":\"管道过流有一定的受阻，运行受影响不大\"},\"sMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"yMEvaluate\":{\"Ⅰ\":\"局部缺陷\"},\"rIEvaluate\":{\"Ⅰ\":\"结构条件基本完好，不修复\"},\"mIEvaluate\":{\"Ⅱ\":\"没有立即进行处理的必要，但宜安排处理计划\"},\"pipeGeom\":null,\"reverse\":false,\"ri\":0.385,\"mi\":1.6},\"code\":\"200\"}"}
             };
-            var  pipe_Lines = _ipipe_LineServices.QuerySql($" SELECT id,Lno FROM pipe_line where areid= {areid} ").Result;
+            var pipe_Lines = _ipipe_LineServices.QuerySql($" SELECT id,Lno FROM pipe_line where areid= 0 ").Result;
             int index = 0;
             List<cctv> mdes = new List<cctv>();
             foreach (var item in pipe_Lines)
             {
 
-                if (index >= cctvIDList.Count) {
+                if (index >= cctvIDList.Count)
+                {
                     index = 0;
                 }
-                cctv cctvIDsModel = new cctv(){
-                   LineID = item.id,
-                   cctvID = cctvIDList[index].cctvID,
-                   cctvJsonStr = cctvIDList[index].cctvJsonStr,
-                   grade = cctvIDList[index].grade,
-                   lno = item.Lno,
-                   areid = areid
+                cctv cctvIDsModel = new cctv()
+                {
+                    LineID = item.id,
+                    cctvID = cctvIDList[index].cctvID,
+                    cctvJsonStr = cctvIDList[index].cctvJsonStr,
+                    grade = cctvIDList[index].grade,
+                    lno = item.Lno,
+                    areid = areid
                 };
                 mdes.Add(cctvIDsModel);
                 index++;
@@ -684,7 +735,8 @@ namespace IPipe.Web.Controllers
                         double startcrow = 0;
                         double endbotto = 0;
                         double endcrow = 0;
-                        if ("-".Equals(dt.Rows[i][20].ToString().Trim())) {
+                        if ("-".Equals(dt.Rows[i][20].ToString().Trim()))
+                        {
                             s_Point = e_Point;
                             e_Point = s_Point;
                             S_Deep = dt.Rows[i][6].ToString().UtObjToMoney();
@@ -764,7 +816,7 @@ namespace IPipe.Web.Controllers
         public IActionResult GetLineHolesDateForBd()
         {
             var result = new MessageModel<LineHoleDateModel>() { msg = "参数错误", response = null, success = true };
-            var LineHoles = _ipipe_LineServices.GetLineHolesDate(areid,0);
+            var LineHoles = _ipipe_LineServices.GetLineHolesDate(areid, 0);
             if (LineHoles != null && LineHoles.holeDateMoldes.Count > 0 && LineHoles.lineDateMoldes.Count > 0)
             {
                 result.response = LineHoles;
@@ -800,7 +852,8 @@ namespace IPipe.Web.Controllers
         /// 获取隐患
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetYhData() {
+        public IActionResult GetYhData()
+        {
             var result = new MessageModel<List<YhDataMolde>>() { msg = "参数错误", response = null, success = true };
             var yhList = _ihidden_DangerServices.GetYhData(areid);
             if (yhList != null && yhList.Count() > 0)
@@ -828,7 +881,8 @@ namespace IPipe.Web.Controllers
             if (LineHoles != null)
             {
                 var cctvsList = _icctvServices.QuerySql($" SELECT lineID FROM cctv where areid= {areid} and lineID = {LineHoles.model.id}  ").Result;
-                if (cctvsList.Any(t=>t.LineID == LineHoles.model.id)) {
+                if (cctvsList.Any(t => t.LineID == LineHoles.model.id))
+                {
                     LineHoles.cctvID = cctvsList.Where(t => t.LineID == LineHoles.model.id).Select(t => t.LineID).First().Value;
                 }
                 result.response = LineHoles;
@@ -842,12 +896,14 @@ namespace IPipe.Web.Controllers
         /// 获取CCTV资料
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetCCTVInfoByID(int pipeid) {
+        public IActionResult GetCCTVInfoByID(int pipeid)
+        {
             var result = new MessageModel<string>() { msg = "参数错误", response = null, success = true };
-            if (pipeid == 0) 
+            if (pipeid == 0)
                 return new JsonResult(result);
-            var cctvsList =  _icctvServices.QuerySql($" SELECT lineID,cctvJsonStr FROM cctv where areid= {areid} and LineID= {pipeid} ").Result;
-            if (cctvsList.Any(t=>t.LineID == pipeid)) {
+            var cctvsList = _icctvServices.QuerySql($" SELECT lineID,cctvJsonStr FROM cctv where areid= {areid} and LineID= {pipeid} ").Result;
+            if (cctvsList.Any(t => t.LineID == pipeid))
+            {
                 result.msg = "获取CCTV资料成功！";
                 result.response = cctvsList.Where(t => t.LineID == pipeid).Select(t => t.cctvJsonStr).First();
             }
@@ -908,9 +964,10 @@ namespace IPipe.Web.Controllers
         #endregion
 
         #region 统计与报表
-        public IActionResult GetStatisticalAllDataData(string areacode) {
+        public IActionResult GetStatisticalAllDataData(string areacode)
+        {
             var result = new MessageModel<StatisticalAllDataDataModel>() { msg = "参数错误", status = 404, response = null, success = true };
-            int areidman;
+            int areidman = 1;
             if (string.IsNullOrWhiteSpace(areacode))
             {
                 areidman = 1;
@@ -919,13 +976,16 @@ namespace IPipe.Web.Controllers
             {
                 if (areacode.Equals("gd_sz_gm"))
                     areidman = 2;
-                else
+                else if (areacode.Equals("gd_fs"))
                     areidman = 1;
+                else if (areacode.Equals("gd_sz_sm"))
+                    areidman = 0;
+
             }
             var statisticalDataModel = _ipipe_LineServices.GetStatisticalAllDataData(areidman);
-            if (statisticalDataModel != null) 
+            if (statisticalDataModel != null)
             {
-                result.status = 200; 
+                result.status = 200;
                 result.response = statisticalDataModel;
                 result.msg = "获取数据成功";
             }

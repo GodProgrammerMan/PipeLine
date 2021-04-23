@@ -1750,3 +1750,45 @@ a:hover{
     width: 516px;
     height:320px;
 }
+.bnt-cjro {
+    background: #62f1ff66;
+    border: #05e7f9 solid 1px;
+    border-radius: 100px;
+    display: inline-block;
+    height: 38px;
+    line-height: 38px;
+    padding: 0 18px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+}
+.bsclear {
+    background: #c3c3c366;
+    border: #0b0c0c solid 1px;
+}
+.bs-text {
+    color: white;
+    font-size: 15px;
+    margin: 10px 0px;
+}
+.msdi-input-number-input {
+    background: #dcded854;
+    width: 80px;
+    height: 32px;
+    line-height: 32px;
+    text-align: left;
+    outline: 0;
+    border: 0;
+    border-radius: 4px;
+    transition: all .2s linear;
+    color: #fff;
+}
+.msdi-input-number-input-wrap {
+    overflow: hidden;
+    height: 34px;
+    width: 110px;
+    padding: 0 6px;
+    background: #4c090900;
+    float: left;
+    color:#fff;
+}

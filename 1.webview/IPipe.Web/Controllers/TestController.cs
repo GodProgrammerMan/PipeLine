@@ -42,7 +42,8 @@ namespace IPipe.Web.Controllers
 			//List<pipe_line> lineList = _ipipe_LineServices.Query().Result;
 			//foreach (var item in lineList)
 			//{
-			//	if ("-".Equals(item.FlowDir)) {
+			//	if ("-".Equals(item.FlowDir))
+			//	{
 			//		//修改
 			//		_ipipe_LineServices.UpdateFlowToData(item);
 			//	}
@@ -51,7 +52,7 @@ namespace IPipe.Web.Controllers
 
 			#region 处理流向和溯源问题
 
-			//List<TreeLineMolde> treeList = _ipipe_LineServices.getLineListBytree(1);
+			//List<TreeLineMolde> treeList = _ipipe_LineServices.getLineListBytree(0);
 			//foreach (var item in treeList)
 			//{
 			//	//计算

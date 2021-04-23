@@ -41,36 +41,50 @@
             <li><i class="nav_4"></i><a href="javascript:void(0);" onclick="showBox('信息录入', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">信息录入</a> </li>
             <li>
                 <i class="nav_8"></i><a href="javascript:void(0);" id="sys-muen">系统设置</a>
-                <ul class="msdi-sys-menu-ul" style="display:none;">
-                    <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;">
-                            <div class="msdi-menu-notifications-title">
-                                <span>修改信息</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;" >
-                            <div class="msdi-menu-notifications-title">
-                                <span>安全管理</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;" onclick="switchcity('@(ViewBag.areanme=="佛山市"?"gd_sz_gm":"gd_fs")')">
-                            <div class="msdi-menu-notifications-title">
-                                <span id="cityall">深圳数据</span>
-                            </div>
-                        </a>
-                    </li>
-                     <li class="msdi-sys-menu-notifications">
-                        <a href="javascript:;">
-                            <div class="msdi-menu-notifications-title">
-                                <span>退出</span>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+                                     <ul class="msdi-sys-menu-ul" style="display:none;">
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>修改信息</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>安全管理</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;" onclick="switchcity('gd_sz_gm')">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>深圳数据</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;" onclick="switchcity('gd_fs')">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>佛山数据</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;" onclick="switchcity('gd_sz_sm')">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>深圳市民中心数据</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                         <li class="msdi-sys-menu-notifications">
+                                             <a href="javascript:;">
+                                                 <div class="msdi-menu-notifications-title">
+                                                     <span>退出</span>
+                                                 </div>
+                                             </a>
+                                         </li>
+                                     </ul>
             </li>
         </ul>
     </div>

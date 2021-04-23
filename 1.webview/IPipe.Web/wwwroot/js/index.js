@@ -2,7 +2,6 @@ var areacode = $.cookie('area');
 $(function () {
     //删除加载动画
     $('#load').fadeOut(1000000);
-    CookieChoohtml();
     $.get("/home/getStatisticalAllDataData", { areacode: areacode}, function (data, status) {
         $('#load').remove();
         if (data.status == 200) {
@@ -429,11 +428,3 @@ function init_Chartarea(areaList,maxvalue) {
     });
 }
 
-//根据cookie修改页面
-function CookieChoohtml() {
-    if (areacode == "gd_sz_gm") {
-        $("#cityall").html("佛山数据");
-    } else {
-        $("#cityall").html("深圳数据"); 
-    }
-}

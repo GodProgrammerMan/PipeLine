@@ -1171,6 +1171,11 @@
             溯源分析
             </summary>
         </member>
+        <member name="P:IPipe.Model.ViewModels.HoleSmCetenModel.Pxdh">
+            <summary>
+            排序点号
+            </summary>
+        </member>
         <member name="P:IPipe.Model.ViewModels.QueryLineHoleMolde.dataType">
             <summary>
             数据类型

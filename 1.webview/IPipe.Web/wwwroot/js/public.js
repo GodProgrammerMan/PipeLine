@@ -349,8 +349,15 @@ function initlocation() {
         } catch (e) {
 
         }
-    } else {
+    } else if (areacode == "gd_fs") {
         flyTo(113.08343495207401, 22.949133135126246, 730.0222897488);
+        try {
+            map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
+        } catch (e) {
+
+        }
+    } else if (areacode =="gd_sz_sm") {
+        flyTo(114.0555891520, 22.5413770432, 730.0222897488);
         try {
             map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
         } catch (e) {
@@ -362,10 +369,10 @@ function initlocation() {
 function CookieChoohtml() {
     if (areacode == "gd_sz_gm") {
         areid = 2;
-        $("#cityall").html("佛山数据");
-    } else {
+    } else if (areacode == "gd_fs") {
         areid = 1;
-        $("#cityall").html("深圳数据");
+    } else if (areacode == "gd_sz_sm") {
+        areid = 0;
     }
 }
 function enterFullscreen() {
