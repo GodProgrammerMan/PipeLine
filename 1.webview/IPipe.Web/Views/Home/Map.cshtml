@@ -25,7 +25,7 @@
         <ul>
             <li><i class="nav_1"></i><a href="/home/homeIndex">数据概览</a> </li>
             <li class="nav_active"><i class="nav_3"></i><a href="/home/map">地图界面</a> </li>
-            <li><i class="nav_2"></i><a href="carContrl.html">CCTV视频监控</a> </li>
+            <li><i class="nav_2"></i><a href="/home/cctv">CCTV视频监控</a> </li>
         </ul>
     </div>
     <div class="header_center left">
@@ -95,15 +95,15 @@
                 <input type="radio" name="maptype" value="2d" title="二维" lay-skin="primary" lay-filter="mapShow" checked>
                 <input type="radio" name="maptype" value="3d" title="三维" lay-skin="primary" lay-filter="mapShow">
                 <input type="radio" name="maptype" value="23d" title="二三维并屏" lay-skin="primary" lay-filter="mapShow">
-                <input type="radio" name="maptype" value="bd" title="百度" lay-skin="primary" lay-filter="mapShow">
+                @*<input type="radio" name="maptype" value="bd" title="百度" lay-skin="primary" lay-filter="mapShow">*@
             </form>
             <ul class="map_box_tool">
                 <li class="active" layermst="layerSelect"><i class="layui-icon layui-icon-template-1"></i><a href="javascript:void (0)" class="active">图层选择</a> </li>
-                <li layermst=""><i class="layui-icon layui-icon-subtraction"></i><a href="javascript:void (0)">缩小</a> </li>
-                <li layermst=""><i class="layui-icon layui-icon-addition"></i><a href="javascript:void (0)">放大</a> </li>
+                @*<li layermst=""><i class="layui-icon layui-icon-subtraction"></i><a href="javascript:void (0)">缩小</a> </li>
+                <li layermst=""><i class="layui-icon layui-icon-addition"></i><a href="javascript:void (0)">放大</a> </li>*@
                 <li layermst=""><i class="layui-icon layui-icon-transfer"></i><a href="javascript:void (0)">对比</a> </li>
                 <li layermst="layerSearch"><i class="layui-icon layui-icon-search"></i><a href="javascript:void (0)">搜索</a> </li>
-                <li layermst="layerTool"><i class="layui-icon layui-icon-util"></i><a href="javascript:void (0)">工具</a> </li>
+                <li layermst="wdlayerTool"><i class="layui-icon layui-icon-util"></i><a href="javascript:void (0)">挖地工具</a> </li>
                 <li layermst="fullScreen"><i class="layui-icon layui-icon-screen-full"></i><a href="javascript:void (0)">全屏</a> </li>
             </ul>
         </div>
@@ -179,7 +179,7 @@
                 </div>
             </div>
         </div> 
-        <div class="msdi-model-box" id="layerTool" layermst="layerTool" style="position: absolute;width: 514px;height: 150px;top: 15%;left: 30%;">
+        <div class="msdi-model-box" id="wdlayerTool" layermst="wdlayerTool" style="position: absolute;width: 514px;height: 150px;top: 15%;left: 30%;display:none;">
             <i class="bar"></i>
             <div class="msdi-model-header">
                 挖地与管线上移工具
@@ -188,7 +188,7 @@
             </div>
             <div class="msdi-model-content">
                 <div class="msdi-model-content-box">
-                    <div class="msdi-input-number-input-wrap"><input value="10" type="number"  class="msdi-input-number-input"><span>m</span></div>
+                    <div class="msdi-input-number-input-wrap"><input value="10" id="wdheight" type="number"  class="msdi-input-number-input"><span>m</span></div>
                     <button type="button" class="bnt-cjro" id="bnt_upheigt">上升</button>
                     <button type="button" class="bnt-cjro bsclear" id="bnt_clearup">恢复默认</button>
                     <button type="button" class="bnt-cjro" id="bnt_wd">模型挖地</button>

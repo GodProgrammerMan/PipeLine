@@ -1,22 +1,22 @@
-var scene, globe, canvas, ellipsoid, labels, linePrimitive, flowtoPrimitive, holePrimitive, cctvDate, IsBddiv = true, Isgoemdiv = true;
-let x;//鼠标的x
-let y;//鼠标的y
-var cctvflat = false,wdflat=false;
+var scene, globe, canvas, ellipsoid, labels, yhlabels, linePrimitive, flowtoPrimitive, holePrimitive, yhPrimitive,cctvDate, IsBddiv = true, Isgoemdiv = true;
+let x,latval=0;//鼠标的x
+let y,lngval=0;//鼠标的y
+var cctvflat = false, wdflat = false, lengtvalue = 0, mlengtvalue = 0, bflengtvalue=0;
 var layerFrom;
 var olMap, map, viewer;//三大地图的jq dom对象
 var oLpipeAllLayer, oLyhLayer, oLcctvLayer, showollayer, sylxollayer, bingmaplayerMap, ces_mapboxImager, palaceTileset;//地图对象和地图组
 var geoserverURLIP = "https://map.imlzx.cn:8082/geoserver/MSDI/wms";
 var oLLayerArr = [];//ol- layer数组
 var format = 'image/png';
-var areacode = $.cookie('area'); 
+var areacode = $.cookie('area');
 var areid = 1, jsentities, buildingNumber, buildIndex = 0, showZoom = 19, thismap = "2d";
 var lablesShow = false, flowtoShow = false;
 var lineCLICKID = "", holeCLICKID = null;
-var yhPairList = [], ceHoleList = [], holdListData, Laledata = [], currZoom, bdPolyline = [], bdPolylineID = [], bdholeList = [].dbholeOverlays = [], bdPSizeOverlays = [];
+var  ceHoleList = [], holdListData, Laledata = [], currZoom, bdPolyline = [], bdPolylineID = [], bdholeList = [].dbholeOverlays = [], bdPSizeOverlays = [];
 let pipetypeStr = "'WS'|'YS'|'null'";
 var activeShapePoints = [];
-var activeShape, shape; 
-var floatingPoint, drawingMode ='polygon';
+var activeShape, shape,shopePoint=[];
+var floatingPoint, floatingPointArr=[], drawingMode = 'polygon';
 var projection = new ol.proj.Projection({
     code: 'EPSG:4326',
     units: 'degrees',
@@ -33,7 +33,7 @@ $(function () {
     //ol地图加载二维
     initOL();
     //cesium
-    initCesium()
+    initCesium();
     layui.use(['form', 'element'], function () {
         var element = layui.element;
         var form = layui.form;
@@ -242,14 +242,16 @@ $(function () {
                     if (typeof (olMap) != 'undefined' && typeof (oLyhLayer) != 'undefined') {
                         if (data.elem.checked) {
                             oLyhLayer.setVisible(true);
-                            for (var i = 0; i < yhPairList.length; i++) {
-                                yhPairList[i].show = true;
+                            yhPrimitive.show = true;
+                            for (var i = 0; i < yhlabels.length; i++) {
+                                yhlabels.get(i).show = true;
                             }
                         }
                         else {
                             oLyhLayer.setVisible(false);
-                            for (var i = 0; i < yhPairList.length; i++) {
-                                yhPairList[i].show = false;
+                            yhPrimitive.show = false;
+                            for (var i = 0; i < yhlabels.length; i++) {
+                                yhlabels.get(i).show = false;
                             }
                         }
                     } else {
@@ -644,7 +646,7 @@ function olMouseEvents() {
                         } else if (!isAnypoint && isAnyline) {
                             showlayername = 'MSDI:ys_show_pipeline';
                             featuresData = data.features[Anylinei];
-                            let model = featuresData.properties
+                            let model = featuresData.properties;
                             //针对cesium点击同步
                             let pick_id = "pipe_line_" + model.lno + "_" + model.lineclass + "$" + model.mysqlid;
                             if (lineCLICKID != pick_id)
@@ -684,13 +686,13 @@ function ollcesium() {
             if (rotatuin == 0) {
                 let sn_wgs84 = olMap.getView().calculateExtent(olMap.getSize());
                 viewer.camera.flyTo({
-                    destination: Cesium.Rectangle.fromDegrees(sn_wgs84[0] - 0.0049005903307, sn_wgs84[1] + 0.002863038721292, sn_wgs84[2] - 0.0049005903307, sn_wgs84[3] + 0.002863038721292)
+                    destination: Cesium.Rectangle.fromDegrees(sn_wgs84[0] - lngval, sn_wgs84[1] - latval, sn_wgs84[2] - lngval, sn_wgs84[3] - latval)
                 });
             } else {
                 let ceterCoor = olMap.getView().getCenter();
                 let zoomheight = getOLcesiumHeight(olMap.getView().getZoom());
                 viewer.camera.flyTo({
-                    destination: Cesium.Cartesian3.fromDegrees(ceterCoor[0] - 0.0049005903307, ceterCoor[1] + 0.002863038721292, zoomheight),
+                    destination: Cesium.Cartesian3.fromDegrees(ceterCoor[0] - lngval, ceterCoor[1] - latval, zoomheight),
                     orientation: {
                         roll: -rotatuin
                     }
@@ -793,6 +795,10 @@ function initCesium() {
         scene: scene,
         blendOption: Cesium.BlendOption.TRANSLUCENT
     }));
+    yhlabels = scene.primitives.add(new Cesium.LabelCollection({
+        scene: scene,
+        blendOption: Cesium.BlendOption.TRANSLUCENT
+    }));
 
     if (areacode == "gd_sz_sm") {
         //倾斜模型
@@ -801,12 +807,10 @@ function initCesium() {
         //建筑物
         getbuildList();
     }
-
-
     //线与井点数据
-    getLineHoles();
+    getLineHoles(false);
     //隐患点数据
-    //getYhData();
+    getYhData();
 
     getMouseEventsForCesium();
     initlocation();
@@ -819,6 +823,7 @@ function getMouseEventsForCesium() {
         if (wdflat) {
             var earthPosition = viewer.scene.pickPosition(movement.position);
             if (Cesium.defined(earthPosition)) {
+                let cartographic1 = viewer.scene.globe.ellipsoid.cartesianToCartographic(earthPosition);
                 if (activeShapePoints.length === 0) {
                     floatingPoint = createPoint(earthPosition);
                     activeShapePoints.push(earthPosition);
@@ -830,6 +835,7 @@ function getMouseEventsForCesium() {
                     }, false);
                     activeShape = drawShape(dynamicPositions, 'polygon');//绘制动态图
                 }
+                shopePoint.push({ lng: Cesium.Math.toDegrees(cartographic1.longitude), lat: Cesium.Math.toDegrees(cartographic1.latitude)});
                 activeShapePoints.push(earthPosition);
                 createPoint(earthPosition);
             }
@@ -882,7 +888,7 @@ function getMouseEventsForCesium() {
                         recoveryLineColor();
                         recoveryHoleColor();
                         $("#property").hide();
-                        if (lineCLICKID != pick.id)
+                        if (lineCLICKID != pick.id) 
                             removeFTcolor();
 
                         holeCLICKID = pick.id;
@@ -930,7 +936,7 @@ function getMouseEventsForCesium() {
                     activeShapePoints.pop();
                     activeShapePoints.push(newPosition);
                 }
-            } 
+            }
         } else {
             //捕获椭球体，将笛卡尔二维平面坐标转为椭球体的笛卡尔三维坐标，返回球体表面的点
             let cartesian = viewer.camera.pickEllipsoid(movement.endPosition, ellipsoid);
@@ -954,31 +960,39 @@ function getMouseEventsForCesium() {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     handler.setInputAction(function (event) {
         if (wdflat) {
-            terminateShape("polygon"); 
+            terminateShape("polygon");
             $("#map").css("cursor", "auto");
             wdflat = false;
-            //创建模型挖地
-            console.log(palaceTileset);
+            if (shopePoint.length >= 3) {
+                //创建模型挖地
+                let clippArr = [];
+                let transformParea = getInverseTransform();
+                for (var i = 0; i < shopePoint.length; i++) {
+                    if (i == shopePoint.length - 1) {
+                        clippArr.push(createPlane(shopePoint[i], shopePoint[0], transformParea));
+                        break;
+                    }
+                    clippArr.push(createPlane(shopePoint[i], shopePoint[i + 1], transformParea));
+                }
+                console.log(clippArr);
+                palaceTileset.clippingPlanes = new Cesium.ClippingPlaneCollection({
+                    planes: clippArr,
+                    edgeColor: Cesium.Color.RED,
+                    edgeWidth: 1.0,
+                    unionClippingRegions: false, //true 才能多个切割  
+                });
+                for (var i = 0; i < floatingPointArr.length; i++) {
+                    viewer.entities.remove(floatingPointArr[i]);
+                }
+                shopePoint = [];
+                //移除创建的平面
+                viewer.entities.remove(shape);
+                viewer.entities.remove(floatingPoint);
+                //建立挖地模型
 
-            palaceTileset.clippingPlanes = new Cesium.ClippingPlaneCollection({
-                planes: [
-                    //前后切割
-                    new Cesium.ClippingPlane(new Cesium.Cartesian3(0, 1, 0), 0), //后 
-                    new Cesium.ClippingPlane(new Cesium.Cartesian3(0, -1, 0), 0),  //前
-
-                    // 左右切割
-                    new Cesium.ClippingPlane(new Cesium.Cartesian3(1.0, 0.0, 0), 0), //左 
-                    new Cesium.ClippingPlane(new Cesium.Cartesian3(-1.0, 0.0, 0), 0),  //右
-
-                    // 上下切割
-                    new Cesium.ClippingPlane(new Cesium.Cartesian3(0, 0.0, -1), 0),  //上→下
-                ],
-                edgeColor: Cesium.Color.RED,
-                edgeWidth: 1.0,
-                unionClippingRegions: true, //true 才能多个切割  
-            });
-            viewer.zoomTo(palaceTileset);
-            //移除创建的平面
+            } else {
+                layer.msg("至少选择三个点！");
+            }
         }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
     //相机
@@ -991,41 +1005,40 @@ function getMouseEventsForCesium() {
             //var bd09 = wgs84tobd09(centerPosition.lon, centerPosition.lat);
             IsGoemdiv();
             if (!Isgoemdiv && thismap == "23d") {
-                olMap.getView().setCenter([centerPosition.lon + 0.0049005903307, centerPosition.lat - 0.002863038721292]);
+                olMap.getView().setCenter([centerPosition.lon + lngval, centerPosition.lat + latval]);
                 olMap.getView().setZoom(getolMapZoom(height));
-                let roll = this.viewer.scene.camera.heading
+                let roll = this.viewer.scene.camera.heading;
                 olMap.getView().setRotation(-roll);
             }
+            ////流向缩放出现和隐藏
+            //if (height <= 100 && flowtoShow == false) {
+            //    flowtoPrimitive.show = true;
+            //    flowtoShow = true;
+            //} else if (height > 100 && flowtoShow == true) {
+            //    flowtoPrimitive.show = false;
+            //    flowtoShow = false;
+            //}
+            ////标签缩放出现和隐藏
+            //if (height <= 77 && lablesShow == false) {
+            //    for (var i = 0; i < labels.length; i++) {
+            //        labels.get(i).show = true;
+            //    }
+            //    lablesShow = true;
 
-            //流向缩放出现和隐藏
-            if (height <= 100 && flowtoShow == false) {
-                flowtoPrimitive.show = true;
-                flowtoShow = true;
-            } else if (height > 100 && flowtoShow == true) {
-                flowtoPrimitive.show = false;
-                flowtoShow = false;
-            }
-            //标签缩放出现和隐藏
-            if (height <= 77 && lablesShow == false) {
-                for (var i = 0; i < labels.length; i++) {
-                    labels.get(i).show = true;
-                }
-                lablesShow = true;
+            //    for (var i = 0; i < yhPairList.length; i++) {
+            //        yhPairList[i].show = true;
+            //    }
 
-                for (var i = 0; i < yhPairList.length; i++) {
-                    yhPairList[i].show = true;
-                }
+            //} else if (height > 77 && lablesShow == true) {
+            //    for (var i = 0; i < labels.length; i++) {
+            //        labels.get(i).show = false;
+            //    }
+            //    lablesShow = false;
 
-            } else if (height > 77 && lablesShow == true) {
-                for (var i = 0; i < labels.length; i++) {
-                    labels.get(i).show = false;
-                }
-                lablesShow = false;
-
-                for (var i = 0; i < yhPairList.length; i++) {
-                    yhPairList[i].show = false;
-                }
-            }
+            //    for (var i = 0; i < yhPairList.length; i++) {
+            //        yhPairList[i].show = false;
+            //    }
+            //}
         } catch (e) {
 
         }
@@ -1040,9 +1053,9 @@ function initMap() {
 
     if (areacode == "gd_sz_gm")
         map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252), 21);//深圳
-    else if (areacode == "gd_fs") 
+    else if (areacode == "gd_fs")
         map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
-    
+
 
 
     var scaleCtrl = new BMapGL.ScaleControl();  // 添加比例尺控件
@@ -1266,7 +1279,7 @@ function addLineOverlays() {
                     var opts = {
                         position: new BMapGL.Point(item.cCoorWgsX, item.cCoorWgsY),    // 指定文本标注所在的地理位置
                         offset: new BMapGL.Size(0, 0)    //设置文本偏移量
-                    }
+                    };
                     var label = new BMapGL.Label(item.pSize, opts);  // 创建文本标注对象
                     label.setStyle({
                         color: 'red',
@@ -1512,17 +1525,12 @@ function otherThing() {
         let checkdivobj = $(this).prev();
         checkdivobj.click();
     });
-    // 关闭属性窗体
-    $("#title a").click(function (event) {
-        event.stopPropagation();
-        $("#property").hide();
-    });
     //判定鼠标是否在百度div上
     IsDBdiv();
     //挖地功能，绘制多边形
-    $("#bnt_wd").on('click',function () {
+    $("#bnt_wd").on('click', function () {
         //判定是否开启三维模式
-        if ($("#map").css("display") == "none" ) {
+        if ($("#map").css("display") == "none") {
             os('error', "请开启三维模式！", '');
             return;
         }
@@ -1531,19 +1539,70 @@ function otherThing() {
         wdflat = true;
     });
     $("#bnt_bsclear").on("click", function () {
-        if ($("#map").css("display") == "none") { 
+        if ($("#map").css("display") == "none") {
             os('error', "请开启三维模式！", '');
             return;
         }
-        $("#map").css("cursor", "auto"); 
+        $("#map").css("cursor", "auto");
         wdflat = false;
         try {
-            viewer.entities.remove(shape);
-            viewer.entities.remove(floatingPoint);
-        } catch (e) {
+            palaceTileset.clippingPlanes.removeAll();
+        } catch (e) { 
         }
     });
+    $("#bnt_upheigt").on("click", function () {
+        if ($("#map").css("display") == "none") {
+            os('error', "请开启三维模式！", '');
+            return;
+        }
+        lengtvalue = -1 * $("#wdheight").val();
+        //销毁重建 labels, yhlabels, linePrimitive, flowtoPrimitive, holePrimitive, yhPrimitive
+        labels.removeAll();
+        yhlabels.removeAll();
+        scene.primitives.remove(linePrimitive);//linePrimitive
+        scene.primitives.remove(flowtoPrimitive);//flowtoPrimitive
+        scene.primitives.remove(yhPrimitive);//yhPrimitive
+        for (var i = 0; i < holePrimitive.length; ++i) {
+            let sas = new Cesium.Cartesian3();
+            Cesium.Matrix4.getTranslation(holePrimitive.get(i).modelMatrix, sas);
+            let cats = ellipsoid.cartesianToCartographic(sas);
+            let modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(cats.longitude), Cesium.Math.toDegrees(cats.latitude), cats.height - lengtvalue - bflengtvalue));
+            holePrimitive.get(i).modelMatrix = modelMatrix;
+        }
+        bflengtvalue = -1 * lengtvalue;
+        //线与井点数据 
+        getLineHoles(true);
+        //隐患点数据
+        getYhData(true);
+    });
+    $("#bnt_clearup").on("click", function () {
+        if ($("#map").css("display") == "none") {
+            os('error', "请开启三维模式！", '');
+            return;
+        }
+        //恢复默认值
+        lengtvalue = -1 * mlengtvalue;
+        //销毁重建 labels, yhlabels, linePrimitive, flowtoPrimitive, holePrimitive, yhPrimitive
+        labels.removeAll();
+        yhlabels.removeAll();
+        scene.primitives.remove(linePrimitive);//linePrimitive
+        scene.primitives.remove(flowtoPrimitive);//flowtoPrimitive
+        scene.primitives.remove(yhPrimitive);//yhPrimitive
+        for (var i = 0; i < holePrimitive.length; ++i) {
+            let sas = new Cesium.Cartesian3();
+            Cesium.Matrix4.getTranslation(holePrimitive.get(i).modelMatrix, sas);
+            let cats = ellipsoid.cartesianToCartographic(sas);
+            let modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(cats.longitude), Cesium.Math.toDegrees(cats.latitude), cats.height - lengtvalue - bflengtvalue));
+            holePrimitive.get(i).modelMatrix = modelMatrix;
+        }
+        bflengtvalue = -1 * lengtvalue;
+        //线与井点数据 
+        getLineHoles(true);
+        //隐患点数据
+        getYhData(true);
+    });
 }
+
 function in_array(stringToSearch, arrayToSearch) {
     for (s = 0; s < arrayToSearch.length; s++) {
         thisEntry = arrayToSearch[s].toString();
@@ -1934,7 +1993,7 @@ function getHeight() {
         return height;
     }
 }
-function getLineHoles() {
+function getLineHoles(iswid) {
     var loadindex = layer.load(1, {
         shade: [0.1, '#000']
     });
@@ -1949,11 +2008,14 @@ function getLineHoles() {
             let line_instances = [];
             var flowto_instances = [];
             let holecolor = Cesium.Color.ALICEBLUE;
-            let lengtvalue = 24;
-            holePrimitive = new Cesium.PrimitiveCollection();
+            let msa = 0;
+            if (!iswid) 
+                holePrimitive = new Cesium.PrimitiveCollection();
+            else
+                msa = mlengtvalue; 
             $.each(data.response.lineDateMoldes, function (i, item) {
-                let e_pipealtitude = Number(item.ehight - item.eDeep) - lengtvalue;
-                let s_pipealtitude = Number(item.shight - item.sDeep) - lengtvalue;
+                let e_pipealtitude = Number(item.ehight - item.eDeep) - lengtvalue - msa;
+                let s_pipealtitude = Number(item.shight - item.sDeep) - lengtvalue - msa;
 
                 let attributes = Cesium.Color.DEEPPINK;
                 let sholeUrl = '/js/cesiumhelp/model/ys22.glb';
@@ -1988,64 +2050,66 @@ function getLineHoles() {
                 if (areacode == "gd_sz_gm") {
                     flat = i > 1500;
                     //cesium
-
                 } else {
                     flat = i < 20000000;
                 }
                 //添加psize标签
                 if (flat) {
-                    if (!in_array(item.s_Point, ceHoleList)) {
-                        if (item.s_subsid == "雨水篦" || item.s_subsid == "污水篦") {
-                            sholeUrl = '/js/cesiumhelp/model/yb22.glb';
-                            sscale = 3;
-                            sheight = 1.3;
-                            spipeheight = 1.3;
+                    if (!iswid) {
+                        if (!in_array(item.s_Point, ceHoleList)) {
+                            if (item.s_subsid == "雨水篦" || item.s_subsid == "污水篦") {
+                                sholeUrl = '/js/cesiumhelp/model/yb22.glb';
+                                sscale = 3;
+                                sheight = 1.3;
+                                spipeheight = 1.3;
+                            }
+                            var SmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+                                Cesium.Cartesian3.fromDegrees(item.sCoorWgsX, item.sCoorWgsY, item.shight - lengtvalue - msa));
+                            //画S管点
+                            var WSmodel = Cesium.Model.fromGltf({
+                                id: "pipe_hole_" + item.s_Point + "_$" + item.sholeID,
+                                url: sholeUrl,
+                                modelMatrix: SmodelMatrix,
+                                scale: sscale,
+                                primitivesType: "holeType",
+                                color: holecolor
+                            });
+                            holePrimitive.add(WSmodel);
+                            ceHoleList.push(item.s_Point);
+                        } else {
+                            if (item.s_subsid == "雨水篦" || item.s_subsid == "污水篦")
+                                spipeheight = 1.3;
                         }
-                        var SmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-                            Cesium.Cartesian3.fromDegrees(item.sCoorWgsX, item.sCoorWgsY, item.shight - lengtvalue));
-                        //画S管点
-                        var WSmodel = Cesium.Model.fromGltf({
-                            id: "pipe_hole_" + item.s_Point + "_$" + item.sholeID,
-                            url: sholeUrl,
-                            modelMatrix: SmodelMatrix,
-                            scale: sscale,
-                            primitivesType: "holeType",
-                            color: holecolor
-                        });
-                        holePrimitive.add(WSmodel);
-                        ceHoleList.push(item.s_Point);
-                    } else {
-                        if (item.s_subsid == "雨水篦" || item.s_subsid == "污水篦")
-                            spipeheight = 1.3;
-                    }
-                    //画E管点
-                    if (!in_array(item.e_Point, ceHoleList) && ((item.e_subsid == null || item.e_subsid == "") && item.e_Feature != "出水口")) {
-                        if (item.e_subsid == "雨水篦" || item.e_subsid == "污水篦") {
-                            eholeUrl = '/js/cesiumhelp/model/yb22.glb';
-                            escale = 3;
-                            eheight = 1.3;
-                            epipeheight = 1.3;
+                        //画E管点
+                        if (!in_array(item.e_Point, ceHoleList) && ((item.e_subsid == null || item.e_subsid == "") && item.e_Feature != "出水口")) {
+                            if (item.e_subsid == "雨水篦" || item.e_subsid == "污水篦") {
+                                eholeUrl = '/js/cesiumhelp/model/yb22.glb';
+                                escale = 3;
+                                eheight = 1.3;
+                                epipeheight = 1.3;
+                            }
+                            var EmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+                                Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY, item.ehight - lengtvalue - msa));
+                            var YSmodel = Cesium.Model.fromGltf({
+                                id: "pipe_hole_" + item.e_Point + "_$" + item.eholeID,
+                                url: eholeUrl,
+                                modelMatrix: EmodelMatrix,
+                                scale: escale,
+                                primitivesType: "holeType",
+                                color: holecolor
+                            });
+                            holePrimitive.add(YSmodel);
+                            ceHoleList.push(item.e_Point);
+                        } else {
+                            if (item.e_subsid == "雨水篦" || item.e_subsid == "污水篦")
+                                epipeheight = 1.3;
                         }
-                        var EmodelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-                            Cesium.Cartesian3.fromDegrees(item.eCoorWgsX, item.eCoorWgsY, item.ehight - lengtvalue));
-                        var YSmodel = Cesium.Model.fromGltf({
-                            id: "pipe_hole_" + item.e_Point + "_$" + item.eholeID,
-                            url: eholeUrl,
-                            modelMatrix: EmodelMatrix,
-                            scale: escale,
-                            primitivesType: "holeType",
-                            color: holecolor
-                        });
-                        holePrimitive.add(YSmodel);
-                        ceHoleList.push(item.e_Point);
-                    } else {
-                        if (item.e_subsid == "雨水篦" || item.e_subsid == "污水篦")
-                            epipeheight = 1.3;
                     }
+
                     //管径
                     labels.add({
                         id: "line_labels_" + item.lineID,
-                        position: Cesium.Cartesian3.fromDegrees(item.cCoorWgsX, item.cCoorWgsY, item.shight - lengtvalue),
+                        position: Cesium.Cartesian3.fromDegrees(item.cCoorWgsX, item.cCoorWgsY, item.shight - lengtvalue - msa),
                         text: item.pSize,
                         font: '20px Helvetica',
                         fillColor: attributes,
@@ -2068,12 +2132,11 @@ function getLineHoles() {
                     flowto_instances.push(new Cesium.GeometryInstance({
                         id: "flowto_" + item.line_Class + "_" + item.lineID,
                         geometry: new Cesium.PolylineGeometry({
-                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([slx, sly, (ceshight / 4) + item.ehight - (item.sDeep / 2) - lengtvalue, elx, ely, (ceshight / 4) + item.ehight - (item.sDeep / 2) - lengtvalue]),
+                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([slx, sly, (ceshight / 4) + item.ehight - (item.sDeep / 2) - lengtvalue - msa, elx, ely, (ceshight / 4) + item.ehight - (item.sDeep / 2) - lengtvalue - msa]),
                             width: 20.0,
                             vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
                         })
                     }));
-
                     //画管
                     let shapePositions = computeCircle(0.3);
                     if (item.pSize.indexOf('X') >= 0) //画正方体或者长方体管
@@ -2120,7 +2183,7 @@ function getLineHoles() {
             });
             viewer.scene.primitives.add(linePrimitive);
             viewer.scene.primitives.add(holePrimitive);
-            os('success', data.msg, '', 7000, '');
+            //os('success', data.msg, '', 7000, '');
         }
     }).error(function () {
         layer.close(loadindex);
@@ -2135,7 +2198,7 @@ function getbuildList() {
     palaceTileset = new Cesium.Cesium3DTileset({
         url: url
         //或者url: 'http://ip:port/www/DAEPalace/tileset.json'
-    })
+    });
     viewer.scene.primitives.add(palaceTileset);
 }
 function getCivicCenter() {
@@ -2147,16 +2210,14 @@ function getCivicCenter() {
     tileset.readyPromise.then(function (argument) {
         var longitude = 114.20115646;
         var latitude = 22.7471369382;
-        var height = 0;
+        var height = 10;
         // 1、旋转
         let hpr = new Cesium.Matrix3();
         // new Cesium.HeadingPitchRoll(heading, pitch, roll)
         // heading围绕负z轴的旋转。pitch是围绕负y轴的旋转。Roll是围绕正x轴的旋转
-        let hprObj = new Cesium.HeadingPitchRoll(Math.PI, Math.PI, Math.PI)
-
+        let hprObj = new Cesium.HeadingPitchRoll(Math.PI, Math.PI, Math.PI);
         //  Cesium.Matrix3.fromHeadingPitchRoll （headingPitchRoll，result）
-        hpr = Cesium.Matrix3.fromHeadingPitchRoll(hprObj, hpr)
-
+        hpr = Cesium.Matrix3.fromHeadingPitchRoll(hprObj, hpr);
         // 2、平移
         // 2.3储存平移的结果
         let modelMatrix = Cesium.Matrix4.multiplyByTranslation(
@@ -2169,7 +2230,6 @@ function getCivicCenter() {
         Cesium.Matrix4.multiplyByMatrix3(modelMatrix, hpr, modelMatrix);
         tileset._root.transform = modelMatrix;
     });
-
 }
 function flyTo(lng, lat, height) {
     viewer.camera.flyTo({
@@ -2222,8 +2282,8 @@ function os(msgtype, msg, title, time, positionClass) {
         "hideEasing": "linear",
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
-    }
-    toastr[msgtype](msg, title)
+    };
+    toastr[msgtype](msg, title);
 }
 function validationNumber(e, num) {
     var regu = /^[0-9]+\.?[0-9]*$/;
@@ -2290,25 +2350,62 @@ function recoveryHoleColor() {
 
 }
 //隐患点
-function getYhData() {
+function getYhData(iswd) {
     $.get('/home/getYhData', null, function (res, status) {
         if (res.response != null) {
+            let yh_instances = [];
             $.each(res.response, function (i, item) {
-                var heg = 1.6;
+                let heg = 1.6;
+                let msa = 0;
+                if (iswd)
+                    msa = mlengtvalue;
                 if (item.tableType === "pipe_hole") {
-                    heg = item.height;
+                    heg = item.height - lengtvalue - msa;
                 } else {
-                    heg = ((item.height + item.eheight) / 2) - 1;
+                    heg = ((item.height - lengtvalue - msa + item.eheight - lengtvalue - msa) / 2) - 1;
                 }
-
-                addYHMolde(item.id, item.coorWgsX, item.coorWgsY, heg - 24, item.testMsg);
+                yh_instances.push(new Cesium.GeometryInstance({
+                    id: "yh_" + item.id,
+                    geometry: new Cesium.PolylineGeometry({
+                        positions: Cesium.Cartesian3.fromDegreesArrayHeights([item.coorWgsX, item.coorWgsY, heg + 1 +0.5, item.coorWgsX, item.coorWgsY, heg + 1]),
+                        width: 20.0,
+                        vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
+                    })
+                }));
+                //隐患lables
+                yhlabels.add({
+                    id: "yh_labels_" + item.id,
+                    position: Cesium.Cartesian3.fromDegrees(item.coorWgsX, item.coorWgsY, heg + 1+0.5),
+                    text: item.testMsg,
+                    font: '20px Helvetica',
+                    fillColor: Cesium.Color.RED,
+                    show: false
+                });
             });
+            //隐患
+            yhPrimitive = new Cesium.Primitive({
+                geometryInstances: yh_instances, //合并
+                //某些外观允许每个几何图形实例分别指定某个属性，例如：
+                appearance: new Cesium.PolylineMaterialAppearance({
+                    material: new Cesium.Material({
+                        fabric: {
+                            type: 'PolylineArrow',
+                            uniforms: {
+                                color: Cesium.Color.RED
+                            }
+                        }
+                    })
+                }),
+                show: false
+            });
+            viewer.scene.primitives.add(yhPrimitive);
         }
     });
 }
+
 function addYHMolde(id, longitude, latitude, heght, yhtext) {
     //隐患lables
-    labels.add({
+    yhlabels.add({
         id: "yh_labels_" + id,
         position: Cesium.Cartesian3.fromDegrees(longitude, latitude, heght + 1),
         text: yhtext,
@@ -2321,7 +2418,7 @@ function addYHMolde(id, longitude, latitude, heght, yhtext) {
     var addyh = new Cesium.Primitive({
         geometryInstances: new Cesium.GeometryInstance({
             id: "yh_" + id,
-            geometry: new Cesium.PolylineGeometry({
+            geometry: new Cesium.PolylineGeometry({ 
                 positions: Cesium.Cartesian3.fromDegreesArrayHeights([longitude, latitude, heght + 1, longitude, latitude, heght + 0.5]),
                 width: 20.0,
                 vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
@@ -2340,7 +2437,6 @@ function addYHMolde(id, longitude, latitude, heght, yhtext) {
         }),
         show: false
     });
-    yhPairList.push(addyh);
     viewer.scene.primitives.add(addyh);
 }
 function bindingHoleDate(data) {
@@ -2349,11 +2445,11 @@ function bindingHoleDate(data) {
     //处理第一次展示的详情
     $("#property .layui-tab-title li").each(function () {
         $(this).removeClass("layui-this");
-    })
+    });
     $("#infoTab").addClass("layui-this");
     $("#property .layui-tab-content div").each(function () {
         $(this).removeClass("layui-show");
-    })
+    });
     $("#infoDIV").addClass("layui-show");
     $("#cctvInfoTab").hide();
     $("#cctvinfdiv").hide();
@@ -2421,11 +2517,11 @@ function bindingLineDate(data) {
     }
     $("#property .layui-tab-title li").each(function () {
         $(this).removeClass("layui-this");
-    })
+    });
     $("#infoTab").addClass("layui-this");
     $("#property .layui-tab-content div").each(function () {
         $(this).removeClass("layui-show");
-    })
+    });
     $("#infoDIV").addClass("layui-show");
     $("#cctvinfdiv").removeClass('layui-show');
     $("#cctvInfo").html("");
@@ -2949,9 +3045,10 @@ function createPoint(worldPosition) {
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
         }
     });
+    floatingPointArr.push(point);
     return point;
 }
-function drawShape(positionData,dbtypes) {
+function drawShape(positionData, dbtypes) {
     if (dbtypes === 'line') {
         shape = viewer.entities.add({
             polyline: {
@@ -2993,11 +3090,11 @@ function drawShape(positionData,dbtypes) {
                 outline: true
             }
         });
-    } else if (dbtypes ===  'rectangle') {
+    } else if (dbtypes === 'rectangle') {
         //当positionData为数组时绘制最终图，如果为function则绘制动态图
         var arr = typeof positionData.getValue === 'function' ? positionData.getValue(0) : positionData;
         shape = viewer.entities.add({
-            name: 'Blue translucent, rotated, and extruded ellipse with outline',
+            name: 'Blue e',
             rectangle: {
                 coordinates: new Cesium.CallbackProperty(function () {
                     var obj = Cesium.Rectangle.fromCartesianArray(arr);
@@ -3021,4 +3118,66 @@ function terminateShape(dbtype) {
     floatingPoint = undefined;
     activeShape = undefined;
     activeShapePoints = [];
+}
+function getInverseTransform() {
+    let transform;
+    let tmp = palaceTileset.root.transform;
+    if ((tmp && tmp.equals(Cesium.Matrix4.IDENTITY)) || !tmp) {
+        // 如果root.transform不存在，则3DTiles的原点变成了boundingSphere.center
+        transform = Cesium.Transforms.eastNorthUpToFixedFrame(palaceTileset.boundingSphere.center);
+    } else {
+        transform = Cesium.Matrix4.fromArray(palaceTileset.root.transform);
+    }
+    return Cesium.Matrix4.inverseTransformation(transform, new Cesium.Matrix4());
+}
+function getOriginCoordinateSystemPoint(point, inverseTransform) {
+    let val = Cesium.Cartesian3.fromDegrees(point.lng, point.lat);
+    return Cesium.Matrix4.multiplyByPoint(
+        inverseTransform, val, new Cesium.Cartesian3(0, 0, 0));
+}
+function createPlane(p1, p2, inverseTransform) {
+    // 将仅包含经纬度信息的p1,p2，转换为相应坐标系的cartesian3对象
+    let p1C3 = getOriginCoordinateSystemPoint(p1, inverseTransform);
+    let p2C3 = getOriginCoordinateSystemPoint(p2, inverseTransform);
+    // 定义一个垂直向上的向量up
+    let up = new Cesium.Cartesian3(0, 0, -10);
+    //  right 实际上就是由p1指向p2的向量
+    let right = Cesium.Cartesian3.subtract(p2C3, p1C3, new Cesium.Cartesian3());
+    // 计算normal， right叉乘up，得到平面法向量，这个法向量指向right的右侧
+    let normal = Cesium.Cartesian3.cross(right, up, new Cesium.Cartesian3());
+    normal = Cesium.Cartesian3.normalize(normal, normal);
+    //由于已经获得了法向量和过平面的一点，因此可以直接构造Plane,并进一步构造ClippingPlane
+    let planeTmp = Cesium.Plane.fromPointNormal(p1C3, normal);
+    return Cesium.ClippingPlane.fromPlane(planeTmp);
+}
+function isClockWise(latLngArr) {
+    if (latLngArr.length < 3) {
+        return null;
+    }
+    if (latLngArr[0] === latLngArr[latLngArr.length - 1]) {
+        latLngArr = latLngArr.slice(0, latLngArr.length - 1);
+    }
+    let latMin = { i: -1, val: 90 };
+    for (let i = 0; i < latLngArr.length; i++) {
+        let { lat } = latLngArr[i];
+        if (lat < latMin.val) {
+            latMin.val = lat;
+            latMin.i = i;
+        }
+    };
+    let i1 = (latMin.i + latLngArr.length - 1) % latLngArr.length;
+    let i2 = latMin.i;
+    let i3 = (latMin.i + 1) % latLngArr.length;
+
+    let v2_1 = {
+        lat: latLngArr[i2].lat - latLngArr[i1].lat,
+        lng: latLngArr[i2].lng - latLngArr[i1].lng
+    };
+    let v3_2 = {
+        lat: latLngArr[i3].lat - latLngArr[i2].lat,
+        lng: latLngArr[i3].lng - latLngArr[i2].lng
+    };
+    let result = v3_2.lng * v2_1.lat - v2_1.lng * v3_2.lat;
+    // result>0 3-2在2-1的顺时针方向 result<0 3-2在2-1的逆时针方向 result==0 3-2和2-1共线，可能同向也可能反向
+    return result === 0 ? (latLngArr[i3].lng < latLngArr[i1].lng) : (result > 0);
 }

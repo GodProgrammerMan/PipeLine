@@ -69,7 +69,7 @@ $(function () {
 
     $(".map_box_tool li").on('click', function () {
         let _this = $(this);
-        let layername = _this.attr("layermst")
+        let layername = _this.attr("layermst");
         switch (layername) {
             case 'layerSelect'://图层
                 if (_this.hasClass('active')) {
@@ -83,17 +83,17 @@ $(function () {
                     $("#leftMenuid").css("z-index", "10")
                 }
                 break;
-            case 'layerTool'://分屏工具
-                //if (_this.hasClass('active')) {
-                //    _this.removeClass('active');
-                //    _this.find("a").removeClass('active');
-                //    $("#layerTool").hide();
-                //} else {
-                //    _this.addClass('active');
-                //    _this.find("a").addClass('active');
-                //    $("#layerTool").show();
-                //    $("#layerTool").css("z-index", "10")
-                //}
+            case 'wdlayerTool'://分屏工具
+                if (_this.hasClass('active')) {
+                    _this.removeClass('active');
+                    _this.find("a").removeClass('active');
+                    $("#wdlayerTool").hide();
+                } else {
+                    _this.addClass('active');
+                    _this.find("a").addClass('active');
+                    $("#wdlayerTool").show();
+                    $("#wdlayerTool").css("z-index", "10");
+                }
                 break;
             case 'layerSearch'://搜索工具
                 if (_this.hasClass('active')) {
@@ -369,10 +369,22 @@ function initlocation() {
 function CookieChoohtml() {
     if (areacode == "gd_sz_gm") {
         areid = 2;
+        latval = -0.002863038721292;
+        lngval = 0.0049005903307;
+        lengtvalue = 24;
+        mlengtvalue = 24;
     } else if (areacode == "gd_fs") {
         areid = 1;
+        latval = -0.0026169694041;
+        lngval = 0.00544058017012;
+        lengtvalue = 0;
+        mlengtvalue = 0;
     } else if (areacode == "gd_sz_sm") {
         areid = 0;
+        lengtvalue = 0;
+        mlengtvalue = 0;
+        latval = - 0.003045587501575;
+        lngval = 0.00540591756882;
     }
 }
 function enterFullscreen() {
@@ -519,8 +531,6 @@ function PlayCCTV(srcurl) {
         leftDom: vipDom // 将DOM插入弹幕左侧
     })
     //video.addBarrage(barrage2);
-
-    // 当然也可以这样简单的使用
     //video.addBarrage('冲鸭~~~~~~');
     //video.addBarrage('奥里给！！！！！！');
 }

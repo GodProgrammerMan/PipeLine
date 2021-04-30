@@ -60,6 +60,12 @@ namespace IPipe.Web.Controllers
             return View();
         }
 
+        public IActionResult CCTV() {
+            ViewBag.areanme = GetAreName();
+            return View();
+        }
+
+
         public string GetAreName()
         {
 

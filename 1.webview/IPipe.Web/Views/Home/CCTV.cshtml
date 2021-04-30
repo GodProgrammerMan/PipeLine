@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = ViewBag.areanme + "排水管线管理及隐患调查GIS服务平台-CCTV视频监控";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/css/toastr/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/js/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="~/css/index.css" />
+    <!-- 全局js -->
+    <script src="~/js/jquery.min.js"></script>
+    <style>
+        html {
+            height: 100%;
+        }
+    </style>
+}
+
+<!-- 加载 -->
+<div id="load">
+    <div class="load_img">
+        <img class="jzxz1" src="~/img/loading1.png">
+        <img class="jzxz2" src="~/img/loading2.png">
+    </div>
+</div>
+<!--顶部-->
+<header class="header left">
+    <div class="left nav">
+        <ul>
+            <li><i class="nav_1"></i><a href="/home/homeIndex">数据概览</a> </li>
+            <li><i class="nav_3"></i><a href="/home/map">地图界面</a> </li>
+            <li class="nav_active"><i class="nav_2"></i><a href="/home/cctv">CCTV视频监控</a> </li>
+        </ul>
+    </div>
+    <div class="header_center left">
+        <h2><strong>@(ViewBag.areanme)排水管线管理及隐患调查GIS服务平台</strong></h2>
+        <p class="color_font"><small>Drainage pipeline management and hidden danger investigation GIS service platform</small></p>
+    </div>
+    <div class="right nav text_right">
+        <ul>
+            <li><i class="nav_9"></i><a href="javascript:void(0);" onclick="showBox('任务安排', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">任务安排</a> </li>
+            <li><i class="nav_4"></i><a href="javascript:void(0);" onclick="showBox('信息录入', '/pipeHole/editPipeHole?action=add', ['1100px', '700px']);">信息录入</a> </li>
+            <li>
+                <i class="nav_8"></i><a href="javascript:void(0);" id="sys-muen">系统设置</a>
+                <ul class="msdi-sys-menu-ul" style="display:none;">
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;">
+                            <div class="msdi-menu-notifications-title">
+                                <span>修改信息</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;">
+                            <div class="msdi-menu-notifications-title">
+                                <span>安全管理</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;" onclick="switchcity('gd_sz_gm')">
+                            <div class="msdi-menu-notifications-title">
+                                <span>深圳数据</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;" onclick="switchcity('gd_fs')">
+                            <div class="msdi-menu-notifications-title">
+                                <span>佛山数据</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;" onclick="switchcity('gd_sz_sm')">
+                            <div class="msdi-menu-notifications-title">
+                                <span>深圳市民中心数据</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="msdi-sys-menu-notifications">
+                        <a href="javascript:;">
+                            <div class="msdi-menu-notifications-title">
+                                <span>退出</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>
+<!--内容部分-->
+<div class="con1 left" id="car_control">
+    <div class="left car_left">
+        <div class="left_up bow_shadow">
+            <p>
+                <input type="text" placeholder="输入车牌号" class="carNo_input"><input type="button" class="find_but">
+            </p>
+
+            <p class="set_list"><i class="list_i"></i> 设备列表：</p>
+            <p><ul id="treeDemo" class="ztree"></ul></p>
+        </div>
+        <div class="left_down bow_shadow">
+            <div class="text_center"><a href="javascript:void (0)" class="tab_a tab_aActive">基本信息</a><a href="javascript:void (0)" class="tab_a">云台控制</a> </div>
+            <div class="car_content">
+                <p><span>车牌号：</span><span>K89076</span></p>
+                <p><span>驾驶人姓名：</span><span>K89076</span></p>
+                <p><span>车辆品牌：</span><span>K89076</span></p>
+                <p><span>车辆型号：</span><span>K89076</span></p>
+                <p><span>所属公司：</span><span>K89076xxxxxxxxxxxxxxxxxx</span></p>
+                <p><span>行驶里程：</span><span>xxxxx</span></p>
+                <p><span>状态：</span><span>xxxxx</span></p>
+                <p><span>所在位置：</span><span>xxxxxxxxxxxxx</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="left car_center">
+        <video controls="controls"></video>
+        <video controls="controls" class="magin_left"></video>
+        <video controls="controls" class="magin_top"></video>
+        <video controls="controls" class="magin_top magin_left"></video>
+    </div>
+    <div class="right car_right" id="map"></div>
+</div>
+@section Scripts{
+    <!-- cookiesjs -->
+    <script src="~/js/jquery.cookie.js"></script>
+    <!-- Toastr script -->
+    <script src="~/js/toastr/toastr.min.js"></script>
+    <!-- layer -->
+    <script src="~/js/layui/layui.all.js"></script>
+    <script src="~/js/cctv.js"></script>
+}
+
