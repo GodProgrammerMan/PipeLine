@@ -20,6 +20,7 @@ namespace IPipe.IServices
         void UpdateHoleIDByID(int id1, int id2, int id3);
 
         StatisticalAllDataDataModel GetStatisticalAllDataData(int areid);
+        List<QueryLineListMolde> GetQueryPipeLineList(string kw,int areid);
     }
 }
                     

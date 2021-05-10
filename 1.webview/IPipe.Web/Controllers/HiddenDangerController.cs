@@ -85,7 +85,17 @@ namespace IPipe.Web.Controllers
                 GR_img = Utils.UploadImage(obj.GR_img, $"ipipe/headPortrait/",
                     RandomHelper.GetGuid(), "账号头像", 10, 10, Color.Red, false);
             }
-            hidden_danger  model = new hidden_danger()
+            pipe_line osl=null;
+            try
+            {
+                osl = _ipipe_LineServices.QuerySql($"SELECT areatwo from pipe_line where areid={areid} LIMIT 1").Result.First();
+            }
+            catch (Exception)
+            {
+                osl = new pipe_line();
+            }
+
+            hidden_danger model = new hidden_danger()
             {
                 GR_img = GR_img,
                 objID = obj.objID,
@@ -98,6 +108,7 @@ namespace IPipe.Web.Controllers
                 CoorWgsX = obj.CoorWgsX,
                 CoorWgsY = obj.CoorWgsY,
                 hd_name = obj.hd_name,
+                areatwo = osl.areatwo,
                 areid = areid
             };
 

@@ -999,6 +999,44 @@ namespace IPipe.Web.Controllers
         }
         #endregion
 
+        #region 查询管线lineList
+        [HttpPost]
+        public IActionResult GetLineCCTVdata(IDParameter obj)
+        {
+            var result = new MessageModel<LineCCTVInfoMolde>() { msg = "参数错误", response = null, success = false };
+            if (obj.id <= 0)
+                return new JsonResult(result);
 
+            var cctvLine = _ipipe_HoleServices.GetLineCCTVdata(obj.id,areid);
+            if (cctvLine != null)
+            {
+                result.success = true;
+                result.response = cctvLine;
+                result.msg = "获取管道数据成功！";
+            }
+            else
+                result.msg = "目前还没有该管道数据哦";
+            return new JsonResult(result);
+        }
+        [HttpPost]
+        public IActionResult GetPipeLineList(KWParameter obj) {
+            var result = new MessageModel<List<QueryLineListMolde>>() { msg = "参数错误", response = null, success = false };
+            if (string.IsNullOrWhiteSpace(obj.kw))
+            {
+                result.msg = "关键字为空！";
+                return new JsonResult(result);
+            }
+            var LineList = _ipipe_LineServices.GetQueryPipeLineList(obj.kw,areid);
+            result.response = LineList;
+            if (LineList != null && LineList.Count > 0) {
+                result.msg = $"共发现{LineList.Count}条管道记录";
+                result.success = true;
+            }else
+                result.msg = $"没有找到合适的管道记录";
+            
+            //现将管
+            return new JsonResult(result);
+        }
+        #endregion
     }
 }

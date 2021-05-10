@@ -15,6 +15,7 @@ namespace IPipe.IServices
         void UpdateWgsXY(double X, double Y, int id);
         List<HoleCoorXYMolde> getHoleCoorXY();
         void UpdateMaxDeep(pipe_hole item);
+        LineCCTVInfoMolde GetLineCCTVdata(int id,int areid);
     }
 }
                     

@@ -19,6 +19,7 @@ namespace IPipe.IRepository
         void UpdateFlowToData(pipe_line item);
         void UpdateHoleIDByID(int sholeID, int eholeID, int lineid);
         StatisticalAllDataDataModel GetStatisticalAllDataData(int areid);
+        List<QueryLineListMolde> GetQueryPipeLineList(string kw, int areid);
     }
 }
                                     

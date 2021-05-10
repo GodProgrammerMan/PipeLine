@@ -448,8 +448,6 @@ $(function () {
 });
 //初始化 -- OL
 function initOL() {
-    var bounds = [113.069695806788, 22.9192165060491,
-        113.103322927028, 22.9697878620361];
     var mousePositionControl = new ol.control.MousePosition({
         className: 'custom-mouse-position',
         target: document.getElementById('location'),

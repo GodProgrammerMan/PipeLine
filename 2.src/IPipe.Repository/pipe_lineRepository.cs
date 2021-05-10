@@ -168,6 +168,16 @@ namespace IPipe.Repository
             }
             return holeList;
         }
+        public List<QueryLineListMolde> GetQueryPipeLineList(string kw,int areid)
+        {
+            var lineList = Db.Queryable<pipe_line>()
+                .Where(t => t.areid == areid)
+                .Where(t => t.Lno.Contains(kw)||t.E_Point.Contains(kw)||t.S_Point.Contains(kw))
+                .Select(t => new QueryLineListMolde() { addreess = t.Address, dataType = 1, eNo = t.Lno, id = t.id})
+                .Take(7)
+                .ToList();
+            return lineList;
+        }
 
         public void UpdateFlowToData(pipe_line item)
         {
@@ -389,6 +399,7 @@ namespace IPipe.Repository
             model.areaList = areaname;
             return model;
         }
+
 
     }
 }

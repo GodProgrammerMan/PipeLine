@@ -27,6 +27,11 @@ namespace IPipe.Services
             return _dal.GetHoleInfoByID(id);
         }
 
+        public LineCCTVInfoMolde GetLineCCTVdata(int id,int areid)
+        {
+            return _dal.GetLineCCTVdata(id,areid);
+        }
+
         public void UpdateMaxDeep(pipe_hole item)
         {
             _dal.UpdateMaxDeep(item);

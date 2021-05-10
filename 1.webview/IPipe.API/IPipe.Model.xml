@@ -1181,6 +1181,21 @@
             数据类型
             </summary>
         </member>
+        <member name="P:IPipe.Model.ViewModels.QueryLineListMolde.dataType">
+            <summary>
+            数据类型
+            </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.LineCCTVInfoMolde.clat">
+             <summary>
+            纬度
+             </summary>
+        </member>
+        <member name="P:IPipe.Model.ViewModels.LineCCTVInfoMolde.clng">
+            <summary>
+            经度
+            </summary>
+        </member>
         <member name="P:IPipe.Model.ViewModels.StatisticalAllDataDataModel.wscctvSum">
             <summary>
             污水cctv个数

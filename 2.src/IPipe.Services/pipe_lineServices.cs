@@ -37,6 +37,11 @@ namespace IPipe.Services
             return _dal.GetQueryLineHolesDate(kw);
         }
 
+        public List<QueryLineListMolde> GetQueryPipeLineList(string kw, int areid)
+        {
+            return _dal.GetQueryPipeLineList(kw ,areid);
+        }
+
         public StatisticalAllDataDataModel GetStatisticalAllDataData(int areid)
         {
             return _dal.GetStatisticalAllDataData(areid);

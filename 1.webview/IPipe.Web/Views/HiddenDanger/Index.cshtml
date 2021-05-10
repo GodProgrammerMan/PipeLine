@@ -184,6 +184,7 @@
                 if (!data.response) {
                     layer.msg(data.msg, { icon: 2 });
                 } else {
+                    layer.msg(data.msg, { icon: 1 });
 
                 }
             }).error(function () { $('#submit').attr('disabled', false).find('i').addClass('layui-hide');layer.close(loadindex); os('error', data.msg, '请求出错了，请刷新页面后重试！'); });
