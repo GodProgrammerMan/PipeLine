@@ -352,6 +352,9 @@ function init_Chartarea(areaList,maxvalue) {
     if (areacode == "gd_sz_gm") {
         jsonUlr = "sz.json";
         cityName = "深圳市";
+    }else if(areacode=="gd_sz_sm"){
+        jsonUlr = "sz_sm.json";
+        cityName = "福田区";
     } 
     $.get('/json/' + jsonUlr, function (geoJson) {
 
@@ -371,7 +374,6 @@ function init_Chartarea(areaList,maxvalue) {
                 trigger: 'item',
                 formatter: function (data) {
                     let res = data.data;
-                    console.log(data);
                     return res.name + '<br/>隐患 ' + res.value + '(个) <br/>污水管 ' + res.wsvalue + '(个)<br/>雨水管 ' + res.ysvalue +'(个)';
                 }
             },

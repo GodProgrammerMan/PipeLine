@@ -7,12 +7,9 @@ using IPipe.Model.ViewModels;
 using IPipe.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 
 namespace IPipe.Web.Controllers
@@ -42,7 +39,7 @@ namespace IPipe.Web.Controllers
         /// <returns></returns>
         public IActionResult Index()
         {
-            return View();
+            return RedirectToRoute(new { Controller = "Home", Action = "homeIndex" });
         }
 
         /// <summary>

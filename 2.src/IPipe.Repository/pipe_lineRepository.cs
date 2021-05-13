@@ -214,6 +214,19 @@ namespace IPipe.Repository
             var holes =  holelist.Where(t => !string.IsNullOrWhiteSpace(t.Subsid)).ToList();
             var wscctv = cctvlist.Where(t => t.lno.Contains("WS")).ToList();
             var yscctv = cctvlist.Where(t => t.lno.Contains("YS")).ToList();
+            List<hidden_danger> ysyhList;
+            List<hidden_danger> wsyhList;
+            if (wscctv.Count() == 0)
+            {
+                wscctv = cctvlist.Where(t => t.lno.Contains("W")).ToList();
+                yscctv = cctvlist.Where(t => t.lno.Contains("Y")).ToList();
+                wsyhList = yhlist.Where(t => t.hd_name.Contains("W")).ToList();
+                ysyhList = yhlist.Where(t => t.hd_name.Contains("Y")).ToList();
+            }
+            else {
+                wsyhList = yhlist.Where(t => t.hd_name.Contains("WS")).ToList();
+                ysyhList = yhlist.Where(t => t.hd_name.Contains("YS")).ToList();
+            }
             model.wscctvSum = wscctv.Count();
             model.yscctvSum = yscctv.Count();
             model.pipeholeSum = holes.Count();
@@ -255,9 +268,7 @@ namespace IPipe.Repository
             //隐患状态统计
             List<string> yhStartList = new List<string>() { "未处理", "已处理", "处理中" };
             model.yhStateList = yhStartList;
-            var wsyhList = yhlist.Where(t => t.hd_name.Contains("WS")).ToList();
-            var ysyhList = yhlist.Where(t => t.hd_name.Contains("YS")).ToList();
-
+            
             var wsyh0 = wsyhList.Where(t => t.handleState == 0).Count();
             var wsyh1 = wsyhList.Where(t => t.handleState == 1).Count();
             var wsyh2 = wsyhList.Where(t => t.handleState == 2).Count();
@@ -280,9 +291,10 @@ namespace IPipe.Repository
             var ysline = linelist.Where(t => t.line_Class.Equals("YS"));
             if (areid == 1)
             {
-                CommonAreaModel commonAreaModel = new CommonAreaModel() {
+                CommonAreaModel commonAreaModel = new CommonAreaModel()
+                {
                     name = "高明区",
-                    wsvalue = wsline.Where(t=>t.areatwo.Equals("高明区")).Count(),
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("高明区")).Count(),
                     value = yhlist.Where(t => t.areatwo.Equals("高明区")).Count(),
                     ysvalue = ysline.Where(t => t.areatwo.Equals("高明区")).Count()
                 };
@@ -320,7 +332,8 @@ namespace IPipe.Repository
                 areaname.Add(commonAreaModel3);
                 areaname.Add(commonAreaModel4);
             }
-            else {
+            else if (areid == 2)
+            {
                 CommonAreaModel commonAreaModel = new CommonAreaModel()
                 {
                     name = "宝安区",
@@ -394,6 +407,24 @@ namespace IPipe.Repository
                 areaname.Add(commonAreaModel6);
                 areaname.Add(commonAreaModel7);
                 areaname.Add(commonAreaModel8);
+            }
+            else if (areid == 0) {
+                CommonAreaModel commonAreaModel = new CommonAreaModel()
+                {
+                    name = "市民中心",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("市民中心")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("市民中心")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("市民中心")).Count()
+                };
+                CommonAreaModel commonAreaModel1 = new CommonAreaModel()
+                {
+                    name = "市民中心区域外",
+                    wsvalue = wsline.Where(t => t.areatwo.Equals("市民中心区域外")).Count(),
+                    value = yhlist.Where(t => t.areatwo.Equals("市民中心区域外")).Count(),
+                    ysvalue = ysline.Where(t => t.areatwo.Equals("市民中心区域外")).Count()
+                };
+                areaname.Add(commonAreaModel);
+                areaname.Add(commonAreaModel1);
             }
             model.areamaxvalue = areaname.Max(t => t.value);
             model.areaList = areaname;

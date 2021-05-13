@@ -29,11 +29,7 @@ $(document).mousemove(function (e) {
     y = e.pageY;
 });
 $(function () {
-    CookieChoohtml();
-    //ol地图加载二维
-    initOL();
-    //cesium
-    initCesium();
+    CookieChoohtml(initOL);
     layui.use(['form', 'element'], function () {
         var element = layui.element;
         var form = layui.form;
@@ -96,7 +92,6 @@ $(function () {
                             var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
                             attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.GREENYELLOW);
                         } catch (e) {
-                            console.log("流向管线ID异常" + ftIDS[i]);
                         }
                         var LineID = ftIDS[i].split('$')[1];
                         addcolorForBD(LineID, '#c5e82b')//并列百度变颜色
@@ -114,7 +109,6 @@ $(function () {
                                 var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
                                 attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
                             } catch (e) {
-                                console.log("流向管线ID异常" + LineID);
                             }
                             addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
                         } else {
@@ -122,7 +116,6 @@ $(function () {
                                 var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
                                 attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
                             } catch (e) {
-                                console.log("流向管线ID异常" + LineID);
                             }
 
                             addcolorForBD(LineID, '#881212')//并列百度变颜色
@@ -148,7 +141,6 @@ $(function () {
                             var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
                             attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKORANGE);
                         } catch (e) {
-                            console.log("溯源管线ID异常" + LineID);
                         }
                         var LineID = syIDS[i].split('$')[1];
                         addcolorForBD(LineID, '#e7aa00')//并列百度变颜色
@@ -165,7 +157,6 @@ $(function () {
                                 var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
                                 attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
                             } catch (e) {
-                                console.log("溯源管线ID异常" + LineID);
                             }
 
                             addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
@@ -175,7 +166,6 @@ $(function () {
                                 var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
                                 attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
                             } catch (e) {
-                                console.log("溯源管线ID异常" + LineID);
                             }
                             addcolorForBD(LineID, '#881212')//并列百度变颜色
                         }
@@ -447,7 +437,7 @@ $(function () {
 
 });
 //初始化 -- OL
-function initOL() {
+function initOL(callback) {
     var mousePositionControl = new ol.control.MousePosition({
         className: 'custom-mouse-position',
         target: document.getElementById('location'),
@@ -569,6 +559,7 @@ function initOL() {
     $(".ol-zoom").css("bottom", "17.5em");
     $(".custom-mouse-position").hide();
     IDMSclear();
+    callback && callback();
 }
 function olMouseEvents() {
     olMap.getView().on('change:resolution', function (evt) {  //放大和缩小事件
@@ -604,10 +595,8 @@ function olMouseEvents() {
     });
     olMap.on('singleclick', function (evt) {   //单击要素
         IDMSclear();
-        console.log("ol层级===" + olMap.getView().getZoom());
         let dx = parseFloat(evt.coordinate[0]);
         let dy = parseFloat(evt.coordinate[1]);
-        console.log(dx + "" + dy);
         let view = olMap.getView();
         let viewResolution = view.getResolution();
         let source = oLpipeAllLayer.get('visible') ? oLpipeAllLayer.getSource() : null;
@@ -679,7 +668,6 @@ function ollcesium() {
     if (thismap == "23d" && Isgoemdiv) {
         //23d联动
         let rotatuin = olMap.getView().getRotation();
-        console.log("openlayer" + rotatuin);
         if (typeof (viewer) != 'undefined') {
             if (rotatuin == 0) {
                 let sn_wgs84 = olMap.getView().calculateExtent(olMap.getSize());
@@ -844,7 +832,7 @@ function getMouseEventsForCesium() {
                 let lat_String = Cesium.Math.toDegrees(cartographic1.latitude).toFixed(10),
                     log_String = Cesium.Math.toDegrees(cartographic1.longitude).toFixed(10),
                     alti_String = (viewer.camera.positionCartographic.height).toFixed(10);
-                console.log(lat_String + "===========" + log_String);
+
                 //var cartographic2 = Cesium.Cartographic.fromDegrees(cartographic1.longitude, cartographic1.latitude, viewer.camera.positionCartographic.height);
                 //var cartesian3 = ellipsoid.cartographicToCartesian(cartographic2);
             }
@@ -965,29 +953,41 @@ function getMouseEventsForCesium() {
                 //创建模型挖地
                 let clippArr = [];
                 let transformParea = getInverseTransform();
-                for (var i = 0; i < shopePoint.length; i++) {
-                    if (i == shopePoint.length - 1) {
-                        clippArr.push(createPlane(shopePoint[i], shopePoint[0], transformParea));
-                        break;
+                if (!isClockWise(shopePoint)) {
+                    shopePoint = shopePoint.reverse();
+                }
+                try {
+                    for (var i = 0; i < shopePoint.length; i++) {
+                        if (i == shopePoint.length - 1) {
+                            clippArr.push(createPlane(shopePoint[i], shopePoint[0], transformParea));
+                            break;
+                        }
+                        clippArr.push(createPlane(shopePoint[i], shopePoint[i + 1], transformParea));
                     }
-                    clippArr.push(createPlane(shopePoint[i], shopePoint[i + 1], transformParea));
-                }
-                console.log(clippArr);
-                palaceTileset.clippingPlanes = new Cesium.ClippingPlaneCollection({
-                    planes: clippArr,
-                    edgeColor: Cesium.Color.RED,
-                    edgeWidth: 1.0,
-                    unionClippingRegions: false, //true 才能多个切割  
-                });
-                for (var i = 0; i < floatingPointArr.length; i++) {
-                    viewer.entities.remove(floatingPointArr[i]);
-                }
-                shopePoint = [];
-                //移除创建的平面
-                viewer.entities.remove(shape);
-                viewer.entities.remove(floatingPoint);
+                    palaceTileset.clippingPlanes = new Cesium.ClippingPlaneCollection({
+                        planes: clippArr,
+                        edgeColor: Cesium.Color.RED,
+                        edgeWidth: 1.0,
+                        unionClippingRegions: false, //true 才能多个切割  
+                    });
+                    for (var i = 0; i < floatingPointArr.length; i++) {
+                        viewer.entities.remove(floatingPointArr[i]);
+                    }
+                    shopePoint = [];
+                    //移除创建的平面
+                    viewer.entities.remove(shape);
+                    viewer.entities.remove(floatingPoint);
                 //建立挖地模型
-
+                } catch (e) {
+                    layer.msg("计算模型出现误差，请稍后刷新页面再试哦！");
+                    //移除创建的平面
+                    shopePoint = [];
+                    viewer.entities.remove(shape);
+                    viewer.entities.remove(floatingPoint);
+                    for (var i = 0; i < floatingPointArr.length; i++) {
+                        viewer.entities.remove(floatingPointArr[i]);
+                    }
+                }
             } else {
                 layer.msg("至少选择三个点！");
             }
@@ -2189,9 +2189,9 @@ function getLineHoles(iswid) {
     });
 }
 function getbuildList() {
-    let url = "http://134.175.52.40:8081/3dTile/fs/tileset.json";
+    let url = "https://image.imlzx.cn/3dTile/fs/tileset.json";
     if (areacode == "gd_sz_gm")
-        url = "http://134.175.52.40:8081/3dTile/gm/tileset.json";
+        url = "https://image.imlzx.cn/3dTile/gm/tileset.json";
 
     palaceTileset = new Cesium.Cesium3DTileset({
         url: url
@@ -2200,7 +2200,7 @@ function getbuildList() {
     viewer.scene.primitives.add(palaceTileset);
 }
 function getCivicCenter() {
-    let url = "https://192.168.0.20:446/3dTile/qx/tileset.json";
+    let url = "https://image.imlzx.cn/3dTile/qx/tileset.json";
     palaceTileset = new Cesium.Cesium3DTileset({
         url: url
     });
@@ -2208,7 +2208,7 @@ function getCivicCenter() {
     tileset.readyPromise.then(function (argument) {
         var longitude = 114.20115646;
         var latitude = 22.7471369382;
-        var height = 10;
+        var height = 0;
         // 1、旋转
         let hpr = new Cesium.Matrix3();
         // new Cesium.HeadingPitchRoll(heading, pitch, roll)
@@ -2708,7 +2708,6 @@ function removeFTcolor() {
                         var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
                         attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
                     } catch (e) {
-                        console.log("管线ID异常" + LineID);
                     }
 
                     addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
@@ -2717,7 +2716,6 @@ function removeFTcolor() {
                         var attributes = linePrimitive.getGeometryInstanceAttributes(ftIDS[i]);
                         attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
                     } catch (e) {
-                        console.log("管线ID异常" + LineID);
                     }
 
                     addcolorForBD(LineID, '#881212')//并列百度变颜色
@@ -2735,7 +2733,6 @@ function removeFTcolor() {
                         var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
                         attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DEEPPINK);
                     } catch (e) {
-                        console.log("管线ID异常" + LineID);
                     }
 
                     addcolorForBD(LineID, '#ff50ff')//并列百度变颜色
@@ -2744,7 +2741,7 @@ function removeFTcolor() {
                         var attributes = linePrimitive.getGeometryInstanceAttributes(syIDS[i]);
                         attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.DARKRED);
                     } catch (e) {
-                        console.log("管线ID异常" + LineID);
+
                     }
 
                     addcolorForBD(LineID, '#881212')//并列百度变颜色
@@ -2969,7 +2966,7 @@ function imgset(obj) {
         area: '350px',
         skin: 'layui-layer-nobg', //没有背景色
         shadeClose: true,
-        content: '<div id="tong" class="hide" ><img style="width:350px;" src="' + imgsrc + '"></div>'
+        content: '<div id="tong"><img style="width:350px;" src="' + imgsrc + '"></div>'
     });
 }
 function file1change(obj) {
@@ -3178,4 +3175,63 @@ function isClockWise(latLngArr) {
     let result = v3_2.lng * v2_1.lat - v2_1.lng * v3_2.lat;
     // result>0 3-2在2-1的顺时针方向 result<0 3-2在2-1的逆时针方向 result==0 3-2和2-1共线，可能同向也可能反向
     return result === 0 ? (latLngArr[i3].lng < latLngArr[i1].lng) : (result > 0);
+}
+//根据cookie修改页面
+function CookieChoohtml(callback) {
+    if (areacode == "gd_sz_gm") {
+        areid = 2;
+        latval = -0.002863038721292;
+        lngval = 0.0049005903307;
+        lengtvalue = 24;
+        mlengtvalue = 24;
+    } else if (areacode == "gd_fs") {
+        areid = 1;
+        latval = -0.0026169694041;
+        lngval = 0.00544058017012;
+        lengtvalue = 0;
+        mlengtvalue = 0;
+    } else if (areacode == "gd_sz_sm") {
+        areid = 0;
+        lengtvalue = 0;
+        mlengtvalue = 0;
+        latval = - 0.003045587501575;
+        lngval = 0.00540591756882;
+    } else {
+        areid = 1;
+        latval = -0.0026169694041;
+        lngval = 0.00544058017012;
+        lengtvalue = 0;
+        mlengtvalue = 0;
+    }
+    callback && callback(initCesium);
+}
+function initlocation() {
+    if (areacode == "gd_sz_gm") {
+        flyTo(113.94314303246384, 22.746454084801524, 730.0222897488);
+        olMap.getView().setCenter([113.94314303246384, 22.746454084801524]);
+        olMap.getView().setZoom(17.404315028416946);
+        try {
+            map.centerAndZoom(new BMapGL.Point(113.93043624568712, 22.78495878251252, 21));
+        } catch (e) {
+
+        }
+    } else if (areacode == "gd_fs") {
+        flyTo(113.08343495207401, 22.949133135126246, 730.0222897488);
+        olMap.getView().setCenter([113.08343495207401, 22.949133135126246]);
+        olMap.getView().setZoom(18.703693552114576);
+        try {
+            map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
+        } catch (e) {
+
+        }
+    } else if (areacode == "gd_sz_sm") {
+        flyTo(114.0555891520, 22.5413770432, 730.0222897488);
+        olMap.getView().setCenter([114.05971697090581, 22.539934539441248]);
+        olMap.getView().setZoom(17.404315028416946);
+        try {
+            map.centerAndZoom(new BMapGL.Point(113.09084445075322, 22.95372333499535), 21);  // 初始化地图,设置中心点坐标和地图级别
+        } catch (e) {
+
+        }
+    }
 }

@@ -187,6 +187,12 @@ function setplaycctv(lineid,devid) {
                     let cctvjson = JSON.parse(linemode.cctvJsonStr);
                     document.getElementById("video" + devid).src = "https://image.imlzx.cn/cctv/" + cctvjson.msg.video + ".mp4";
                     document.getElementById("video" + devid).play();
+                    setTimeout(function () {
+                        let _video = document.getElementById("video" + devid);
+                        if (_video.paused) {
+                            layer.msg('视频文件或已被锁定,无法播放', { icon: 4 });
+                        } 
+                    }, 3000);
                 } catch (e) {
                     layer.msg('视频文件或已被锁定', { icon: 4 });
                 }
@@ -196,7 +202,7 @@ function setplaycctv(lineid,devid) {
                         break;
                     } 
                 }
-                //移除原先查看的cctv
+                //移除原先查看的cctv 
                 let ofeature = ioclayer.getSource().getFeatureById("cctv" + devid);
                 if (ofeature != null) {
                     try {
@@ -403,7 +409,7 @@ function olMouseEvents() {
             if (url) {
                 let loadindex = layer.load();
                 $.get(url, null, function (data, status) {
-                    if (data.features != null && data.features.length > 0) {
+                    if (data.features != null && data.features.length > 0) { 
                         //设置map中心点
                         view.setCenter([dx, dy]);
                         let isAnypoint = false, Anypointi = 0, isAnyline = false, Anylinei = 0, featuresData, showlayername = 'MSDI:ys_show_pipehole';
