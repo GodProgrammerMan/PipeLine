@@ -5,7 +5,7 @@ $(function () {
     $('#load').fadeOut(2);
     document.onclick = function (e) {
         $(".msdi-sys-menu-ul").hide();
-    }
+    };
 
     $("#sys-muen").on("click", function (e) {
         if ($(".msdi-sys-menu-ul").css("display") == "none") {
@@ -75,7 +75,7 @@ $(function () {
                 if (_this.hasClass('active')) {
                     _this.removeClass('active');
                     _this.find("a").removeClass('active');
-                    $("#leftMenuid").hide(); 
+                    $("#leftMenuid").hide();
                 } else {
                     _this.addClass('active');
                     _this.find("a").addClass('active');
@@ -122,7 +122,7 @@ $(function () {
             default:
                 layer.msg("正在开发中...");
         }
-    })
+    });
 
 
     $(".msdi-model-header").mousedown(function (e) {
@@ -212,7 +212,7 @@ function switchcity(citycoed) {
     window.setTimeout("window.location=''", 2000);
 }
 function kwColse() {
-    $("#sole-input").val("")
+    $("#sole-input").val("");
 }
 
 function searchKW() {
@@ -220,7 +220,7 @@ function searchKW() {
     var kw = $("#sole-input").val();
     if (kw === "") {
         os('warning', '关键字为空！', '');
-        return;
+        return false;
     }
     var loadindex = layer.load(1, {
         shade: [0.1, '#000']
@@ -293,7 +293,7 @@ $("#fileUploadHole").change(function () {
 function importLine_bnt() {
     if ($("#bnt_importLine").hasClass("layui-btn-disabled")) {
         os('warning', '请先导入井点Excel！', '');
-        return;
+        return false;
     }
     $("#fileUploadLine").click();
 }
@@ -384,20 +384,20 @@ function PlayCCTV(srcurl) {
     $("#videoContainer").html("");
     /* 以下将定义视频插件常用的几个控件 */ 
     // 实例化一个“下一个”按钮控件
-    var nextControl = new Super.NextControl()
+    var nextControl = new Super.NextControl();
     // 实例化一个倍速控件
-    var Dbspeen = new Super.DbspeenControl()
+    var Dbspeen = new Super.DbspeenControl();
     // 实例化一个弹幕输入框控件
-    var BarrageControl = new Super.BarrageControl()
+    var BarrageControl = new Super.BarrageControl();
     // 实例化一个全屏按钮控件
-    var fullScreenControl = new Super.FullScreenControl()
+    var fullScreenControl = new Super.FullScreenControl();
     // 实例化视频播放资源
     var source = new Super.VideoSource({
         // type: 视频类型 mp4:可播放浏览器支持的常见格式的视频文件(mp4/ogg/webm) m3u8: 可播放Hls形式推流直播视频(***.m3u8) flv: 可播放flv视频
         // src: 视频路径，可以是本地路径亦可是网络路径
         type: 'mp4',
-        src: 'https://image.imlzx.cn/cctv/' + srcurl+'.mp4'
-    })
+        src: 'https://image.imlzx.cn/cctv/' + srcurl + '.mp4'
+    });
 
     /* 插件的常用配置参数 */
     var config = {
@@ -414,31 +414,30 @@ function PlayCCTV(srcurl) {
         leftControls: [nextControl], // 在底部控件栏左侧插入 “下一个”按钮控件
         rightControls: [Dbspeen, fullScreenControl], // 在底部控件栏左侧插入 “倍速” 控件和 “全屏” 控件
         centerControls: [BarrageControl] // 在底部控件栏中间插入 “弹幕输入控件”
-    }
+    };
 
     //初始化插件superVideo('videoContainer')请对应好html中的插件容器id.
-    var video = new Super.Svideo('videoContainer', config)
+    var video = new Super.Svideo('videoContainer', config);
 
     /* 以下是控件类常用的监听事件 */
 
     // 监听“下一个”按钮控件点击事件
     nextControl.addEventListener('click', function (event) {
-        alert('click next menu !!!')
-    })
+        alert('click next menu !!!');
+    });
     // 监听进入全屏模式后触发（点击进入全屏按钮）
     fullScreenControl.addEventListener('fullscreen', function (event) {
-        console.log('is fullscreen !!!')
-    })
+        console.log('is fullscreen !!!');
+    });
     // 监听退出全屏模式后触发（点击退出全屏按钮）
     fullScreenControl.addEventListener('cancelfullscreen', function (event) {
-        console.log('cancel fullscreen !!!')
-    })
+        console.log('cancel fullscreen !!!');
+    });
     // 监听发送弹幕输入框输入并发送弹幕后触发
     BarrageControl.addEventListener('send', function (event) {
-        var value = event.target.option.value
-        console.log('send ' + value)
-    })
-
+        var value = event.target.option.value;
+        console.log('send ' + value);
+    });
     setTimeout(function () {
         let _video = $("#videoContainer video")[0];
         if (_video.paused) {
@@ -449,46 +448,46 @@ function PlayCCTV(srcurl) {
     /* 以下是video类常用的监听事件 */
     // 视频准备就绪
     video.addEventListener('ready', function () {
-        console.log('is ready!')
-    })
+        console.log('is ready!');
+    });
     // 开始播放
     video.addEventListener('play', function () {
         console.log('is play!');
-    })
+    });
     // 暂停播放
     video.addEventListener('pause', function () {
-        console.log('is pause!')
-    })
+        console.log('is pause!');
+    });
     // 监听进入全屏模式后触发
     video.addEventListener('fullscreen', function (event) {
-        console.log('is fullscreen !!!')
-    })
+        console.log('is fullscreen !!!');
+    });
     // 监听退出全屏模式后触发
     video.addEventListener('cancelfullscreen', function (event) {
-        console.log('cancel fullscreen !!!')
-    })
+        console.log('cancel fullscreen !!!');
+    });
 
     /* 下面将演示弹幕类的用法 */
     // 初始化一个弹幕实例
     var barrage1 = new Super.Barrage('我是一条红色的超大号字体弹幕', {
         color: 'red',
         fontSize: 30
-    })
+    });
     // 将该弹幕加入播放器插件
     //video.addBarrage(barrage1)
 
     // 还可以在弹幕中插入一些dom节点
-    var vipDom = document.createElement('span')
-    vipDom.innerHTML = 'V'
-    vipDom.style.color = 'green'
-    vipDom.style.fontSize = '20px'
-    vipDom.style.fontWeight = '600'
-    vipDom.style.marginRight = '4px'
+    var vipDom = document.createElement('span');
+    vipDom.innerHTML = 'V';
+    vipDom.style.color = 'green';
+    vipDom.style.fontSize = '20px';
+    vipDom.style.fontWeight = '600';
+    vipDom.style.marginRight = '4px';
     var barrage2 = new Super.Barrage('我是超级会员VIP', {
         color: 'orange',
         fontSize: 15,
         leftDom: vipDom // 将DOM插入弹幕左侧
-    })
+    });
     //video.addBarrage(barrage2);
     //video.addBarrage('冲鸭~~~~~~');
     //video.addBarrage('奥里给！！！！！！');

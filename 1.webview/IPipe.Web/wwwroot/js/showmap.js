@@ -1,6 +1,6 @@
 var scene, globe, canvas, ellipsoid, labels, yhlabels, linePrimitive, flowtoPrimitive, holePrimitive, yhPrimitive,cctvDate, IsBddiv = true, Isgoemdiv = true;
-let x,latval=0;//鼠标的x
-let y,lngval=0;//鼠标的y
+var x,latval=0;//鼠标的x
+var y,lngval=0;//鼠标的y
 var cctvflat = false, wdflat = false, lengtvalue = 0, mlengtvalue = 0, bflengtvalue=0;
 var layerFrom;
 var olMap, map, viewer;//三大地图的jq dom对象
@@ -2896,11 +2896,16 @@ function bindingCCTVDate(pipe) {
 
 
     var sm_Str = '<div class="tishi">管段修复等级为' + getkeyvlaue(pipe.rIEvaluate)[0] + ',' + getkeyvlaue(pipe.rIEvaluate)[1] + '；养护等级为' + getkeyvlaue(pipe.mIEvaluate)[0] + ',' + getkeyvlaue(pipe.mIEvaluate)[1] + '。</div>';
-
+    let videoname;
+    if (areid == 1) {
+        videoname = pipe.video.replace(/深圳/g, '佛山');
+    } else {
+        videoname = pipe.video;
+    }
     var html = '<table id="tab1" class="cesium-infoBox-defaultTable">' +
         '<tbody><tr>' +
         '<td  align="right">录像文件：</td>' +
-        '<td  align="center" id="videoid">' + pipe.video + '</td>' +
+        '<td  align="center" id="videoid">' + videoname + '</td>' +
         '</tr>' +
         '<tr>' +
         '<td align="right">检测方向：</td>' +
@@ -3233,5 +3238,5 @@ function initlocation() {
         } catch (e) {
 
         }
-    }
+    } 
 }
