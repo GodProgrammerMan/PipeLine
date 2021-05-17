@@ -183,9 +183,43 @@ $(function () {
                         if (data.elem.checked) {
                             parameterStr = "'YS'|" + pipetypeStr;
                             olLayerTransformation(oLpipeAllLayer, parameterStr, 'MSDI:ys_pipe');
+                            //cesium
+                            $.each(holdListData.response.lineDateMoldes, function (i, item) {
+                                if (item.line_Class == 'YS') {
+                                    try {
+                                        var attributesLine = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.lineID);
+                                        attributesLine.show = Cesium.ShowGeometryInstanceAttribute.toValue(true); 
+                                        var attributesflowto = flowtoPrimitive.getGeometryInstanceAttributes("flowto_" + item.line_Class + "_" + item.lineID);
+                                        attributesflowto.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(1.0, 1.0, 0.0, 1.0));
+                                    } catch (e) {
+                                    }
+                                }
+                            });
+                            for (var i = 0; i < holePrimitive.length; ++i) {
+                                if (holePrimitive.get(i).id.indexOf("YS") > -1) {
+                                    holePrimitive.get(i).show = true;
+                                }
+                            }
                         } else {
                             parameterStr = pipetypeStr.replace("'YS'|", "");
                             olLayerTransformation(oLpipeAllLayer, parameterStr, 'MSDI:ys_pipe');
+                            //cesium
+                            $.each(holdListData.response.lineDateMoldes, function (i, item) {
+                                if (item.line_Class == 'YS') {
+                                    try {
+                                        var attributesLine = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.lineID);
+                                        attributesLine.show = Cesium.ShowGeometryInstanceAttribute.toValue(false); 
+                                        var attributesflowto = flowtoPrimitive.getGeometryInstanceAttributes("flowto_" + item.line_Class + "_" + item.lineID);
+                                        attributesflowto.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.TRANSPARENT);
+                                    } catch (e) {
+                                    }
+                                }
+                            });
+                            for (var i = 0; i < holePrimitive.length; ++i) {
+                                if (holePrimitive.get(i).id.indexOf("YS") > -1) {
+                                    holePrimitive.get(i).show = false;
+                                }
+                            }
                         }
                         pipetypeStr = parameterStr;
                     } else {
@@ -198,9 +232,44 @@ $(function () {
                         if (data.elem.checked) {
                             parameterStr = "'WS'|" + pipetypeStr;
                             olLayerTransformation(oLpipeAllLayer, parameterStr, 'MSDI:ys_pipe');
+                            //cesium
+                            $.each(holdListData.response.lineDateMoldes, function (i, item) {
+                                if (item.line_Class == 'WS') {
+                                    try {
+                                        var attributesLine = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.lineID);
+                                        attributesLine.show = Cesium.ShowGeometryInstanceAttribute.toValue(true); 
+                                        var attributesflowto = flowtoPrimitive.getGeometryInstanceAttributes("flowto_" + item.line_Class + "_" + item.lineID);
+                                        attributesflowto.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(1.0, 1.0, 0.0, 1.0));
+                                    } catch (e) {
+                                    }
+                                }
+                            });
+                            for (var i = 0; i < holePrimitive.length; ++i) {
+                                if (holePrimitive.get(i).id.indexOf("WS") > -1) {
+                                    holePrimitive.get(i).show = true;
+                                }
+                            }
                         } else {
                             parameterStr = pipetypeStr.replace("'WS'|", "");
                             olLayerTransformation(oLpipeAllLayer, parameterStr, 'MSDI:ys_pipe');
+
+                            //cesium
+                            $.each(holdListData.response.lineDateMoldes, function (i, item) {
+                                if (item.line_Class == 'WS') {
+                                    try {
+                                        var attributesLine = linePrimitive.getGeometryInstanceAttributes("pipe_line_" + item.lno + "_" + item.line_Class + "$" + item.lineID);
+                                        attributesLine.show = Cesium.ShowGeometryInstanceAttribute.toValue(false); 
+                                        var attributesflowto = flowtoPrimitive.getGeometryInstanceAttributes("flowto_" + item.line_Class + "_" + item.lineID);
+                                        attributesflowto.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.TRANSPARENT);
+                                    } catch (e) {
+                                    }
+                                }
+                            });
+                            for (var i = 0; i < holePrimitive.length; ++i) {
+                                if (holePrimitive.get(i).id.indexOf("WS") > -1) {
+                                    holePrimitive.get(i).show = false;
+                                }
+                            }
                         }
                         pipetypeStr = parameterStr;
                     } else {
@@ -2072,7 +2141,7 @@ function getLineHoles(iswid) {
                                 primitivesType: "holeType",
                                 color: holecolor
                             });
-                            holePrimitive.add(WSmodel);
+                            holePrimitive.add(WSmodel, item.sholeID);
                             ceHoleList.push(item.s_Point);
                         } else {
                             if (item.s_subsid == "雨水篦" || item.s_subsid == "污水篦")
@@ -2096,7 +2165,7 @@ function getLineHoles(iswid) {
                                 primitivesType: "holeType",
                                 color: holecolor
                             });
-                            holePrimitive.add(YSmodel);
+                            holePrimitive.add(YSmodel, item.eholeID);
                             ceHoleList.push(item.e_Point);
                         } else {
                             if (item.e_subsid == "雨水篦" || item.e_subsid == "污水篦")
@@ -2149,7 +2218,8 @@ function getLineHoles(iswid) {
                             shapePositions: shapePositions
                         }),
                         attributes: {
-                            color: Cesium.ColorGeometryInstanceAttribute.fromColor(attributes)
+                            color: Cesium.ColorGeometryInstanceAttribute.fromColor(attributes),
+                            show: new Cesium.ShowGeometryInstanceAttribute(true)
                         }
                     }));
                 }
@@ -2679,7 +2749,7 @@ function flytoByLineHole(lineID, type) {
 
                 return false;
             }
-        })
+        });
     } else {
         $.each(holdListData.response.lineDateMoldes, function (i, item) {
             if (item.e_holeID == lineID || item.s_holeID == lineID) {
@@ -2690,7 +2760,7 @@ function flytoByLineHole(lineID, type) {
 
                 return false;
             }
-        })
+        });
     }
 
 }

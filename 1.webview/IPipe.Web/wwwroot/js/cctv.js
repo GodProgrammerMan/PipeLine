@@ -515,6 +515,12 @@ function CookieChoohtml() {
         mlengtvalue = 0;
         latval = - 0.003045587501575;
         lngval = 0.00540591756882;
+    } else {
+        areid = 1;
+        latval = -0.0026169694041;
+        lngval = 0.00544058017012;
+        lengtvalue = 0;
+        mlengtvalue = 0;
     }
 }
 function enterFullscreen() {
