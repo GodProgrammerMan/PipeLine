@@ -11,7 +11,7 @@ namespace IPipe.IRepository
     /// </summary>	
     public interface Ipipe_lineRepository : IBaseRepository<pipe_line>
     {
-        List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw);
+        List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw,int areid);
         LineHoleDateModel GetLineHolesDate(int areid, int type);
         LineInfoMolde GetLineInfoByID(int id);
         List<TreeLineMolde> getLineListBytree(int areid);

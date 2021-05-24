@@ -949,7 +949,7 @@ namespace IPipe.Web.Controllers
                 result.msg = "关键字为空！";
                 return new JsonResult(result);
             }
-            var LineHoles = _ipipe_LineServices.GetQueryLineHolesDate(obj.kw);
+            var LineHoles = _ipipe_LineServices.GetQueryLineHolesDate(obj.kw,areid);
             if (LineHoles.Count > 0)
             {
                 result.msg = $"共发现{LineHoles.Count}条管道记录";

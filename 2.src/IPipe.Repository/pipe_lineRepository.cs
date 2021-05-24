@@ -151,16 +151,16 @@ namespace IPipe.Repository
             return Db.Queryable<pipe_line>().Where(t=>t.areid == areid).Select(t=> new TreeLineMolde() { eHoleID = t.E_holeID, id = t.id, sHoleID =t.S_holeID }).ToList();
         }
 
-        public List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw)
+        public List<QueryLineHoleMolde>  GetQueryLineHolesDate(string kw,int areid)
         {
             var holeList = Db.Queryable<pipe_hole>()
-                .Where(t=>t.Exp_No.Contains(kw))
+                .Where(t=>t.Exp_No.Contains(kw) && t.areid==areid)
                 .Take(4)
-                .OrderBy(t=>t.id,SqlSugar.OrderByType.Desc)
+                .OrderBy(t=>t.id, OrderByType.Desc)
                 .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 2, eNo = t.Exp_No, id = t.id }).ToList();
 
             var lineList = Db.Queryable<pipe_line>()
-                .Where(t=>t.Lno.Contains(kw))
+                .Where(t=>t.Lno.Contains(kw) && t.areid == areid)
                 .Take(4) 
                 .Select(t=> new QueryLineHoleMolde() { addreess = t.Address, dataType = 1, eNo = t.Lno, id = t.id }).ToList();
             if (holeList != null) {

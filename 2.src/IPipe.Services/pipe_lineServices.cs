@@ -32,9 +32,9 @@ namespace IPipe.Services
             return _dal.getLineListBytree(areid);
         }
 
-        public List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw)
+        public List<QueryLineHoleMolde> GetQueryLineHolesDate(string kw,int areid)
         {
-            return _dal.GetQueryLineHolesDate(kw);
+            return _dal.GetQueryLineHolesDate(kw, areid);
         }
 
         public List<QueryLineListMolde> GetQueryPipeLineList(string kw, int areid)

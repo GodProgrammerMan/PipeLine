@@ -13,64 +13,90 @@
         <li>GIS信息</li>
     </ul>
     <div class="layui-tab-content">
-        <form class="layui-form" action="">
-            <div class="layui-form-item">
-                <label class="layui-form-label">工程名</label>
-                <div class="layui-input-block">
-                    <input type="text" name="title" required lay-verify="required" placeholder="请输入工程名" autocomplete="off" class="layui-input">
+        <div class="layui-tab-item layui-show">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">工程名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="titlename" required lay-verify="required" placeholder="请输入工程名" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">井点编号</label>
-                <div class="layui-input-inline">
-                    <input type="password" name="password" required lay-verify="required" placeholder="请输入井点编号" autocomplete="off" class="layui-input">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">井点编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="lon" required lay-verify="required" placeholder="请输入井点编号" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">辅助文字</div>
                 </div>
-                <div class="layui-form-mid layui-word-aux">辅助文字</div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">井点类型</label>
-                <div class="layui-input-block">
-                    <select name="city" lay-verify="required">
-                        <option value=""></option>
-                        <option value="0">终止点</option>
-                        <option value="1">直通</option>
-                        <option value="2">三叉</option>
-                        <option value="3">四叉</option>
-                    </select>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">井点类型</label>
+                    <div class="layui-input-block">
+                        <select name="city" lay-verify="required">
+                            <option value=""></option>
+                            <option value="0">终止点</option>
+                            <option value="1">直通</option>
+                            <option value="2">三叉</option>
+                            <option value="3">四叉</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">材质</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="like[write]" title="砼">
-                    <input type="checkbox" name="like[read]" title="钢铁" checked>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">材质</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="like[write]" title="砼">
+                        <input type="checkbox" name="like[read]" title="钢铁" checked>
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">是否可见</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="switch" lay-skin="switch">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">是否可见</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="switch" lay-skin="switch">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">归属</label>
-                <div class="layui-input-block">
-                    <input type="text" name="title" required lay-verify="required" placeholder="归属" autocomplete="off" class="layui-input">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">归属</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required lay-verify="required" placeholder="归属" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">备注</label>
-                <div class="layui-input-block">
-                    <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-block">
+                        <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="adrr" required lay-verify="required" placeholder="请输入地址" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">坐标X</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="coorx" required lay-verify="required" placeholder="请输入坐标X" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">辅助文字</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">坐标y</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="coory" required lay-verify="required" placeholder="请输入坐标y" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">辅助文字</div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -87,6 +113,13 @@
             var element = layui.element;
             //监听提交
             form.on('submit(formDemo)', function (data) {
+                var loadindex = layer.load(1, {
+                    shade: [0.1, '#000']
+                });
+                setTimeout(function () {
+                    layer.close(loadindex);
+                    layer.msg('提交成功，系统正在分配！', { icon: 1 });
+                }, 5000);
                 layer.msg(JSON.stringify(data.field));
                 return false;
             });
